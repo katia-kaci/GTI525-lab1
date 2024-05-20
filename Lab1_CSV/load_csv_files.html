@@ -5,7 +5,7 @@
 </head>
 <body>
 
-  <script type="text/javascript">
+  <!-- <script type="text/javascript">
     var stations = {};
   </script>
 
@@ -29,6 +29,37 @@
 
   <script type="text/javascript">
     console.log(stations[6720]);
-  </script>
+  </script> -->
+
+  <div style="width: 1100px;">
+    <div>
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAL8AAADfCAMAAACQwPJuAAAAflBMVEX///8AAAA/Pz+mpqZqamr6+vp/f3+vr68MDAy/v7/v7+/09PQUFBQEBATh4eFgYGDb29sZGRnOzs4yMjIfHx+WlpbV1dVYWFglJSVLS0sqKirp6ek7Oztubm6Li4tGRkaCgoK2trZ3d3dQUFDFxcWpqamcnJyPj48vLy9cXFzXzFRyAAAOe0lEQVR4nNVd2ULiShANyL4jiAoqBBH1/3/wEgJZaq8OeDPnbcYsh0p3bV1dHUV/i9eGhPYfs3HjUaRff/6f/zb/lUy/9vyf/23+mvjrzl8Tf835zzT6Nef/+2/z18Vfb/7Tf5v/ZPxv8zeIv878LeKvM/+WgX6N+W8s4q8xf5P468vfJv768n830a8tf6P4a8vfKP668t/0/m3+eyP9mvIfWMVfU/5m8deTv1389eTfMdOvJf+hXfy14D9YxcfdvvX72ly8zB3cE/zP1Ifx7nPuY1wX+bcfn6brKtT/T/6zp1fnQKkR/8P78ibcE/w5+ccbkv9z/sPj4pbkG387fmat24z5Iv6O/UrNJYfgr+T/KC/DBeNv2E/uIvsEfyH/gS0VEoTB3dm3P24/a3PMH+5M/+vljuwTvD3ekf2keWf2J4xbdxtE38YsTorRehT2C0bxXdjP3myvn792nrqHiStuBJje4RMcDWyWn7t4k92xC6V/ksGtP8FQXztsfk/KtwQOnxTTm9J/VNRO7/kBffKPKvQbjcWEIhKGo/yqbZe4p5r4Txj1b8ReHju99xl5V0XxnzD+vgn9jeTkv3wPmdvYON6hlW4xCVZCgLWmBk6KJ5a+ZR31ii0nHTP6vLhevvjb2qz4313u36KiJYhZk7s8Ss4uK/7GzOe+vlRSQ1/cY0dP8o3soNsaVyIzzFfh9B846b9u5Bt5hdv18m+Mgn8AJ/2e6qWz4l9aV4KLP4BW0Cr6zPO2ivAl8X+I/BlNPQ/6AY+05ukpIz8B622MByL/hy5ttJcBk3hGP2ptkMUDSzAxSBL/aLOlf4D6ySEGtAynFoPC56EfNf6c39F00m+Twcr4aLmXVbqNRaTzj75Iped0Jcg65aVNk/Hif7Dwjw7kxDNMuxzkktvWZsu7LL1RZOIfzUj163CnSQqvxpt5d7Vj5B9tqE84MiuhFfUBX425vZint7HyjwaUEBZGBgPq8z1bfzwv/s/IzD8aUnr03caAyi0/WzOrMc+u7+AftalUGR9uFEAZf7v24pNE68jDPxoSH7JnmAIzYvBbpy7vMzVyBWjkHw1+8AULnQHxs3/sURyfIO1dH2LlH22IefihEfjG99gVV3TguWWTz8yf0oNjxf0iKr16jow27X2dkb3Yzj+K8SXKCCL8BkcqUtjdtc0ucvCnnDkxKUT84J2dvrS5Lld9Hv7EjpmxMJrb2Gl+c9AXxL/Mr3LxH2JP4pcngD+XReNmEDbXFfSGiz+lzlkvmJi8nvU0aXdXwXX18SeiiS1xFfPkTwd9aXdX0X47+RO7lhhPGu+QmHuyd9L2oqIK9vIfoECc0aH4wa5VHCHLXlICXv5RjK4j/bgJuszsMyeQxF/i5eaPd/6QHwA9V9K0hpfkGMnvUfljvUIMDFyiv/PQl7YX7Svyx3qdSKegkH3pKgaRViXKyacA/m3kiSKfDC+3mYKdKyTxAyUcwB8nFFBEghYcPI6DnFTumy/lrSWKSuDcRJ6PK+u+EeivwbVB/GN4aXlO4bjPHjImkPa3wMRZEH+U1CvrNGz7Dx760vaiHgw+w/ijGVCanuj7+0a/tMECJW3C+KMPUBogKOp1eQ7i9iIUsAbyRwqmOINh1gbOORmS+LGzG8gfbYMohBTI9XGV0Yl1StiKBPJHOqIwxKF9HrlMr7S/ZYkvD+WPHMTcuYfWoeWhL+5vIfJNofxRbixbDELax6U8pTKxMREABfOHidlsasH1QuKj8xDFT+V9g/kPgJXJhAN9x734GACxTolK3QXzR+mlq26AtS6eElixTIy0guH84Ti5mEaY93Apf1H8JJ9w/gNw+U/639CydTz8pe1eI/KOcP5IA6UTAPpuHt+BSLfnoOdRBf7wY6cTAIrQYbz4MrEEdNFCBf5wpJ8nAHQeDGs0GfgysQabvKvAH4r6TBUmGB3aUxY/k+arwh8M9XEyVKD36IjbxbrcF+amKvzhBEicc2gV7DlPnNYogiu4qMIfrq8lsgYkHNqfr1NqEHHjFUK0oPJvgxt2JwMK/ktY3oAQi9LZxf4hv8aqhx1gTfgXL/rszPRF8eO4MUObXSbT+YMJ/IMDe6EoGEAUP7tIQrBw8AfOeg9bULPzxpeJJZC1GLNWoPOHLx2gsNJsfcXd4loIQSshnT8c7Sv4Lc2xC18mlkCtUyCDZp0/1DYxTJ2YCxXFrctU3AhAeX6GtAeI9o5wGFhD91iiL9YLXQcoYbwN/AHdXQTiJ6v3I+8cl5TA/uoXYf1r4A+MRysCj9jZ6McifTF72hpfdVMXpn0N/MF0fYb81YmXQt5LKPJo5X/vjx33pQDqcgv528pchTKxhpa+axXeAkptDfyB3nqD/E0VzkKZWAJ5Dp1V/+7yj8fS9DPwBx70D+RvytwKZWIJ5GL31HRd3btSmb7h5SDiW0L+puhFKBNrqEUfF9N7VbGTgv9u4A+U1gjytyQfFPErhdZX1+FanbDJ/UADf2j2I6ACLPKXmz9wcSPkn1VU54WeBv5x+WVjaL8M7rPSg13TYLnr1ryEaFm1tl/+PZiSMDxC7sHOxo2Yf7Y78BqShYx/EIXo+lNpAq4WiRdd55eLqrqEZAb+wGuaw4hSt19K85BpR0HJc8p2Rj0b+QO3dQk9AdV/UHuw+5Btb5za+AP7u4CmVP38+kZ+H7Ly5JaJPwjctnA2ajVjhibg3h9wtRedIP8T/CCtcMCze9qI8dVmfhv4g+H+Dh0ixfrgIr9b4MrbkDsA6n6HoiD59juIP4HN602Afjl0ZsSiQ1MT8BBYWyXA6ddHI0J04O7XeskYd0P37SRtIFLJAFjbIIfAtsUJLva3Uf5ceo61DXIQTNW+RLYNeMOCAr2n+Bu2krs1vgWsJ4x5JWbvwxuGprpPC6YPk1kDU7ps8Ym5C3Uw1G4bMbghMRxQJbGq7N7iP2Gt7HOHWd+z8wfEys2j8HZWDijtQkDioHf+T+CB0lULrjbIFSD2emgDEabJcqgV6cphTxvkCviRPkAMLk6NHvSAaAtWoZuYA3L6Hko6TZbA8jdyCeNvxK/4cXDF8DLbYS6f0mLV21np0PozwND1Ur+EFCMRRlTuJmbAp2a+4BC++nwwG04Y8vuLf6yvPMBxkiUqoV+DrMj9xT/Xa06hp9/L/gITmkgUYpnYLdA0NJiBBig3tLCMCtWgVGrKboApeoFjIE/VagXEYplYdfRMFYPQz+wVHGU4gEARzU17hCNknRq74u+Aa1ZFPw3VYpSGo9K+8eR1Ne1AQzEzuR/i4gPKWxYvbsOxVRyQcplYAk/BMcjAZL3M2lN58QRmbsqLnDCxUPyrKn5Xc6cyj5eryd28NUT+Q6jjy1MeLWkV8uhqy2TXZp8S/8zkzs4vEfgj7x342ZDkPPsAcplYQ1/w4vlnod4hHb88fxQ8wfouNEh23C9DcHWmKvDPTe61TyHPH8Wu6FI4g3sXL1QuEzth5OvRmfHP22ll5Fj+KHWAvzkaYJeVDPVQEddujZx/VqU/zFcgWP4obYy/OdxdcuEvl4mdMHa2xkup5M15JwWvkuOPVmypbw4Vc8pLPeHCUe+avyZvjrwq2jOOPyJBbbEABi4dFrFG32W7rvxbmXKLSwOb4Y+Cjx6Z5/okLlHF721MeOI/zh3Hp/KgpflPUOhN73CZ4Utijb5vl/yZf2ZyozadT4BAtV60+Esz4DJB1JbzPtuVoJtNvQEqwyH5Y/eF22BUWB1KIzC5TCxBhRbZM6yZKf4zlLTnDU5mSC7um3rcglqsweORCKkp/ngG8kmizMtIxarUKTXctquALpUPI/jjrKu0v+iiqebpv+QysQTBzaXpfAzmT5hPKVHRTqtRUuus1Ck1nA1qiq9hlpERf6IDnLzOdzZilxp0/YygwLNONpxag/yJJrw9xV1JcnTpBNHF72uykGHFeuSAP9WDUl2pX1x1ulwmRonLBrq9LfVAYrVcN/erS15Ir1NybdPOn7/lcxPlqUmsOFjauV28E/2Mqdsc78AicIPDBXqdUgXbZQGV83O0c9PLxIzdaANB0V/aJWYoE7vh+SwYFP2xQ13rdUqhtssE0jw78hyGOiVXjwsnyDoXj8B08Xt2aTsxJA2/owmvpUrPvk3SiwnRd9jVhNdSJuZrDucBFReclLWnnZjUTewC4zYlP5hktytFrJeJ3ct2DRinyzVaDWVid7JdB2ad0HeqoqFOKfBEFhnswZj26tYEhjIxV1tZKx64RVrnmZYG8d/qZLQCVmyqyUnfUCb2oz/FieE7N+fG3hNFDWVi6SOPYeEXxX7Hl1d4X2KoU0qzK8NR4+0m42j4wbMfuTMEhjKx3fnCs4u4rXzOpCT7xtrtoxsKZdLs7/CiLZY799FEBWw60vua/sPjDHVK6Xp/IcB4DZ0IfTnF4eqil8JSp3S2XeXOP6O9/4y0w14uSxj7lmVTGMSfFpeh+O6l1bV/7UG3pdVULEPio6GhTinVOeTrF/u+7lYP473h1Pv3IAfRUKeU2i6+pKPZ+eJ13uPx3XSI8DJQMRvEn9oupaZguf3df3/1M3SP353fprkKah/onRvEny7MqCUdVbAOPsHbIKCdRfyVsAtlr9cpXfuyqCUd4WhWyIoZxJ+aFLWkIxSVjq83iP+yNSA2nkTuxPKpUlLDMKizoqc7/IIXX5SIYNEpBW8z1hcnPVhXGTlnGAZ1uax41rrZloZm9ePeLToFfuHh9y0Uae+9wgm/GQzipzYmHap+hG3FYX+BWibWYMs+vl6Dt0U2jxWPt85gcAn5Qrd23+JSAiynX7cib6lT0hbuB12ba3nGevp0izGfwyI+wxsP39OFMh/mn7v+zZO/ep2S0pCxiFl313purkEkOvp5bXWO8X0W/Sxf3q+ih5vJ6nD2/w93Xas8yT/ufj0cj0/fH7tOZ//eak1/nz9ft823xc/6ZTkf9XrOExn+Dv8Bd2/E2r2wo8IAAAAASUVORK5CYII=" alt="">
+      <img src="https://idata.over-blog.com/4/32/89/72/petits-mots/bienvenue.png" alt="">
+    </div>
+  
+    <div>
+        <ul style="vertical-align: -webkit-baseline-middle;">
+          <ul><button>test</button></ul>
+          <ul><button>test</button></ul>
+          <ul><button>test</button></ul>
+          <ul><button>test</button></ul>
+          <ul><button>test</button></ul>
+          <ul><button>test</button></ul>
+        </ul>
+    </div>
+
+    
+      <footer>
+        <div>
+          <h2 style="text-decoration: solid;">Nos coordonnées:</h2>
+          <p>
+            <p>Thanushai Kandiah Ariyanayagam <b>Courriel:</b> thanushai.kandiah-ariyanayagam.1@ens.etsmtl.ca <b>Tél:</b> 111-111-1111</p>
+            <p>Mark Yousef <b>Courriel:</b> mark.yousef.1@ens.etsmtl.ca <b>Tél:</b> 222-222-2222</p>
+            <p>Antar Zakaria <b>Courriel:</b> zakaria.antar.1@ens.etsmtl.ca <b>Tél:</b> 333-333-3333</p>
+            <p>Katia Kaci <b>Courriel:</b> katia.kaci.1@ens.etsmtl.ca <b>Tél:</b> 444-444-4444</p>
+          </p>
+        </div>
+      </footer>
+  </div>
 </body>
 </html>
