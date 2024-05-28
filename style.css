@@ -1,0 +1,27 @@
+body {
+    max-width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: lightblue;
+}
+
+.header {
+    max-width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+    /* background-color: brown; A ENLEVER, JUSTE PR VOIR Où EST LE DIV */
+}
+
+.buttons {
+    max-width: fit-content;
+    margin-left: auto;
+    margin-right: auto; 
+    display: flex;
+    justify-content: center;
+    /* background-color: blue;  */
+}
+
+.footer {
+    text-align: center;
+    /* background-color: purple    ; A ENLEVER, JUSTE PR VOIR Où EST LE DIV */
+}
