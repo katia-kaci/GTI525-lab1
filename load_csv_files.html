@@ -32,6 +32,33 @@
   <script src="scripts/6633.csv.js"></script>
   <script src="scripts/6720.csv.js"></script>
 
+  <!-- JE TRAVAIL DESSUS LIVE -->
+  <!-- <script type="text/javascript">
+
+    //console.log(StationInventoryEN);
+
+    const CSVToArray = (data, separateur, skipPremiereLigne) =>{
+     // console.log(data.split("\n"));
+      let valeurs = data
+      .slice(skipPremiereLigne ? data.indexOf('\n') + 1 : 0)
+      .split('\n')
+      .map(v => v.split(separateur))
+      console.log('valeurs: '+valeurs)
+
+      let rows = data.slice(data.indexOf('\n') + 1).split('\n');
+      let titles = valeurs[3];
+      //console.log(rows);
+      rows.splice(0,1);
+
+      return rows.map(row => {
+      const values = row.split(separateur);
+      return titles.reduce((object, curr, i) => (object[curr] = values[i], object), {})
+      });
+    };
+    tabStJohn = CSVToArray(StationInventoryEN, ",", true);
+    console.log(tabStJohn);
+  </script> -->
+
   <div>
 
     <div class="header">
