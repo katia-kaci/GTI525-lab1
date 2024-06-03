@@ -5,11 +5,11 @@ var listeStations = csvToArray(stations,",",true);
 
 let valeursProvince = csvToArray(StationInventoryEN,'","',false);
 
-// console.log(valeursProvince)
 let listeProvince = getProvinces();
 
 let listeStationsProvince= [];
 let donnee = [];
+let donneeUtiliser = [];
 afficherProvince()
 
 
@@ -17,9 +17,9 @@ afficherProvince()
 function test() {
 
     //document.getElementById("max").innerHTML = tabStJohn[0]['"Extr Min Temp (°C)"'];"
-    document.getElementById("annee1").innerHTML = donnee[0]['"Year"'].replace('"', "").replace('"',"");
+    document.getElementById("annee1").innerHTML = donneeUtiliser[0]['"Year"'].replace('"', "").replace('"',"");
     //document.getElementById("max").innerHTML = tabStJohn[0]['"Extr Min Temp (°C)"'];
-    document.getElementById("annee2").innerHTML = donnee[1]['"Year"'].replace('"', "").replace('"',"");
+    document.getElementById("annee2").innerHTML = donneeUtiliser[1]['"Year"'].replace('"', "").replace('"',"");
 }
 
 function getProvinces(){
@@ -94,7 +94,7 @@ function afficherProvince() {
 
   let listeAfficher = ""
   for(i in listeProvince){
-    listeAfficher = listeAfficher+'<ul> <button value="'+i+'" onclick="afficherNomsStations(this.value)">'+listeProvince[i]+"</button></ul>";
+    listeAfficher = listeAfficher+'<ul> <button value="'+i+'" onclick="afficherNomsStations(this.value)">'+listeProvince[i]+'</button><ul id="province'+i +'" ></ul></ul>';
   }
   document.getElementById("listeprovince").innerHTML = listeAfficher;
   
@@ -110,4 +110,28 @@ function afficherNomsStations(value) {
   });
 
   donnee = listeStationsAfficher;
+
+
+  listeStationsAfficher =[];
+  let baliseAfficher = "";
+  afficherProvince();
+  donnee.map((e)=> {
+    if(!listeStationsAfficher.includes(e['"Station Name"'])){
+      listeStationsAfficher.push(e['"Station Name"']);
+      baliseAfficher = baliseAfficher+ '<ul> <button value="'+e['"Station Name"'].replace('"',"").replace('"',"")+'" onclick="recupererStations(this.value)" >'+e['"Station Name"'].replace('"',"").replace('"',"")+'</button></ul>'
+    }
+  })
+  // onclick="afficherNomsStations(this.value)"
+  
+  document.getElementById("province"+value).innerHTML = baliseAfficher;
+
+
   }
+
+  function recupererStations(value){
+    donneeUtiliser = donnee.filter((e)=> e['"Station Name"'].replace('"',"").replace('"',"") === value)
+  }
+
+
+  // obtenirIntervalleAnnee(){
+  // }
