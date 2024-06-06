@@ -16,7 +16,7 @@
 
   <script type="text/javascript">
     var stations = {};
-    var StationInventoryEN= {};
+    var StationInventoryEN = {};
   </script>
   <script src="scripts/Station Inventory EN.csv.js"></script>
   <script src="scripts/118.csv.js"></script>
@@ -36,6 +36,8 @@
   <script src="scripts/6633.csv.js"></script>
   <script src="scripts/6720.csv.js"></script>
 
+  <!-- <script src="jquery-csv.js"></script> -->
+
   <div>
 
     <div class="header">
@@ -44,7 +46,7 @@
     </div>
 
     <div class="buttons">
-      <ul id="listeprovince">
+      <ul id="listeprovince" class="scrollable-listeprovince">
       </ul>
       <span>
         <table>
@@ -58,10 +60,18 @@
             <th>Mois</th>
           </tr>
           <tr>
-            <td><p id="max"></p></td>
-            <td><p id="annee1"></p></td>
-            <td><p id="min"></p></td>
-            <td><p id="annee2"></p></td>
+            <td>
+              <p id="max"></p>
+            </td>
+            <td>
+              <p id="annee1"></p>
+            </td>
+            <td>
+              <p id="min"></p>
+            </td>
+            <td>
+              <p id="annee2"></p>
+            </td>
           </tr>
         </table>
       </span>
@@ -70,16 +80,19 @@
     <button onclick="test()"> faire afficher les données</button>
 
     <footer>
-      <div class="footer">
-        <h2 style="text-decoration: solid;">Nos coordonnées:</h2>
+      <div id="contact" class="footer">
+        <h2>Nos coordonnées:</h2>
+
         <p>
         <p>Thanushai Kandiah Ariyanayagam<b>Courriel:</b> thanushai.kandiah-ariyanayagam.1@ens.etsmtl.ca <b>Tél:</b>
           111-111-1111</p>
-        <p>Mark Yousef<b>Courriel:</b> mark.yousef.1@ens.etsmtl.ca <b>Tél:</b> 222-222-2222</p>
-        <p>Zakaria Antar<b>Courriel:</b> zakaria.antar.1@ens.etsmtl.ca <b>Tél:</b> 333-333-3333</p>
-        <p>Katia Kaci<b>Courriel:</b> katia.kaci.1@ens.etsmtl.ca <b>Tél:</b> 444-444-4444</p>
-        <p>Nicolas Thibodeau<b>Courriel:</b> katia.kaci.1@ens.etsmtl.ca <b>Tél:</b> 444-444-4444</p>
+        <p>Mark Yousef<b>Courriel:</b> mark.yousef.1@ens.etsmtl.ca</p>
+        <p>Zakaria Antar<b>Courriel:</b> zakaria.antar.1@ens.etsmtl.ca</p>
+        <p>Katia Kaci<b>Courriel:</b> katia.kaci.1@ens.etsmtl.ca</p>
+        <p>Nicolas Thibodeau<b>Courriel:</b> nicolas.thibodeau.1@ens.etsmtl.ca</p>
+        <p>Équipe 9</p>
         </p>
+
       </div>
     </footer>
 
