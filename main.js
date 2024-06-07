@@ -102,7 +102,16 @@ function afficherProvince() {
     listeAfficher = listeAfficher+'<ul> <button value="'+i+'" onclick="afficherNomsStations(this.value)">'+listeProvince[i]+'</button><ul id="province'+i +'" ></ul></ul>';
   }
   document.getElementById("listeprovince").innerHTML = listeAfficher;
-  
+
+  let buttons = document.querySelectorAll('button');
+  buttons.forEach(button => {
+    button.addEventListener('click', function() {
+      //buttons.forEach(btn => btn.classList.remove('special'));
+      this.classList.add('special');
+      afficherNomsStations(this.value);
+    })
+  });
+
 }
 
 function afficherNomsStations(value) {
@@ -122,11 +131,10 @@ function afficherNomsStations(value) {
 
   listeStationsAfficher =[];
   let baliseAfficher = "";
-  afficherProvince();
   donnee.map((e)=> {
     if(!listeStationsAfficher.includes(e['"Station Name"'])){
       listeStationsAfficher.push(e['"Station Name"']);
-      baliseAfficher = baliseAfficher+ '<ul> <button value="'+e['"Station Name"'].replace('"',"").replace('"',"")+'" onclick="recupererStations(this.value)" >'+e['"Station Name"'].replace('"',"").replace('"',"")+'</button></ul>'
+      baliseAfficher = baliseAfficher+ '<ul> <button value="'+e['"Station Name"'].replace('"',"").replace('"',"")+'" onclick="recupererStations(this.value)" >'+e['"Station Name"'].replace('"',"").replace('"',"")+'</button></ul>';
     }
   })
   

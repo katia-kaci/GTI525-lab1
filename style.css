@@ -32,3 +32,7 @@ body {
     text-align: center;
     /* background-color: purple    ; A ENLEVER, JUSTE PR VOIR Où EST LE DIV */
 }
+
+.special {
+    background-color: blueviolet;
+}
