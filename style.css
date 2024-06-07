@@ -36,3 +36,17 @@ body {
 .special {
     background-color: blueviolet;
 }
+
+table {
+    border: 1px solid;
+    border-color: black;
+}
+
+th {
+    border: 1px solid;
+    text-align: center;
+}
+
+td {
+    border: 1px solid;
+}
