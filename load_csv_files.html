@@ -36,8 +36,6 @@
   <script src="scripts/6633.csv.js"></script>
   <script src="scripts/6720.csv.js"></script>
 
-  <!-- <script src="jquery-csv.js"></script> -->
-
   <div>
 
     <div class="header">
@@ -50,7 +48,35 @@
       </ul>
       <span>
         <h3 id="nom"></h3>
-        <button  onclick="afficherStatistique()"> Statistiques</button>
+        <p> Plage de dates</p>
+
+        <label for="from">De:</label>
+        <select name="fromYear" id="fromYear">
+          <option value="2000">2000</option>
+          <option value="2001">2001</option>
+          <option value="2002">2002</option>
+        </select>
+        <select name="fromMonth" id="fromMonth">
+          <option value="Janvier">Janvier</option>
+          <option value="Février">Février</option>
+          <option value="Mars">Mars</option>
+        </select>
+
+        <br>
+        <label for="to">À:</label>
+        <select name="toYear" id="toYear">
+          <option value="2000">2000</option>
+          <option value="2001">2001</option>
+          <option value="2002">2002</option>
+        </select>
+        <select name="toMonth" id="toMonth">
+          <option value="Janvier">Janvier</option>
+          <option value="Février">Février</option>
+          <option value="Mars">Mars</option>
+        </select>
+        <br><br>
+
+        <button onclick="showStatistics()"> Statistiques</button>
         <div id="tableau" class="scrollable-listeprovince"></div>
         <!-- <table id="tableStats"></table> -->
         <!-- <table>
@@ -81,19 +107,18 @@
       </span>
 
     </div>
-    <button onclick="test()"> faire afficher les données</button>
+    <button onclick="test()"> Afficher les données</button>
 
     <footer>
       <div id="contact" class="footer">
         <h2>Nos coordonnées:</h2>
 
         <p>
-        <p>Thanushai Kandiah Ariyanayagam<b>Courriel:</b> thanushai.kandiah-ariyanayagam.1@ens.etsmtl.ca <b>Tél:</b>
-          111-111-1111</p>
-        <p>Mark Yousef<b>Courriel:</b> mark.yousef.1@ens.etsmtl.ca</p>
-        <p>Zakaria Antar<b>Courriel:</b> zakaria.antar.1@ens.etsmtl.ca</p>
-        <p>Katia Kaci<b>Courriel:</b> katia.kaci.1@ens.etsmtl.ca</p>
-        <p>Nicolas Thibodeau<b>Courriel:</b> nicolas.thibodeau.1@ens.etsmtl.ca</p>
+        <p>Thanushai Kandiah Ariyanayagam<b> Courriel:</b> thanushai.kandiah-ariyanayagam.1@ens.etsmtl.ca</p>
+        <p>Mark Yousef<b> Courriel:</b> mark.yousef.1@ens.etsmtl.ca</p>
+        <p>Zakaria Antar<b> Courriel:</b> zakaria.antar.1@ens.etsmtl.ca</p>
+        <p>Katia Kaci<b> Courriel:</b> katia.kaci.1@ens.etsmtl.ca</p>
+        <p>Nicolas Thibodeau<b> Courriel:</b> nicolas.thibodeau.1@ens.etsmtl.ca</p>
         <p>Équipe 9</p>
         </p>
 
