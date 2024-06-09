@@ -48,8 +48,8 @@
       </ul>
       <span>
         <h3 id="nom"></h3>
-        <p> Plage de dates</p>
 
+        <p> Plage de dates</p>
         <label for="from">De:</label>
         <select name="fromYear" id="fromYear">
           <option value="2000">2000</option>
@@ -60,8 +60,16 @@
           <option value="Janvier">Janvier</option>
           <option value="Février">Février</option>
           <option value="Mars">Mars</option>
+          <option value="Avril">Avril</option>
+          <option value="Mai">Mai</option>
+          <option value="Juin">Juin</option>
+          <option value="Juillet">Juillet</option>
+          <option value="Août">Août</option>
+          <option value="Septembre">Septembre</option>
+          <option value="Octobre">Octobre</option>
+          <option value="Novembre">Novembre</option>
+          <option value="Décembre">Décembre</option>
         </select>
-
         <br>
         <label for="to">À:</label>
         <select name="toYear" id="toYear">
@@ -73,41 +81,23 @@
           <option value="Janvier">Janvier</option>
           <option value="Février">Février</option>
           <option value="Mars">Mars</option>
+          <option value="Avril">Avril</option>
+          <option value="Mai">Mai</option>
+          <option value="Juin">Juin</option>
+          <option value="Juillet">Juillet</option>
+          <option value="Août">Août</option>
+          <option value="Septembre">Septembre</option>
+          <option value="Octobre">Octobre</option>
+          <option value="Novembre">Novembre</option>
+          <option value="Décembre">Décembre</option>
         </select>
-        <br><br>
 
-        <button onclick="afficherStatistique()"> Statistiques</button>
+        <button id="afficherStatistiques" onclick="afficherStatistique()"> Statistiques</button>
         <div id="tableau" class="scrollable-listeprovince"></div>
-        <!-- <table id="tableStats"></table> -->
-        <!-- <table>
-          <tr>
-            <th>Donnée</th>
-            <th>Valeur maximale</th>
-            <th>Année</th>
-            <th>Mois</th>
-            <th>Valeur minimale</th>
-            <th>Année</th>
-            <th>Mois</th>
-          </tr>
-          <tr>
-            <td>
-              <p id="max"></p>
-            </td>
-            <td>
-              <p id="annee1"></p>
-            </td>
-            <td>
-              <p id="min"></p>
-            </td>
-            <td>
-              <p id="annee2"></p>
-            </td>
-          </tr>
-        </table> -->
+
       </span>
 
     </div>
-    <button onclick="test()"> Afficher les données</button>
 
     <footer>
       <div id="contact" class="footer">
