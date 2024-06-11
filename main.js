@@ -6,11 +6,10 @@ let provinceSelectionnee = [];
 let stationSelectionee = stations;
 
 const months = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"];
-let years = ["2001", "2002", "2003", "2004", "2005", "2006"];
+let years = [];
 let fromYear = 0, fromMonth = 0, toYear = 3000, toMonth = 11;
 
-afficherProvinces(stations)
-afficherDonnees()
+afficherProvinces()
 selectDateRange();
 
 function selectDateRange() {
@@ -168,6 +167,10 @@ function afficherNomsStations(value) {
 let previousButton = null;
 function recupererStations(value) {
   stationSelectionee = provinceSelectionnee.filter((e) => e['"Station Name"'].replace(/"/g, '') === value);
+  years = Array.from(new Set(stationSelectionee.map((s) => s['"Year"'])));
+
+  // console.log(stationSelectionnee)
+  // console.log(years)
   document.getElementById("nom").innerHTML = value;
 
   if (previousButton !== null) previousButton.classList.remove('special');
@@ -368,12 +371,9 @@ function afficherStatistique() {//sil'y a aucune donne ne rien afficher
   }
 
   document.getElementById("tableau").innerHTML = baliseFinale;
-  console.log(stationSelectionee)
 }
 
 function afficherDonnees() {
-  console.log(stationSelectionee)
-
   let baliseFinale = '<table><tr><th>Année</th><th>Mois</th><th>Température maximale moyenne</th><th>Température minimale moyenne</th><th>Température moyenne</th><th>Température maximale enregistrée</th><th>Température minimale enregistrée</th><th>Pluie totale</th><th>Neige totale</th><th>Vitesse du vent maximale</th></tr>'
   
   const columns = [
