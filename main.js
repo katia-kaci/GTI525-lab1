@@ -10,6 +10,7 @@ let years = [];
 let fromYear = 0, fromMonth = 0, toYear = 3000, toMonth = 11;
 
 afficherProvinces()
+afficherStatistique()
 selectDateRange();
 
 function selectDateRange() {
