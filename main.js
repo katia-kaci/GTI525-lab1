@@ -142,19 +142,30 @@ function afficherNomsStations(value) {
 
   listeStationsAfficher = [];
   let baliseAfficher = "";
+  afficherProvinces();
+
   provinceSelectionnee.map((e) => {
     if (!listeStationsAfficher.includes(e['"Station Name"'])) {
       listeStationsAfficher.push(e['"Station Name"']);
-      baliseAfficher += '<ul> <button value="' + e['"Station Name"'].replace('"', "").replace('"', "") + '" onclick="recupererStations(this.value)" >' + e['"Station Name"'].replace('"', "").replace('"', "") + '</button></ul>';
+      baliseAfficher += '<ul> <button id="' + e['"Station Name"'].replace('"', "").replace('"', "") + '" value="' + e['"Station Name"'].replace('"', "").replace('"', "") + '" onclick="recupererStations(this.value)">' + e['"Station Name"'].replace('"', "").replace('"', "") + '</button></ul>';
     }
   })
 
   document.getElementById("province" + value).innerHTML = baliseAfficher;
 }
 
+let previousButton = null;
 function recupererStations(value) {
   stationSelectionee = provinceSelectionnee.filter((e) => e['"Station Name"'].replace('"', "").replace('"', "") === value);
   document.getElementById("nom").innerHTML = value;
+
+  if (previousButton !== null) {
+    previousButton.classList.remove('special');
+    // previousButton.disabled = false;
+  }
+  // document.getElementById(value).disabled=true;
+  document.getElementById(value).classList.add('special');
+  previousButton = document.getElementById(value);
 }
 
 function afficherStatistique() {//sil'y a aucune donne ne rien afficher
