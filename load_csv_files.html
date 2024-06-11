@@ -57,7 +57,7 @@
           <option value="2002">2002</option>
         </select>
         <select name="fromMonth" id="fromMonth">
-          <option value="Janvier">Janvier</option>
+          <option value="Janvier" selected="selected">Janvier</option>
           <option value="Février">Février</option>
           <option value="Mars">Mars</option>
           <option value="Avril">Avril</option>
@@ -89,9 +89,10 @@
           <option value="Septembre">Septembre</option>
           <option value="Octobre">Octobre</option>
           <option value="Novembre">Novembre</option>
-          <option value="Décembre">Décembre</option>
+          <option value="Décembre" selected="selected">Décembre</option>
         </select>
-
+        <br>
+        <button id="afficherDonnees" onclick="afficherDonnees()"> Données</button>
         <button id="afficherStatistiques" onclick="afficherStatistique()"> Statistiques</button>
         <div id="tableau" class="scrollable-listeprovince"></div>
 

@@ -8,6 +8,8 @@ let fromYear = 0, fromMonth = 0, toYear = 3000, toMonth = 11;
 afficherProvinces(stations)
 selectDateRange();
 
+afficherDonnees()
+
 function selectDateRange() {
   const months = { "Janvier": 0, "Février": 1, "Mars": 2, "Avril": 3, "Mai": 4, "Juin": 5, "Juillet": 6, "Août": 7, "Septembre": 8, "Octobre": 9, "Novembre": 10, "Décembre": 11 };
   
@@ -89,6 +91,16 @@ function csvToArray(data, separator, skipLigne1) {
       return titles.reduce((obj, actuel, i) => (obj[actuel] = values[i], obj), {})
     });
   }
+}
+
+function getCodeAeroport(station) {
+  for (s in stationInventory) {
+    if (s['Station'] == station) {
+
+    }
+  }
+
+  // TC ID
 }
 
 function afficherProvinces() {
@@ -303,4 +315,41 @@ function afficherStatistique() {//sil'y a aucune donne ne rien afficher
   }
 
   document.getElementById("tableau").innerHTML = baliseFinale;
+}
+
+function afficherDonnees() {
+  console.log(stationSelectionee)
+
+  let titreTableDefeaut = '<table><tr><th>Année</th><th>Mois</th><th>Température maximale moyenne</th><th>Température minimale moyenne</th><th>Température moyenne</th><th>Température maximale enregistrée</th><th>Température minimale enregistrée</th><th>Pluie totale</th><th>Neige totale</th><th>Vitesse du vent maximale</th></tr>'
+  let baliseFinale = titreTableDefeaut;
+  // let valeurTable = '<tr><td>' + tempMoyenne.titre + '</td><td>' + tempMoyenne.valmax + '</td><td>' + tempMoyenne.anneeMax + '</td><td>' + tempMoyenne.moisMax + '</td><td>' + tempMoyenne.valmin + '</td><td>' + tempMoyenne.anneeMin + '</td><td>' + tempMoyenne.moisMin + '</td></tr>';
+  stationSelectionee.filter((e) => e['"Year"'] !== undefined
+    && e['"Month"'] !== undefined 
+    && e['"Mean Max Temp (°C)"'] !== undefined 
+    && e['"Mean Min Temp (°C)"'] !== undefined 
+    && e['"Mean Temp (°C)"'] !== undefined 
+    && e['"Extr Max Temp (°C)"'] !== undefined
+    && e['"Extr Min Temp (°C)"'] !== undefined
+    && e['"Total Rain (mm)"'] !== undefined
+    && e['"Total Snow (cm)"'] !== undefined
+    && e['"Spd of Max Gust (km/h)"'] !== undefined
+  )
+    .map(s => {
+      baliseFinale += '<tr><td>' + s['"Year"'].replace('"', "").replace('"', "")
+      + '</td>' + '<td>' + s['"Month"'].replace('"', "").replace('"', "")
+      + '</td><td>' + s['"Mean Max Temp (°C)"'].replace('"', "").replace('"', "")
+      + '</td><td>' + s['"Mean Min Temp (°C)"'].replace('"', "").replace('"', "")
+      + '</td><td>' + s['"Mean Temp (°C)"'].replace('"', "").replace('"', "")
+      + '</td><td>' + s['"Extr Max Temp (°C)"'].replace('"', "").replace('"', "")
+      + '</td><td>' + s['"Extr Min Temp (°C)"'].replace('"', "").replace('"', "")
+      + '</td><td>' + s['"Total Rain (mm)"'].replace('"', "").replace('"', "")
+      + '</td><td>' + s['"Total Snow (cm)"'].replace('"', "").replace('"', "")
+      + '</td><td>' + s['"Spd of Max Gust (km/h)"'].replace('"', "").replace('"', "") + '</td></tr>'
+    })
+
+
+  baliseFinale += '</table>';
+  // let baliseFinale = titreTableDefeaut + valeurTable;
+  document.getElementById("tableau").innerHTML = baliseFinale;
+  // console.log(stationSelectionee)
 }
