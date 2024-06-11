@@ -6,7 +6,7 @@ let provinceSelectionnee = [];
 let stationSelectionee = stations;
 
 const months = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"];
-let years = [];
+let years = Array.from(new Set(stations.map((s) => s['"Year"'].replace(/"/g, '')))).sort();
 let fromYear = 0, fromMonth = 0, toYear = 3000, toMonth = 11;
 
 afficherProvinces()
@@ -31,21 +31,23 @@ function selectDateRange() {
     fromMonthSelector.appendChild(optionFrom);
   }
   
-  for (var i = 0; i < years.length; i++) {
+  for (let year of years) {
     var optionTo = document.createElement("option");
-    optionTo.value = years[i];
-    optionTo.text = years[i];
+    optionTo.value = year;
+    optionTo.text = year;
     toYearSelector.appendChild(optionTo);
 
     var optionFrom = document.createElement("option");
-    optionFrom.value = years[i];
-    optionFrom.text = years[i];
+    optionFrom.value = year;
+    optionFrom.text = year;
     fromYearSelector.appendChild(optionFrom);
   }
 
   // Default values
   fromMonthSelector.querySelector('option[value="0"]').selected = "selected";
   toMonthSelector.querySelector('option[value="11"]').selected = "selected";
+  fromYearSelector.querySelector('option[value="'+Math.min(...years)+'"]').selected = "selected";
+  toYearSelector.querySelector('option[value="'+Math.max(...years)+'"]').selected = "selected";
 
   fromMonthSelector.addEventListener('change', handleChange);
   toMonthSelector.addEventListener('change', handleChange);
