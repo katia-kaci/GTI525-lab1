@@ -23,6 +23,7 @@ function selectDateRange() {
   fromMonthSelector.addEventListener('click', function () {
     fromMonth = months[fromMonthSelector.value];
     afficherStatistique();
+    afficherDonnee();
   });
 
   // const toYearSelector = document.getElementById('toYear');
@@ -35,6 +36,7 @@ function selectDateRange() {
   toMonthSelector.addEventListener('click', function () {
     toMonth = months[toMonthSelector.value];
     afficherStatistique();
+    afficherDonnee();
   });
 }
 
@@ -134,7 +136,7 @@ function afficherNomsStations(value) {
   let val = stationInventory.filter(e => e["Province"] === provinces[value])
 
   val.forEach((element) => {
-    let test = stations.filter((e) => e['"Climate ID"'].replace('"', "").replace('"', "") == element["Climate ID"])
+    let test = stations.filter((e) => e['"Climate ID"'].replace(/"/g, '') == element["Climate ID"])
     listeStationsAfficher = listeStationsAfficher.concat(test);
   });
 
@@ -156,7 +158,7 @@ function afficherNomsStations(value) {
 
 let previousButton = null;
 function recupererStations(value) {
-  stationSelectionee = provinceSelectionnee.filter((e) => e['"Station Name"'].replace('"', "").replace('"', "") === value);
+  stationSelectionee = provinceSelectionnee.filter((e) => e['"Station Name"'].replace(/"/g, '') === value);
   document.getElementById("nom").innerHTML = value;
 
   if (previousButton !== null) {
@@ -168,6 +170,47 @@ function recupererStations(value) {
   previousButton = document.getElementById(value);
 }
 
+function afficherDonnee(){
+  
+  let titreTableDefeaut = '<table><tr><th>Annee-Mois</th><th>Annee</th><th>Mois</th><th>TMaxMoy</th><th>TMinMoy</th><th>TMoy</th><th>TMax</th><th>TMin</th><th>PluieTotal</th><th>NeigeTotale</th><th>VitVentMax</th></tr>';
+  let valeurTable = "";
+
+  // Loop through each row of the selected station data
+  stationSelectionee.forEach((row) => {
+    const anneeMois = row['"Date/Time"'].replace(/"/g, ''); 
+    const annee = row['"Year"'].replace(/"/g, '');
+    const mois = row['"Month"'].replace(/"/g, '');
+    const tMaxMoy = row['"Mean Max Temp (°C)"'].replace(/"/g, '');
+    const tMinMoy = row['"Mean Min Temp (°C)"'].replace(/"/g, '');
+    const tMoy = row['"Mean Temp (°C)"'].replace(/"/g, '');
+    const tMax = row['"Extr Max Temp (°C)"'].replace(/"/g, '');
+    const tMin = row['"Extr Min Temp (°C)"'].replace(/"/g, '');
+    const pluieTotal = row['"Total Rain (mm)"'].replace(/"/g, '');
+    const neigeTotale = row['"Total Snow (cm)"'].replace(/"/g, '');
+    const vitVentMax = row['"Spd of Max Gust (km/h)"'].replace(/"/g, '');
+
+    valeurTable += `<tr>
+      <td>${anneeMois}</td>
+      <td>${annee}</td>
+      <td>${mois}</td>
+      <td>${tMaxMoy}</td>
+      <td>${tMinMoy}</td>
+      <td>${tMoy}</td>
+      <td>${tMax}</td>
+      <td>${tMin}</td>
+      <td>${pluieTotal}</td>
+      <td>${neigeTotale}</td>
+      <td>${vitVentMax}</td>
+    </tr>`;
+  });
+
+  let baliseFinale = titreTableDefeaut + valeurTable + '</table>';
+
+  document.getElementById("tableau").innerHTML = baliseFinale;
+
+  //console.log(stationSelectionee.map((e)=>e['"Year"']))
+}
+
 function afficherStatistique() {//sil'y a aucune donne ne rien afficher
   let tempExtreme = { titre: 'Température extrême', valmax: '-10000', anneeMax: undefined, moisMax: undefined, valmin: '10000', anneeMin: undefined, moisMin: undefined };
   let tempMoyenne = { titre: 'Température moyenne mensuelle', valmax: '-10000', anneeMax: undefined, moisMax: undefined, valmin: '10000', anneeMin: undefined, moisMin: undefined };
@@ -176,59 +219,59 @@ function afficherStatistique() {//sil'y a aucune donne ne rien afficher
   let vitesseVent = { titre: 'Vitesse du vent', valmax: '-10000', anneeMax: undefined, moisMax: undefined, valmin: '10000', anneeMin: undefined, moisMin: undefined };
 
   stationSelectionee.map((e) => {
-    if (parseInt(e['"Total Rain (mm)"'].replace('"', "").replace('"', "")) > parseInt(qtePluie.valmax) && e['"Total Rain (mm)"'].replace('"', "").replace('"', "").length > 0) {
-      qtePluie.valmax = e['"Total Rain (mm)"'].replace('"', "").replace('"', "") + " mm";
-      qtePluie.anneeMax = e['"Date/Time"'].split("-")[0].replace('"', "").replace('"', "");
-      qtePluie.moisMax = e['"Date/Time"'].split("-")[1].replace('"', "").replace('"', "");
+    if (parseInt(e['"Total Rain (mm)"'].replace(/"/g, '')) > parseInt(qtePluie.valmax) && e['"Total Rain (mm)"'].replace(/"/g, '').length > 0) {
+      qtePluie.valmax = e['"Total Rain (mm)"'].replace(/"/g, '') + " mm";
+      qtePluie.anneeMax = e['"Date/Time"'].split("-")[0].replace(/"/g, '');
+      qtePluie.moisMax = e['"Date/Time"'].split("-")[1].replace(/"/g, '');
     }
-    else if (parseInt(e['"Total Rain (mm)"'].replace('"', "").replace('"', "")) < parseInt(qtePluie.valmin) && e['"Total Rain (mm)"'].replace('"', "").replace('"', "").length > 0) {
-      qtePluie.valmin = e['"Total Rain (mm)"'].replace('"', "").replace('"', "") + " mm";
-      qtePluie.anneeMin = e['"Date/Time"'].split("-")[0].replace('"', "").replace('"', "");
-      qtePluie.moisMin = e['"Date/Time"'].split("-")[1].replace('"', "").replace('"', "");
+    else if (parseInt(e['"Total Rain (mm)"'].replace(/"/g, '')) < parseInt(qtePluie.valmin) && e['"Total Rain (mm)"'].replace(/"/g, '').length > 0) {
+      qtePluie.valmin = e['"Total Rain (mm)"'].replace(/"/g, '') + " mm";
+      qtePluie.anneeMin = e['"Date/Time"'].split("-")[0].replace(/"/g, '');
+      qtePluie.moisMin = e['"Date/Time"'].split("-")[1].replace(/"/g, '');
     }
     //donnee de neige
-    if (parseInt(e['"Total Snow (cm)"'].replace('"', "").replace('"', "")) > parseInt(qteNeige.valmax) && e['"Total Snow (cm)"'].replace('"', "").replace('"', "").length > 0) {
-      qteNeige.valmax = e['"Total Snow (cm)"'].replace('"', "").replace('"', "") + " cm";
-      qteNeige.anneeMax = e['"Date/Time"'].split("-")[0].replace('"', "").replace('"', "");
-      qteNeige.moisMax = e['"Date/Time"'].split("-")[1].replace('"', "").replace('"', "");
+    if (parseInt(e['"Total Snow (cm)"'].replace(/"/g, '')) > parseInt(qteNeige.valmax) && e['"Total Snow (cm)"'].replace(/"/g, '').length > 0) {
+      qteNeige.valmax = e['"Total Snow (cm)"'].replace(/"/g, '') + " cm";
+      qteNeige.anneeMax = e['"Date/Time"'].split("-")[0].replace(/"/g, '');
+      qteNeige.moisMax = e['"Date/Time"'].split("-")[1].replace(/"/g, '');
     }
-    else if (parseInt(e['"Total Snow (cm)"'].replace('"', "").replace('"', "")) < parseInt(qteNeige.valmin) && e['"Total Snow (cm)"'].replace('"', "").replace('"', "").length > 0) {
-      qteNeige.valmin = e['"Total Snow (cm)"'].replace('"', "").replace('"', "") + " cm";
-      qteNeige.anneeMin = e['"Date/Time"'].split("-")[0].replace('"', "").replace('"', "");
-      qteNeige.moisMin = e['"Date/Time"'].split("-")[1].replace('"', "").replace('"', "");
+    else if (parseInt(e['"Total Snow (cm)"'].replace(/"/g, '')) < parseInt(qteNeige.valmin) && e['"Total Snow (cm)"'].replace(/"/g, '').length > 0) {
+      qteNeige.valmin = e['"Total Snow (cm)"'].replace(/"/g, '') + " cm";
+      qteNeige.anneeMin = e['"Date/Time"'].split("-")[0].replace(/"/g, '');
+      qteNeige.moisMin = e['"Date/Time"'].split("-")[1].replace(/"/g, '');
     }
     //donnee de vent
-    if (parseInt(e['"Spd of Max Gust (km/h)"'].replace('"', "").replace('"', "").replace('>', "").replace('<', "")) > parseInt(vitesseVent.valmax) && e['"Spd of Max Gust (km/h)"'].replace('"', "").replace('"', "").length > 0) {
-      vitesseVent.valmax = e['"Spd of Max Gust (km/h)"'].replace('"', "").replace('"', "").replace('>', "").replace('<', "") + " km/h";
-      vitesseVent.anneeMax = e['"Date/Time"'].split("-")[0].replace('"', "").replace('"', "");
-      vitesseVent.moisMax = e['"Date/Time"'].split("-")[1].replace('"', "").replace('"', "");
+    if (parseInt(e['"Spd of Max Gust (km/h)"'].replace(/"/g, '').replace('>', "").replace('<', "")) > parseInt(vitesseVent.valmax) && e['"Spd of Max Gust (km/h)"'].replace(/"/g, '').length > 0) {
+      vitesseVent.valmax = e['"Spd of Max Gust (km/h)"'].replace(/"/g, '').replace('>', "").replace('<', "") + " km/h";
+      vitesseVent.anneeMax = e['"Date/Time"'].split("-")[0].replace(/"/g, '');
+      vitesseVent.moisMax = e['"Date/Time"'].split("-")[1].replace(/"/g, '');
     }
-    else if (parseInt(e['"Spd of Max Gust (km/h)"'].replace('"', "").replace('"', "").replace('>', "").replace('<', "")) < parseInt(vitesseVent.valmin) && e['"Spd of Max Gust (km/h)"'].replace('"', "").replace('"', "").length > 0) {
-      vitesseVent.valmin = e['"Spd of Max Gust (km/h)"'].replace('"', "").replace('"', "").replace('>', "").replace('<', "") + " km/h";
-      vitesseVent.anneeMin = e['"Date/Time"'].split("-")[0].replace('"', "").replace('"', "");
-      vitesseVent.moisMin = e['"Date/Time"'].split("-")[1].replace('"', "").replace('"', "");
+    else if (parseInt(e['"Spd of Max Gust (km/h)"'].replace(/"/g, '').replace('>', "").replace('<', "")) < parseInt(vitesseVent.valmin) && e['"Spd of Max Gust (km/h)"'].replace(/"/g, '').length > 0) {
+      vitesseVent.valmin = e['"Spd of Max Gust (km/h)"'].replace(/"/g, '').replace('>', "").replace('<', "") + " km/h";
+      vitesseVent.anneeMin = e['"Date/Time"'].split("-")[0].replace(/"/g, '');
+      vitesseVent.moisMin = e['"Date/Time"'].split("-")[1].replace(/"/g, '');
     }
     //donnee de température extreme
-    if (parseInt(e['"Extr Max Temp (°C)"'].replace('"', "").replace('"', "")) > parseInt(tempExtreme.valmax) && e['"Extr Max Temp (°C)"'].replace('"', "").replace('"', "").length > 0) {
-      tempExtreme.valmax = e['"Extr Max Temp (°C)"'].replace('"', "").replace('"', "") + " °C";
-      tempExtreme.anneeMax = e['"Date/Time"'].split("-")[0].replace('"', "").replace('"', "");
-      tempExtreme.moisMax = e['"Date/Time"'].split("-")[1].replace('"', "").replace('"', "");
+    if (parseInt(e['"Extr Max Temp (°C)"'].replace(/"/g, '')) > parseInt(tempExtreme.valmax) && e['"Extr Max Temp (°C)"'].replace(/"/g, '').length > 0) {
+      tempExtreme.valmax = e['"Extr Max Temp (°C)"'].replace(/"/g, '') + " °C";
+      tempExtreme.anneeMax = e['"Date/Time"'].split("-")[0].replace(/"/g, '');
+      tempExtreme.moisMax = e['"Date/Time"'].split("-")[1].replace(/"/g, '');
     }
-    else if (parseInt(e['"Extr Min Temp (°C)"'].replace('"', "").replace('"', "")) < parseInt(tempExtreme.valmin) && e['"Extr Min Temp (°C)"'].replace('"', "").replace('"', "").length > 0) {
-      tempExtreme.valmin = e['"Extr Min Temp (°C)"'].replace('"', "").replace('"', "") + " °C";
-      tempExtreme.anneeMin = e['"Date/Time"'].split("-")[0].replace('"', "").replace('"', "");
-      tempExtreme.moisMin = e['"Date/Time"'].split("-")[1].replace('"', "").replace('"', "");
+    else if (parseInt(e['"Extr Min Temp (°C)"'].replace(/"/g, '')) < parseInt(tempExtreme.valmin) && e['"Extr Min Temp (°C)"'].replace(/"/g, '').length > 0) {
+      tempExtreme.valmin = e['"Extr Min Temp (°C)"'].replace(/"/g, '') + " °C";
+      tempExtreme.anneeMin = e['"Date/Time"'].split("-")[0].replace(/"/g, '');
+      tempExtreme.moisMin = e['"Date/Time"'].split("-")[1].replace(/"/g, '');
     }
     //donnee de température moyenne
-    if (parseInt(e['"Mean Temp (°C)"'].replace('"', "").replace('"', "")) > parseInt(tempMoyenne.valmax) && e['"Mean Temp (°C)"'].replace('"', "").replace('"', "").length > 0) {
-      tempMoyenne.valmax = e['"Mean Temp (°C)"'].replace('"', "").replace('"', "") + " °C";
-      tempMoyenne.anneeMax = e['"Date/Time"'].split("-")[0].replace('"', "").replace('"', "");
-      tempMoyenne.moisMax = e['"Date/Time"'].split("-")[1].replace('"', "").replace('"', "");
+    if (parseInt(e['"Mean Temp (°C)"'].replace(/"/g, '')) > parseInt(tempMoyenne.valmax) && e['"Mean Temp (°C)"'].replace(/"/g, '').length > 0) {
+      tempMoyenne.valmax = e['"Mean Temp (°C)"'].replace(/"/g, '') + " °C";
+      tempMoyenne.anneeMax = e['"Date/Time"'].split("-")[0].replace(/"/g, '');
+      tempMoyenne.moisMax = e['"Date/Time"'].split("-")[1].replace(/"/g, '');
     }
-    else if (parseInt(e['"Mean Temp (°C)"'].replace('"', "").replace('"', "")) < parseInt(tempMoyenne.valmin) && e['"Mean Temp (°C)"'].replace('"', "").replace('"', "").length > 0) {
-      tempMoyenne.valmin = e['"Mean Temp (°C)"'].replace('"', "").replace('"', "") + " °C";
-      tempMoyenne.anneeMin = e['"Date/Time"'].split("-")[0].replace('"', "").replace('"', "");
-      tempMoyenne.moisMin = e['"Date/Time"'].split("-")[1].replace('"', "").replace('"', "");
+    else if (parseInt(e['"Mean Temp (°C)"'].replace(/"/g, '')) < parseInt(tempMoyenne.valmin) && e['"Mean Temp (°C)"'].replace(/"/g, '').length > 0) {
+      tempMoyenne.valmin = e['"Mean Temp (°C)"'].replace(/"/g, '') + " °C";
+      tempMoyenne.anneeMin = e['"Date/Time"'].split("-")[0].replace(/"/g, '');
+      tempMoyenne.moisMin = e['"Date/Time"'].split("-")[1].replace(/"/g, '');
     }
   })
 
@@ -254,65 +297,65 @@ function afficherStatistique() {//sil'y a aucune donne ne rien afficher
     let qteNeige = { titre: 'Quantité de neige', valmax: '-10000', anneeMax: undefined, moisMax: undefined, valmin: '10000', anneeMin: undefined, moisMin: undefined };
     let vitesseVent = { titre: 'Vitesse du vent', valmax: '-10000', anneeMax: undefined, moisMax: undefined, valmin: '10000', anneeMin: undefined, moisMin: undefined };
 
-    let listeFiltrer = stationSelectionee.filter((e) => e['"Date/Time"'].split("-")[1].replace('"', "").replace('"', "") == '0' + i + 1
-      || e['"Date/Time"'].split("-")[1].replace('"', "").replace('"', "") == i + 1);
+    let listeFiltrer = stationSelectionee.filter((e) => e['"Date/Time"'].split("-")[1].replace(/"/g, '') == '0' + i + 1
+      || e['"Date/Time"'].split("-")[1].replace(/"/g, '') == i + 1);
 
     baliseFinale += '<h1>' + listeMois[i] + '</h1>'
 
     listeFiltrer.map((e) => {
-      if (parseInt(e['"Total Rain (mm)"'].replace('"', "").replace('"', "")) > parseInt(qtePluie.valmax) && e['"Total Rain (mm)"'].replace('"', "").replace('"', "").length > 0) {
-        qtePluie.valmax = e['"Total Rain (mm)"'].replace('"', "").replace('"', "") + " mm";
-        qtePluie.anneeMax = e['"Date/Time"'].split("-")[0].replace('"', "").replace('"', "");
-        qtePluie.moisMax = e['"Date/Time"'].split("-")[1].replace('"', "").replace('"', "");
+      if (parseInt(e['"Total Rain (mm)"'].replace(/"/g, '')) > parseInt(qtePluie.valmax) && e['"Total Rain (mm)"'].replace(/"/g, '').length > 0) {
+        qtePluie.valmax = e['"Total Rain (mm)"'].replace(/"/g, '') + " mm";
+        qtePluie.anneeMax = e['"Date/Time"'].split("-")[0].replace(/"/g, '');
+        qtePluie.moisMax = e['"Date/Time"'].split("-")[1].replace(/"/g, '');
       }
-      else if (parseInt(e['"Total Rain (mm)"'].replace('"', "").replace('"', "")) < parseInt(qtePluie.valmin) && e['"Total Rain (mm)"'].replace('"', "").replace('"', "").length > 0) {
-        qtePluie.valmin = e['"Total Rain (mm)"'].replace('"', "").replace('"', "") + " mm";
-        qtePluie.anneeMin = e['"Date/Time"'].split("-")[0].replace('"', "").replace('"', "");
-        qtePluie.moisMin = e['"Date/Time"'].split("-")[1].replace('"', "").replace('"', "");
+      else if (parseInt(e['"Total Rain (mm)"'].replace(/"/g, '')) < parseInt(qtePluie.valmin) && e['"Total Rain (mm)"'].replace(/"/g, '').length > 0) {
+        qtePluie.valmin = e['"Total Rain (mm)"'].replace(/"/g, '') + " mm";
+        qtePluie.anneeMin = e['"Date/Time"'].split("-")[0].replace(/"/g, '');
+        qtePluie.moisMin = e['"Date/Time"'].split("-")[1].replace(/"/g, '');
       }
       //donnee de neige
-      if (parseInt(e['"Total Snow (cm)"'].replace('"', "").replace('"', "")) > parseInt(qteNeige.valmax) && e['"Total Snow (cm)"'].replace('"', "").replace('"', "").length > 0) {
-        qteNeige.valmax = e['"Total Snow (cm)"'].replace('"', "").replace('"', "") + " cm";
-        qteNeige.anneeMax = e['"Date/Time"'].split("-")[0].replace('"', "").replace('"', "");
-        qteNeige.moisMax = e['"Date/Time"'].split("-")[1].replace('"', "").replace('"', "");
+      if (parseInt(e['"Total Snow (cm)"'].replace(/"/g, '')) > parseInt(qteNeige.valmax) && e['"Total Snow (cm)"'].replace(/"/g, '').length > 0) {
+        qteNeige.valmax = e['"Total Snow (cm)"'].replace(/"/g, '') + " cm";
+        qteNeige.anneeMax = e['"Date/Time"'].split("-")[0].replace(/"/g, '');
+        qteNeige.moisMax = e['"Date/Time"'].split("-")[1].replace(/"/g, '');
       }
-      if (parseInt(e['"Total Snow (cm)"'].replace('"', "").replace('"', "")) < parseInt(qteNeige.valmin) && e['"Total Snow (cm)"'].replace('"', "").replace('"', "").length > 0) {
-        qteNeige.valmin = e['"Total Snow (cm)"'].replace('"', "").replace('"', "") + " cm";
-        qteNeige.anneeMin = e['"Date/Time"'].split("-")[0].replace('"', "").replace('"', "");
-        qteNeige.moisMin = e['"Date/Time"'].split("-")[1].replace('"', "").replace('"', "");
+      if (parseInt(e['"Total Snow (cm)"'].replace(/"/g, '')) < parseInt(qteNeige.valmin) && e['"Total Snow (cm)"'].replace(/"/g, '').length > 0) {
+        qteNeige.valmin = e['"Total Snow (cm)"'].replace(/"/g, '') + " cm";
+        qteNeige.anneeMin = e['"Date/Time"'].split("-")[0].replace(/"/g, '');
+        qteNeige.moisMin = e['"Date/Time"'].split("-")[1].replace(/"/g, '');
       }
       //donnee de vent
-      if (parseInt(e['"Spd of Max Gust (km/h)"'].replace('"', "").replace('"', "").replace('>', "").replace('<', "")) > parseInt(vitesseVent.valmax) && e['"Spd of Max Gust (km/h)"'].replace('"', "").replace('"', "").length > 0) {
-        vitesseVent.valmax = e['"Spd of Max Gust (km/h)"'].replace('"', "").replace('"', "").replace('>', "").replace('<', "") + " km/h";
-        vitesseVent.anneeMax = e['"Date/Time"'].split("-")[0].replace('"', "").replace('"', "");
-        vitesseVent.moisMax = e['"Date/Time"'].split("-")[1].replace('"', "").replace('"', "");
+      if (parseInt(e['"Spd of Max Gust (km/h)"'].replace(/"/g, '').replace('>', "").replace('<', "")) > parseInt(vitesseVent.valmax) && e['"Spd of Max Gust (km/h)"'].replace(/"/g, '').length > 0) {
+        vitesseVent.valmax = e['"Spd of Max Gust (km/h)"'].replace(/"/g, '').replace('>', "").replace('<', "") + " km/h";
+        vitesseVent.anneeMax = e['"Date/Time"'].split("-")[0].replace(/"/g, '');
+        vitesseVent.moisMax = e['"Date/Time"'].split("-")[1].replace(/"/g, '');
       }
-      if (parseInt(e['"Spd of Max Gust (km/h)"'].replace('"', "").replace('"', "").replace('>', "").replace('<', "")) < parseInt(vitesseVent.valmin) && e['"Spd of Max Gust (km/h)"'].replace('"', "").replace('"', "").length > 0) {
-        vitesseVent.valmin = e['"Spd of Max Gust (km/h)"'].replace('"', "").replace('"', "").replace('>', "").replace('<', "") + " km/h";
-        vitesseVent.anneeMin = e['"Date/Time"'].split("-")[0].replace('"', "").replace('"', "");
-        vitesseVent.moisMin = e['"Date/Time"'].split("-")[1].replace('"', "").replace('"', "");
+      if (parseInt(e['"Spd of Max Gust (km/h)"'].replace(/"/g, '').replace('>', "").replace('<', "")) < parseInt(vitesseVent.valmin) && e['"Spd of Max Gust (km/h)"'].replace(/"/g, '').length > 0) {
+        vitesseVent.valmin = e['"Spd of Max Gust (km/h)"'].replace(/"/g, '').replace('>', "").replace('<', "") + " km/h";
+        vitesseVent.anneeMin = e['"Date/Time"'].split("-")[0].replace(/"/g, '');
+        vitesseVent.moisMin = e['"Date/Time"'].split("-")[1].replace(/"/g, '');
       }
       //donnee de température extreme
-      if (parseInt(e['"Extr Max Temp (°C)"'].replace('"', "").replace('"', "")) > parseInt(tempExtreme.valmax) && e['"Extr Max Temp (°C)"'].replace('"', "").replace('"', "").length > 0) {
-        tempExtreme.valmax = e['"Extr Max Temp (°C)"'].replace('"', "").replace('"', "") + " °C";
-        tempExtreme.anneeMax = e['"Date/Time"'].split("-")[0].replace('"', "").replace('"', "");
-        tempExtreme.moisMax = e['"Date/Time"'].split("-")[1].replace('"', "").replace('"', "");
+      if (parseInt(e['"Extr Max Temp (°C)"'].replace(/"/g, '')) > parseInt(tempExtreme.valmax) && e['"Extr Max Temp (°C)"'].replace(/"/g, '').length > 0) {
+        tempExtreme.valmax = e['"Extr Max Temp (°C)"'].replace(/"/g, '') + " °C";
+        tempExtreme.anneeMax = e['"Date/Time"'].split("-")[0].replace(/"/g, '');
+        tempExtreme.moisMax = e['"Date/Time"'].split("-")[1].replace(/"/g, '');
       }
-      if (parseInt(e['"Extr Min Temp (°C)"'].replace('"', "").replace('"', "")) < parseInt(tempExtreme.valmin) && e['"Extr Min Temp (°C)"'].replace('"', "").replace('"', "").length > 0) {
-        tempExtreme.valmin = e['"Extr Min Temp (°C)"'].replace('"', "").replace('"', "") + " °C";
-        tempExtreme.anneeMin = e['"Date/Time"'].split("-")[0].replace('"', "").replace('"', "");
-        tempExtreme.moisMin = e['"Date/Time"'].split("-")[1].replace('"', "").replace('"', "");
+      if (parseInt(e['"Extr Min Temp (°C)"'].replace(/"/g, '')) < parseInt(tempExtreme.valmin) && e['"Extr Min Temp (°C)"'].replace(/"/g, '').length > 0) {
+        tempExtreme.valmin = e['"Extr Min Temp (°C)"'].replace(/"/g, '') + " °C";
+        tempExtreme.anneeMin = e['"Date/Time"'].split("-")[0].replace(/"/g, '');
+        tempExtreme.moisMin = e['"Date/Time"'].split("-")[1].replace(/"/g, '');
       }
       //donnee de température moyenne
-      if (parseInt(e['"Mean Temp (°C)"'].replace('"', "").replace('"', "")) > parseInt(tempMoyenne.valmax) && e['"Mean Temp (°C)"'].replace('"', "").replace('"', "").length > 0) {
-        tempMoyenne.valmax = e['"Mean Temp (°C)"'].replace('"', "").replace('"', "") + " °C";
-        tempMoyenne.anneeMax = e['"Date/Time"'].split("-")[0].replace('"', "").replace('"', "");
-        tempMoyenne.moisMax = e['"Date/Time"'].split("-")[1].replace('"', "").replace('"', "");
+      if (parseInt(e['"Mean Temp (°C)"'].replace(/"/g, '')) > parseInt(tempMoyenne.valmax) && e['"Mean Temp (°C)"'].replace(/"/g, '').length > 0) {
+        tempMoyenne.valmax = e['"Mean Temp (°C)"'].replace(/"/g, '') + " °C";
+        tempMoyenne.anneeMax = e['"Date/Time"'].split("-")[0].replace(/"/g, '');
+        tempMoyenne.moisMax = e['"Date/Time"'].split("-")[1].replace(/"/g, '');
       }
-      if (parseInt(e['"Mean Temp (°C)"'].replace('"', "").replace('"', "")) < parseInt(tempMoyenne.valmin) && e['"Mean Temp (°C)"'].replace('"', "").replace('"', "").length > 0) {
-        tempMoyenne.valmin = e['"Mean Temp (°C)"'].replace('"', "").replace('"', "") + " °C";
-        tempMoyenne.anneeMin = e['"Date/Time"'].split("-")[0].replace('"', "").replace('"', "");
-        tempMoyenne.moisMin = e['"Date/Time"'].split("-")[1].replace('"', "").replace('"', "");
+      if (parseInt(e['"Mean Temp (°C)"'].replace(/"/g, '')) < parseInt(tempMoyenne.valmin) && e['"Mean Temp (°C)"'].replace(/"/g, '').length > 0) {
+        tempMoyenne.valmin = e['"Mean Temp (°C)"'].replace(/"/g, '') + " °C";
+        tempMoyenne.anneeMin = e['"Date/Time"'].split("-")[0].replace(/"/g, '');
+        tempMoyenne.moisMin = e['"Date/Time"'].split("-")[1].replace(/"/g, '');
       }
     })
     titreTableDefeaut = '<table><tr><th>Donnée</th><th>Valeur maximale</th><th>Année</th><th>Mois</th><th>Valeur minimale</th><th>Année</th><th>Mois</th></tr>'
@@ -326,6 +369,7 @@ function afficherStatistique() {//sil'y a aucune donne ne rien afficher
   }
 
   document.getElementById("tableau").innerHTML = baliseFinale;
+  console.log(stationSelectionee)
 }
 
 function afficherDonnees() {
