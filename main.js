@@ -3,41 +3,59 @@ let stationInventory = csvToArray(StationInventoryEN, '","', false);
 let provinces = getProvinces();
 let provinceSelectionnee = [];
 let stationSelectionee = stations;
-const listeMois = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"];
+const months = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"];
+let years = ["2001", "2002", "2003", "2004", "2005", "2006"];
 let fromYear = 0, fromMonth = 0, toYear = 3000, toMonth = 11;
 afficherProvinces(stations)
+afficherDonnees()
 selectDateRange();
 
-afficherDonnees()
-
 function selectDateRange() {
-  const months = { "Janvier": 0, "Février": 1, "Mars": 2, "Avril": 3, "Mai": 4, "Juin": 5, "Juillet": 6, "Août": 7, "Septembre": 8, "Octobre": 9, "Novembre": 10, "Décembre": 11 };
-  
-  // const fromYearSelector = document.getElementById('fromYear');
-  // fromYearSelector.addEventListener('click', function() {
-  //   fromYear = fromYearSelector.value;
-  //   console.log("De l'année :", fromYear);
-  // });
-
   const fromMonthSelector = document.getElementById('fromMonth');
-  fromMonthSelector.addEventListener('click', function () {
-    fromMonth = months[fromMonthSelector.value];
-    afficherStatistique();
-    afficherDonnee();
-  });
-
-  // const toYearSelector = document.getElementById('toYear');
-  // toYearSelector.addEventListener('click', function() {
-  //   toYear = toYearSelector.value;
-  //   console.log("jusqu'à l'année :", toYear);
-  // });
-
   const toMonthSelector = document.getElementById('toMonth');
-  toMonthSelector.addEventListener('click', function () {
-    toMonth = months[toMonthSelector.value];
-    afficherStatistique();
-    afficherDonnee();
-  });
+  const fromYearSelector = document.getElementById('fromYear');
+  const toYearSelector = document.getElementById('toYear');
+
+  for (var i = 0; i < months.length; i++) {
+    var optionTo = document.createElement("option");
+    optionTo.value = i;
+    optionTo.text = months[i];
+    toMonthSelector.appendChild(optionTo);
+
+    var optionFrom = document.createElement("option");
+    optionFrom.value = i;
+    optionFrom.text = months[i];
+    fromMonthSelector.appendChild(optionFrom);
+  }
+  
+  for (var i = 0; i < years.length; i++) {
+    var optionTo = document.createElement("option");
+    optionTo.value = years[i];
+    optionTo.text = years[i];
+    toYearSelector.appendChild(optionTo);
+
+    var optionFrom = document.createElement("option");
+    optionFrom.value = years[i];
+    optionFrom.text = years[i];
+    fromYearSelector.appendChild(optionFrom);
+  }
+
+  // Default values
+  fromMonthSelector.querySelector('option[value="0"]').selected = "selected";
+  toMonthSelector.querySelector('option[value="11"]').selected = "selected";
+
+  fromMonthSelector.addEventListener('change', handleChange);
+  toMonthSelector.addEventListener('change', handleChange);
+  fromYearSelector.addEventListener('change', handleChange);
+  toYearSelector.addEventListener('change', handleChange);
+}
+
+function handleChange() {
+  if (this === fromMonthSelector) fromMonth = fromMonthSelector.value;
+  else if (this === toMonthSelector) toMonth = toMonthSelector.value;
+  if (this === fromYearSelector) fromYear = fromYearSelector.value;
+  else if (this === toYearSelector) toYear = toYearSelector.value;
+  afficherStatistique();
 }
 
 function getProvinces() {
@@ -170,14 +188,14 @@ function recupererStations(value) {
   previousButton = document.getElementById(value);
 }
 
-function afficherDonnee(){
-  
+function afficherDonnee() {
+
   let titreTableDefeaut = '<table><tr><th>Annee-Mois</th><th>Annee</th><th>Mois</th><th>TMaxMoy</th><th>TMinMoy</th><th>TMoy</th><th>TMax</th><th>TMin</th><th>PluieTotal</th><th>NeigeTotale</th><th>VitVentMax</th></tr>';
   let valeurTable = "";
 
   // Loop through each row of the selected station data
   stationSelectionee.forEach((row) => {
-    const anneeMois = row['"Date/Time"'].replace(/"/g, ''); 
+    const anneeMois = row['"Date/Time"'].replace(/"/g, '');
     const annee = row['"Year"'].replace(/"/g, '');
     const mois = row['"Month"'].replace(/"/g, '');
     const tMaxMoy = row['"Mean Max Temp (°C)"'].replace(/"/g, '');
@@ -300,7 +318,7 @@ function afficherStatistique() {//sil'y a aucune donne ne rien afficher
     let listeFiltrer = stationSelectionee.filter((e) => e['"Date/Time"'].split("-")[1].replace(/"/g, '') == '0' + i + 1
       || e['"Date/Time"'].split("-")[1].replace(/"/g, '') == i + 1);
 
-    baliseFinale += '<h1>' + listeMois[i] + '</h1>'
+    baliseFinale += '<h1>' + months[i] + '</h1>'
 
     listeFiltrer.map((e) => {
       if (parseInt(e['"Total Rain (mm)"'].replace(/"/g, '')) > parseInt(qtePluie.valmax) && e['"Total Rain (mm)"'].replace(/"/g, '').length > 0) {
@@ -379,10 +397,10 @@ function afficherDonnees() {
   let baliseFinale = titreTableDefeaut;
   // let valeurTable = '<tr><td>' + tempMoyenne.titre + '</td><td>' + tempMoyenne.valmax + '</td><td>' + tempMoyenne.anneeMax + '</td><td>' + tempMoyenne.moisMax + '</td><td>' + tempMoyenne.valmin + '</td><td>' + tempMoyenne.anneeMin + '</td><td>' + tempMoyenne.moisMin + '</td></tr>';
   stationSelectionee.filter((e) => e['"Year"'] !== undefined
-    && e['"Month"'] !== undefined 
-    && e['"Mean Max Temp (°C)"'] !== undefined 
-    && e['"Mean Min Temp (°C)"'] !== undefined 
-    && e['"Mean Temp (°C)"'] !== undefined 
+    && e['"Month"'] !== undefined
+    && e['"Mean Max Temp (°C)"'] !== undefined
+    && e['"Mean Min Temp (°C)"'] !== undefined
+    && e['"Mean Temp (°C)"'] !== undefined
     && e['"Extr Max Temp (°C)"'] !== undefined
     && e['"Extr Min Temp (°C)"'] !== undefined
     && e['"Total Rain (mm)"'] !== undefined
@@ -391,15 +409,15 @@ function afficherDonnees() {
   )
     .map(s => {
       baliseFinale += '<tr><td>' + s['"Year"'].replace('"', "").replace('"', "")
-      + '</td>' + '<td>' + s['"Month"'].replace('"', "").replace('"', "")
-      + '</td><td>' + s['"Mean Max Temp (°C)"'].replace('"', "").replace('"', "")
-      + '</td><td>' + s['"Mean Min Temp (°C)"'].replace('"', "").replace('"', "")
-      + '</td><td>' + s['"Mean Temp (°C)"'].replace('"', "").replace('"', "")
-      + '</td><td>' + s['"Extr Max Temp (°C)"'].replace('"', "").replace('"', "")
-      + '</td><td>' + s['"Extr Min Temp (°C)"'].replace('"', "").replace('"', "")
-      + '</td><td>' + s['"Total Rain (mm)"'].replace('"', "").replace('"', "")
-      + '</td><td>' + s['"Total Snow (cm)"'].replace('"', "").replace('"', "")
-      + '</td><td>' + s['"Spd of Max Gust (km/h)"'].replace('"', "").replace('"', "") + '</td></tr>'
+        + '</td>' + '<td>' + s['"Month"'].replace('"', "").replace('"', "")
+        + '</td><td>' + s['"Mean Max Temp (°C)"'].replace('"', "").replace('"', "")
+        + '</td><td>' + s['"Mean Min Temp (°C)"'].replace('"', "").replace('"', "")
+        + '</td><td>' + s['"Mean Temp (°C)"'].replace('"', "").replace('"', "")
+        + '</td><td>' + s['"Extr Max Temp (°C)"'].replace('"', "").replace('"', "")
+        + '</td><td>' + s['"Extr Min Temp (°C)"'].replace('"', "").replace('"', "")
+        + '</td><td>' + s['"Total Rain (mm)"'].replace('"', "").replace('"', "")
+        + '</td><td>' + s['"Total Snow (cm)"'].replace('"', "").replace('"', "")
+        + '</td><td>' + s['"Spd of Max Gust (km/h)"'].replace('"', "").replace('"', "") + '</td></tr>'
     })
 
 

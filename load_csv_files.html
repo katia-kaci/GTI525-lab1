@@ -51,51 +51,18 @@
 
         <p> Plage de dates</p>
         <label for="from">De:</label>
-        <select name="fromYear" id="fromYear">
-          <option value="2000">2000</option>
-          <option value="2001">2001</option>
-          <option value="2002">2002</option>
-        </select>
-        <select name="fromMonth" id="fromMonth">
-          <option value="Janvier" selected="selected">Janvier</option>
-          <option value="Février">Février</option>
-          <option value="Mars">Mars</option>
-          <option value="Avril">Avril</option>
-          <option value="Mai">Mai</option>
-          <option value="Juin">Juin</option>
-          <option value="Juillet">Juillet</option>
-          <option value="Août">Août</option>
-          <option value="Septembre">Septembre</option>
-          <option value="Octobre">Octobre</option>
-          <option value="Novembre">Novembre</option>
-          <option value="Décembre">Décembre</option>
-        </select>
+        <select name="fromYear" id="fromYear"></select>
+        <select name="fromMonth" id="fromMonth"></select>
         <br>
         <label for="to">À:</label>
-        <select name="toYear" id="toYear">
-          <option value="2000">2000</option>
-          <option value="2001">2001</option>
-          <option value="2002">2002</option>
-        </select>
-        <select name="toMonth" id="toMonth">
-          <option value="Janvier">Janvier</option>
-          <option value="Février">Février</option>
-          <option value="Mars">Mars</option>
-          <option value="Avril">Avril</option>
-          <option value="Mai">Mai</option>
-          <option value="Juin">Juin</option>
-          <option value="Juillet">Juillet</option>
-          <option value="Août">Août</option>
-          <option value="Septembre">Septembre</option>
-          <option value="Octobre">Octobre</option>
-          <option value="Novembre">Novembre</option>
-          <option value="Décembre" selected="selected">Décembre</option>
-        </select>
+        <select name="toYear" id="toYear"></select>
+        <select name="toMonth" id="toMonth"></select>
+        
         <br>
         <button id="afficherDonnees" onclick="afficherDonnees()"> Données</button>
-
         <button onclick="afficherDonnee()"> Donnee</button>
         <button id="afficherStatistiques" onclick="afficherStatistique()"> Statistiques</button>
+        
         <div id="tableau" class="scrollable-listeprovince"></div>
 
       </span>
@@ -105,7 +72,6 @@
     <footer>
       <div id="contact" class="footer">
         <h2>Nos coordonnées:</h2>
-
         <p>
         <p>Thanushai Kandiah Ariyanayagam<b> Courriel:</b> thanushai.kandiah-ariyanayagam.1@ens.etsmtl.ca</p>
         <p>Mark Yousef<b> Courriel:</b> mark.yousef.1@ens.etsmtl.ca</p>
@@ -114,13 +80,12 @@
         <p>Nicolas Thibodeau<b> Courriel:</b> nicolas.thibodeau.1@ens.etsmtl.ca</p>
         <p>Équipe 9</p>
         </p>
-
       </div>
     </footer>
 
   </div>
-
 </body>
+
 <script src="main.js"></script>
 
 </html>
