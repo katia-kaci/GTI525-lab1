@@ -10,6 +10,10 @@ let years = Array.from(new Set(stations.map((s) => s['"Year"'].replace(/"/g, '')
 let fromYear = 0, fromMonth = 0, toYear = 3000, toMonth = 11;
 
 afficherProvinces()
+
+let provinceId = 'province-0';
+document.getElementById(provinceId).classList.add('special');
+
 afficherStatistique()
 selectDateRange();
 
@@ -119,7 +123,8 @@ function getCodeAeroport(station) {
 function afficherProvinces() {
   let htmlButtons = ""
   for (i in provinces) {
-    htmlButtons += '<ul> <button value="' + i + '" onclick="afficherNomsStations(this.value)" class="province-btn">' + provinces[i] + '</button><ul id="province' + i + '" ></ul></ul>';
+    htmlButtons += '<ul> <button id="province-'+i+'" value="' + i + '"  class="province-btn">' + provinces[i] + '</button><ul id="province' + i + '" ></ul></ul>';
+    // htmlButtons += '<ul> <button value="' + i + '" onclick="afficherNomsStations(this.value)" class="province-btn">' + provinces[i] + '</button><ul id="province' + i + '" ></ul></ul>';
   }
   document.getElementById("listeprovince").innerHTML = htmlButtons;
 
@@ -155,7 +160,13 @@ function afficherNomsStations(value) {
 
   listeStationsAfficher = [];
   let baliseAfficher = "";
-  afficherProvinces();
+  let ancienBtn = document.getElementById(provinceId)
+  ancienBtn.classList.remove('special');
+  ancienBtn.innerHTML = provinces[provinceId.split('-')[1]];
+  document.getElementById('province'+provinceId.split('-')[1]).innerHTML='';
+  provinceId = 'province-'+value;
+  document.getElementById(provinceId).classList.add('special');
+  //afficherProvinces();
 
   provinceSelectionnee.map((e) => {
     if (!listeStationsAfficher.includes(e['"Station Name"'])) {
