@@ -1,11 +1,14 @@
 var stations = csvToArray(stations, ",", true);
 let stationInventory = csvToArray(StationInventoryEN, '","', false);
+
 let provinces = getProvinces();
 let provinceSelectionnee = [];
 let stationSelectionee = stations;
+
 const months = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"];
 let years = ["2001", "2002", "2003", "2004", "2005", "2006"];
 let fromYear = 0, fromMonth = 0, toYear = 3000, toMonth = 11;
+
 afficherProvinces(stations)
 afficherDonnees()
 selectDateRange();
@@ -83,18 +86,6 @@ function csvToArray(data, separator, skipLigne1) {
       });
       listSta = listSta.concat(temp);
     }
-    // console.log("avanr");
-    // console.log(listSta);
-
-    // let cleanedList = listSta.map(obj => {
-    //   let newObj = {};
-    //   for (let key in obj) {
-    //     newObj[key] = 2; // Enlever les guillemets au début et à la fin
-    //   }
-    //   return newObj;
-    // });
-    // console.log("apres");
-    // console.log(cleanedList);
     return listSta.filter((e) => e['"Climate ID"'] !== undefined);
   }
   else {
@@ -167,7 +158,7 @@ function afficherNomsStations(value) {
   provinceSelectionnee.map((e) => {
     if (!listeStationsAfficher.includes(e['"Station Name"'])) {
       listeStationsAfficher.push(e['"Station Name"']);
-      baliseAfficher += '<ul> <button id="' + e['"Station Name"'].replace('"', "").replace('"', "") + '" value="' + e['"Station Name"'].replace('"', "").replace('"', "") + '" onclick="recupererStations(this.value)">' + e['"Station Name"'].replace('"', "").replace('"', "") + '</button></ul>';
+      baliseAfficher += '<ul> <button id="' + e['"Station Name"'].replace(/"/g, '') + '" value="' + e['"Station Name"'].replace(/"/g, '') + '" onclick="recupererStations(this.value)">' + e['"Station Name"'].replace(/"/g, '') + '</button></ul>';
     }
   })
 
@@ -179,17 +170,14 @@ function recupererStations(value) {
   stationSelectionee = provinceSelectionnee.filter((e) => e['"Station Name"'].replace(/"/g, '') === value);
   document.getElementById("nom").innerHTML = value;
 
-  if (previousButton !== null) {
-    previousButton.classList.remove('special');
-    // previousButton.disabled = false;
-  }
-  // document.getElementById(value).disabled=true;
+  if (previousButton !== null) previousButton.classList.remove('special');
+  
   document.getElementById(value).classList.add('special');
   previousButton = document.getElementById(value);
+  
 }
 
 function afficherDonnee() {
-
   let titreTableDefeaut = '<table><tr><th>Annee-Mois</th><th>Annee</th><th>Mois</th><th>TMaxMoy</th><th>TMinMoy</th><th>TMoy</th><th>TMax</th><th>TMin</th><th>PluieTotal</th><th>NeigeTotale</th><th>VitVentMax</th></tr>';
   let valeurTable = "";
 
@@ -221,12 +209,8 @@ function afficherDonnee() {
       <td>${vitVentMax}</td>
     </tr>`;
   });
-
   let baliseFinale = titreTableDefeaut + valeurTable + '</table>';
-
   document.getElementById("tableau").innerHTML = baliseFinale;
-
-  //console.log(stationSelectionee.map((e)=>e['"Year"']))
 }
 
 function afficherStatistique() {//sil'y a aucune donne ne rien afficher
@@ -306,9 +290,6 @@ function afficherStatistique() {//sil'y a aucune donne ne rien afficher
 
   //tableau des mois
   for (var i = fromMonth; i <= toMonth; i++) {
-    // if(i==2) continue;
-    // if(i>2 && i<10) continue;
-
     let tempExtreme = { titre: 'Température extrême', valmax: '-10000', anneeMax: undefined, moisMax: undefined, valmin: '10000', anneeMin: undefined, moisMin: undefined };
     let tempMoyenne = { titre: 'Température moyenne mensuelle', valmax: '-10000', anneeMax: undefined, moisMax: undefined, valmin: '10000', anneeMin: undefined, moisMin: undefined };
     let qtePluie = { titre: 'Quantité de pluie', valmax: '-10000', anneeMax: undefined, moisMax: undefined, valmin: '10000', anneeMin: undefined, moisMin: undefined };
@@ -393,36 +374,28 @@ function afficherStatistique() {//sil'y a aucune donne ne rien afficher
 function afficherDonnees() {
   console.log(stationSelectionee)
 
-  let titreTableDefeaut = '<table><tr><th>Année</th><th>Mois</th><th>Température maximale moyenne</th><th>Température minimale moyenne</th><th>Température moyenne</th><th>Température maximale enregistrée</th><th>Température minimale enregistrée</th><th>Pluie totale</th><th>Neige totale</th><th>Vitesse du vent maximale</th></tr>'
-  let baliseFinale = titreTableDefeaut;
-  // let valeurTable = '<tr><td>' + tempMoyenne.titre + '</td><td>' + tempMoyenne.valmax + '</td><td>' + tempMoyenne.anneeMax + '</td><td>' + tempMoyenne.moisMax + '</td><td>' + tempMoyenne.valmin + '</td><td>' + tempMoyenne.anneeMin + '</td><td>' + tempMoyenne.moisMin + '</td></tr>';
-  stationSelectionee.filter((e) => e['"Year"'] !== undefined
-    && e['"Month"'] !== undefined
-    && e['"Mean Max Temp (°C)"'] !== undefined
-    && e['"Mean Min Temp (°C)"'] !== undefined
-    && e['"Mean Temp (°C)"'] !== undefined
-    && e['"Extr Max Temp (°C)"'] !== undefined
-    && e['"Extr Min Temp (°C)"'] !== undefined
-    && e['"Total Rain (mm)"'] !== undefined
-    && e['"Total Snow (cm)"'] !== undefined
-    && e['"Spd of Max Gust (km/h)"'] !== undefined
-  )
+  let baliseFinale = '<table><tr><th>Année</th><th>Mois</th><th>Température maximale moyenne</th><th>Température minimale moyenne</th><th>Température moyenne</th><th>Température maximale enregistrée</th><th>Température minimale enregistrée</th><th>Pluie totale</th><th>Neige totale</th><th>Vitesse du vent maximale</th></tr>'
+  
+  const columns = [
+    '"Year"', '"Month"', '"Mean Max Temp (°C)"', '"Mean Min Temp (°C)"', '"Mean Temp (°C)"',
+    '"Extr Max Temp (°C)"', '"Extr Min Temp (°C)"', '"Total Rain (mm)"', '"Total Snow (cm)"',
+    '"Spd of Max Gust (km/h)"'
+  ];
+  stationSelectionee
+    .filter(e => columns.every(col => e[col] !== undefined))
     .map(s => {
-      baliseFinale += '<tr><td>' + s['"Year"'].replace('"', "").replace('"', "")
-        + '</td>' + '<td>' + s['"Month"'].replace('"', "").replace('"', "")
-        + '</td><td>' + s['"Mean Max Temp (°C)"'].replace('"', "").replace('"', "")
-        + '</td><td>' + s['"Mean Min Temp (°C)"'].replace('"', "").replace('"', "")
-        + '</td><td>' + s['"Mean Temp (°C)"'].replace('"', "").replace('"', "")
-        + '</td><td>' + s['"Extr Max Temp (°C)"'].replace('"', "").replace('"', "")
-        + '</td><td>' + s['"Extr Min Temp (°C)"'].replace('"', "").replace('"', "")
-        + '</td><td>' + s['"Total Rain (mm)"'].replace('"', "").replace('"', "")
-        + '</td><td>' + s['"Total Snow (cm)"'].replace('"', "").replace('"', "")
-        + '</td><td>' + s['"Spd of Max Gust (km/h)"'].replace('"', "").replace('"', "") + '</td></tr>'
+      baliseFinale += '<tr><td>' + s['"Year"'].replace(/"/g, '')
+        + '</td>' + '<td>' + s['"Month"'].replace(/"/g, '')
+        + '</td><td>' + s['"Mean Max Temp (°C)"'].replace(/"/g, '')
+        + '</td><td>' + s['"Mean Min Temp (°C)"'].replace(/"/g, '')
+        + '</td><td>' + s['"Mean Temp (°C)"'].replace(/"/g, '')
+        + '</td><td>' + s['"Extr Max Temp (°C)"'].replace(/"/g, '')
+        + '</td><td>' + s['"Extr Min Temp (°C)"'].replace(/"/g, '')
+        + '</td><td>' + s['"Total Rain (mm)"'].replace(/"/g, '')
+        + '</td><td>' + s['"Total Snow (cm)"'].replace(/"/g, '')
+        + '</td><td>' + s['"Spd of Max Gust (km/h)"'].replace(/"/g, '') + '</td></tr>'
     })
 
-
   baliseFinale += '</table>';
-  // let baliseFinale = titreTableDefeaut + valeurTable;
   document.getElementById("tableau").innerHTML = baliseFinale;
-  // console.log(stationSelectionee)
 }
