@@ -131,14 +131,22 @@ function csvToArray(data, separator, skipLigne1) {
   }
 }
 
-function getCodeAeroport(station) {
-  for (s in stationInventory) {
-    if (s['Station'] == station) {
-
+function getCodeAeroport(stationName) {
+  let s;
+  for (let i = 0; i < stations.length; i++) {
+    if (stations[i]['"Station Name"'] == stationName || stations[i]['"Station Name"'].replace(/"/g, '') == stationName) {
+      s = stations[i];
+      break;
     }
   }
+  const climateId = s['"Climate ID"'].replace(/"/g, '');
 
-  // TC ID
+  for (let i = 0; i < stationInventory.length; i++) {
+    if (stationInventory[i]["Climate ID"] == climateId) {
+      return stationInventory[i]["TC ID"];
+    }
+  }
+  return "";
 }
 
 function showProvinces() {
@@ -151,6 +159,9 @@ function showProvinces() {
   let previousSelectedButton = null;
   document.querySelectorAll('.province-btn').forEach(button => {
     button.addEventListener('click', function () {
+      // stationSelectionee = provinceSelectionnee.filter((e) => e['"Station Name"'].replace(/"/g, '') === value);
+      // update stationSelectionee pour pouvoir faire :
+      // updateDateFilter();
       if (previousSelectedButton !== null) {
         previousSelectedButton.classList.remove('special');
         previousSelectedButton.disabled = false;
@@ -188,13 +199,13 @@ function afficherNomsStations(value) {
   provinceSelectionnee.map((e) => {
     if (!listeStationsAfficher.includes(e['"Station Name"'])) {
       listeStationsAfficher.push(e['"Station Name"']);
-      // baliseAfficher += '<ul> <button id="' + e['"Station Name"'].replace(/"/g, '') + '" value="' + e['"Station Name"'].replace(/"/g, '') + '" onclick="recupererStations(this.value)">' + e['"Station Name"'].replace(/"/g, '') + '</button></ul>';
     }
   })
 
-  listeStationsAfficher.sort().map((e)=>{  
-    baliseAfficher += '<ul> <button id="' + e.replace(/"/g, '') + '" value="' + e.replace(/"/g, '') + '" onclick="recupererStations(this.value)">' + e.replace(/"/g, '') + '</button></ul>';
+  listeStationsAfficher.sort().map((e) => {
+    baliseAfficher += '<ul> <button id="' + e.replace(/"/g, '') + '" value="' + e.replace(/"/g, '') + '" onclick="recupererStations(this.value)">' + e.replace(/"/g, '') + " " + getCodeAeroport(e) + '</button></ul>';
   })
+
   document.getElementById("province" + value).innerHTML = baliseAfficher;
 }
 
@@ -203,7 +214,7 @@ function recupererStations(value) {
   stationSelectionee = provinceSelectionnee.filter((e) => e['"Station Name"'].replace(/"/g, '') === value);
   updateDateFilter();
 
-  document.getElementById("nom").innerHTML = value;
+  document.getElementById("nom").innerHTML = value + " " + getCodeAeroport(value);
 
   if (previousButton !== null) previousButton.classList.remove('special');
   document.getElementById(value).classList.add('special');
@@ -264,6 +275,7 @@ function showStatistics() { // s'il y a aucune donne ne rien afficher
   document.getElementById("showStatistics").disabled = true;
   document.getElementById("showData").disabled = false;
 
+  // il faut enlever les valeurs par default pcq ca les affiche qd ya pas de donnees qd les filtres sont restreints
   let tempExtreme = { titre: 'Température extrême', valmax: '-10000', anneeMax: undefined, moisMax: undefined, valmin: '10000', anneeMin: undefined, moisMin: undefined };
   let tempMoyenne = { titre: 'Température moyenne mensuelle', valmax: '-10000', anneeMax: undefined, moisMax: undefined, valmin: '10000', anneeMin: undefined, moisMin: undefined };
   let qtePluie = { titre: 'Quantité de pluie', valmax: '-10000', anneeMax: undefined, moisMax: undefined, valmin: '10000', anneeMin: undefined, moisMin: undefined };
@@ -342,6 +354,7 @@ function showStatistics() { // s'il y a aucune donne ne rien afficher
   let baliseFinale = titreTableDefeaut + valeurTable;
 
   //tableau des mois
+  // TODO AJOUTER CAS OU CEST LA MM ANNEE ON AFFICHE PAS TT LES MOIS
   for (var i = 0; i <= 11; i++) {
     let tempExtreme = { titre: 'Température extrême', valmax: '-10000', anneeMax: undefined, moisMax: undefined, valmin: '10000', anneeMin: undefined, moisMin: undefined };
     let tempMoyenne = { titre: 'Température moyenne mensuelle', valmax: '-10000', anneeMax: undefined, moisMax: undefined, valmin: '10000', anneeMin: undefined, moisMin: undefined };
