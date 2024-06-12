@@ -8,6 +8,7 @@ let stationSelectionee = stations;
 const months = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"];
 let years = Array.from(new Set(stations.map((s) => s['"Year"'].replace(/"/g, '')))).sort();
 let fromYear = Math.min(...years), toYear = Math.max(...years), fromMonth = 0, toMonth = 11;
+let statistiqueChoisis = true;
 
 showProvinces()
 let provinceId = 'province-0';
@@ -219,6 +220,9 @@ function getStations(value) {
   if (previousButton !== null) previousButton.classList.remove('special');
   document.getElementById(value).classList.add('special');
   previousButton = document.getElementById(value);
+
+  if (statistiqueChoisis) showStatistics();
+  else showData();
 }
 
 function apresDateDebut(date) {
@@ -235,7 +239,7 @@ function avantDateFin(date) {
   else return true; //  date est avant date debut filtre
 }
 
-function showStatistics() { // s'il y a aucune donne ne rien afficher
+function showStatistics() {
   document.getElementById("showStatistics").disabled = true;
   document.getElementById("showData").disabled = false;
 
@@ -387,6 +391,7 @@ function showStatistics() { // s'il y a aucune donne ne rien afficher
     baliseFinale += titreTableDefeaut + valeurTable;
   }
 
+  statistiqueChoisis = true;
   document.getElementById("tableau").innerHTML = baliseFinale;
 }
 
@@ -416,4 +421,6 @@ function showData() {
 
   baliseFinale += '</table>';
   document.getElementById("tableau").innerHTML = baliseFinale;
+
+  statistiqueChoisis = false;
 }
