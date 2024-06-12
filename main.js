@@ -203,58 +203,22 @@ function afficherNomsStations(value) {
   })
 
   listeStationsAfficher.sort().map((e) => {
-    baliseAfficher += '<ul> <button id="' + e.replace(/"/g, '') + '" value="' + e.replace(/"/g, '') + '" onclick="recupererStations(this.value)">' + e.replace(/"/g, '') + " " + getCodeAeroport(e) + '</button></ul>';
+    baliseAfficher += '<ul> <button id="' + e.replace(/"/g, '') + '" value="' + e.replace(/"/g, '') + '" onclick="getStations(this.value)">' + e.replace(/"/g, '') + " (" + getCodeAeroport(e) + ") " + '</button></ul>';
   })
 
   document.getElementById("province" + value).innerHTML = baliseAfficher;
 }
 
 let previousButton = null;
-function recupererStations(value) {
+function getStations(value) {
   stationSelectionee = provinceSelectionnee.filter((e) => e['"Station Name"'].replace(/"/g, '') === value);
   updateDateFilter();
 
-  document.getElementById("nom").innerHTML = value + " " + getCodeAeroport(value);
+  document.getElementById("nom").innerHTML = value + " (" + getCodeAeroport(value) + ")";
 
   if (previousButton !== null) previousButton.classList.remove('special');
   document.getElementById(value).classList.add('special');
   previousButton = document.getElementById(value);
-}
-
-function afficherDonnee() {
-  let titreTableDefeaut = '<table><tr><th>Annee-Mois</th><th>Annee</th><th>Mois</th><th>TMaxMoy</th><th>TMinMoy</th><th>TMoy</th><th>TMax</th><th>TMin</th><th>PluieTotal</th><th>NeigeTotale</th><th>VitVentMax</th></tr>';
-  let valeurTable = "";
-
-  // Loop through each row of the selected station data
-  stationSelectionee.forEach((row) => {
-    const anneeMois = row['"Date/Time"'].replace(/"/g, '');
-    const annee = row['"Year"'].replace(/"/g, '');
-    const mois = row['"Month"'].replace(/"/g, '');
-    const tMaxMoy = row['"Mean Max Temp (°C)"'].replace(/"/g, '');
-    const tMinMoy = row['"Mean Min Temp (°C)"'].replace(/"/g, '');
-    const tMoy = row['"Mean Temp (°C)"'].replace(/"/g, '');
-    const tMax = row['"Extr Max Temp (°C)"'].replace(/"/g, '');
-    const tMin = row['"Extr Min Temp (°C)"'].replace(/"/g, '');
-    const pluieTotal = row['"Total Rain (mm)"'].replace(/"/g, '');
-    const neigeTotale = row['"Total Snow (cm)"'].replace(/"/g, '');
-    const vitVentMax = row['"Spd of Max Gust (km/h)"'].replace(/"/g, '');
-
-    valeurTable += `<tr>
-      <td>${anneeMois}</td>
-      <td>${annee}</td>
-      <td>${mois}</td>
-      <td>${tMaxMoy}</td>
-      <td>${tMinMoy}</td>
-      <td>${tMoy}</td>
-      <td>${tMax}</td>
-      <td>${tMin}</td>
-      <td>${pluieTotal}</td>
-      <td>${neigeTotale}</td>
-      <td>${vitVentMax}</td>
-    </tr>`;
-  });
-  let baliseFinale = titreTableDefeaut + valeurTable + '</table>';
-  document.getElementById("tableau").innerHTML = baliseFinale;
 }
 
 function apresDateDebut(date) {
