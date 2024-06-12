@@ -9,7 +9,7 @@ const months = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet"
 let years = Array.from(new Set(stations.map((s) => s['"Year"'].replace(/"/g, '')))).sort();
 let fromYear = 0, fromMonth = 0, toYear = 3000, toMonth = 11;
 
-afficherProvinces()
+showProvinces()
 afficherStatistique()
 selectDateRange();
 
@@ -30,7 +30,7 @@ function selectDateRange() {
     optionFrom.text = months[i];
     fromMonthSelector.appendChild(optionFrom);
   }
-  
+
   for (let year of years) {
     var optionTo = document.createElement("option");
     optionTo.value = year;
@@ -46,21 +46,19 @@ function selectDateRange() {
   // Default values
   fromMonthSelector.querySelector('option[value="0"]').selected = "selected";
   toMonthSelector.querySelector('option[value="11"]').selected = "selected";
-  fromYearSelector.querySelector('option[value="'+Math.min(...years)+'"]').selected = "selected";
-  toYearSelector.querySelector('option[value="'+Math.max(...years)+'"]').selected = "selected";
+  fromYearSelector.querySelector('option[value="' + Math.min(...years) + '"]').selected = "selected";
+  toYearSelector.querySelector('option[value="' + Math.max(...years) + '"]').selected = "selected";
 
-  fromMonthSelector.addEventListener('change', handleChange);
-  toMonthSelector.addEventListener('change', handleChange);
-  fromYearSelector.addEventListener('change', handleChange);
-  toYearSelector.addEventListener('change', handleChange);
+  fromMonthSelector.addEventListener('change', function () { fromMonth = document.getElementById('fromMonth').value });
+  toMonthSelector.addEventListener('change', function () { toMonth = document.getElementById('toMonth').value });
+  fromYearSelector.addEventListener('change', function () { fromYear = document.getElementById('fromYear').value });
+  toYearSelector.addEventListener('change', function () { toYear = document.getElementById('toYear').value });
 }
 
-function handleChange() {
-  if (this === fromMonthSelector) fromMonth = fromMonthSelector.value;
-  else if (this === toMonthSelector) toMonth = toMonthSelector.value;
-  if (this === fromYearSelector) fromYear = fromYearSelector.value;
-  else if (this === toYearSelector) toYear = toYearSelector.value;
-  afficherStatistique();
+function updateYearRange() {
+  years = Array.from(new Set(stationSelectionee.map((s) => s['"Year"'].replace(/"/g, '')))).sort();
+  document.getElementById('fromYear').querySelector('option[value="' + Math.min(...years) + '"]').selected = "selected";
+  document.getElementById('toYear').querySelector('option[value="' + Math.max(...years) + '"]').selected = "selected";
 }
 
 function getProvinces() {
@@ -116,33 +114,32 @@ function getCodeAeroport(station) {
   // TC ID
 }
 
-function afficherProvinces() {
-  let htmlButtons = ""
-  for (i in provinces) {
-    htmlButtons += '<ul> <button value="' + i + '" onclick="afficherNomsStations(this.value)" class="province-btn">' + provinces[i] + '</button><ul id="province' + i + '" ></ul></ul>';
-  }
-  document.getElementById("listeprovince").innerHTML = htmlButtons;
+function showProvinces() {
+  document.getElementById("listeprovince").innerHTML = provinces.map((province, i) => `
+  <ul>
+    <button value="${i}" class="province-btn">${province}</button>
+    <ul id="province${i}"></ul>
+  </ul>
+  `).join('');
 
-  let buttons = document.querySelectorAll('.province-btn');
-  let previousButton = null;
-  buttons.forEach(button => {
+  let previousSelectedButton = null;
+  document.querySelectorAll('.province-btn').forEach(button => {
     button.addEventListener('click', function () {
-      if (previousButton !== null) {
-        previousButton.classList.remove('special');
-        previousButton.disabled = false;
+      if (previousSelectedButton !== null) {
+        previousSelectedButton.classList.remove('special');
+        previousSelectedButton.disabled = false;
       }
       this.classList.add('special');
       this.disabled = true;
-      previousButton = this;
+      previousSelectedButton = this;
       afficherNomsStations(this.value);
     })
   });
 }
 
 function afficherNomsStations(value) {
-  if (value == 0) {
-    stationSelectionee = stations;
-  }
+  if (value == 0) stationSelectionee = stations;
+
   let listeStationsAfficher = [];
   let val = stationInventory.filter(e => e["Province"] === provinces[value])
 
@@ -155,7 +152,7 @@ function afficherNomsStations(value) {
 
   listeStationsAfficher = [];
   let baliseAfficher = "";
-  afficherProvinces();
+  showProvinces();
 
   provinceSelectionnee.map((e) => {
     if (!listeStationsAfficher.includes(e['"Station Name"'])) {
@@ -170,17 +167,15 @@ function afficherNomsStations(value) {
 let previousButton = null;
 function recupererStations(value) {
   stationSelectionee = provinceSelectionnee.filter((e) => e['"Station Name"'].replace(/"/g, '') === value);
-  years = Array.from(new Set(stationSelectionee.map((s) => s['"Year"'])));
+  updateYearRange();
 
-  // console.log(stationSelectionnee)
-  // console.log(years)
   document.getElementById("nom").innerHTML = value;
 
   if (previousButton !== null) previousButton.classList.remove('special');
-  
+
   document.getElementById(value).classList.add('special');
   previousButton = document.getElementById(value);
-  
+
 }
 
 function afficherDonnee() {
@@ -376,28 +371,24 @@ function afficherStatistique() {//sil'y a aucune donne ne rien afficher
   document.getElementById("tableau").innerHTML = baliseFinale;
 }
 
-function afficherDonnees() {
+function showData() {
   let baliseFinale = '<table><tr><th>Année</th><th>Mois</th><th>Température maximale moyenne</th><th>Température minimale moyenne</th><th>Température moyenne</th><th>Température maximale enregistrée</th><th>Température minimale enregistrée</th><th>Pluie totale</th><th>Neige totale</th><th>Vitesse du vent maximale</th></tr>'
-  
+
   const columns = [
     '"Year"', '"Month"', '"Mean Max Temp (°C)"', '"Mean Min Temp (°C)"', '"Mean Temp (°C)"',
     '"Extr Max Temp (°C)"', '"Extr Min Temp (°C)"', '"Total Rain (mm)"', '"Total Snow (cm)"',
     '"Spd of Max Gust (km/h)"'
   ];
+
   stationSelectionee
     .filter(e => columns.every(col => e[col] !== undefined))
-    .map(s => {
-      baliseFinale += '<tr><td>' + s['"Year"'].replace(/"/g, '')
-        + '</td>' + '<td>' + s['"Month"'].replace(/"/g, '')
-        + '</td><td>' + s['"Mean Max Temp (°C)"'].replace(/"/g, '')
-        + '</td><td>' + s['"Mean Min Temp (°C)"'].replace(/"/g, '')
-        + '</td><td>' + s['"Mean Temp (°C)"'].replace(/"/g, '')
-        + '</td><td>' + s['"Extr Max Temp (°C)"'].replace(/"/g, '')
-        + '</td><td>' + s['"Extr Min Temp (°C)"'].replace(/"/g, '')
-        + '</td><td>' + s['"Total Rain (mm)"'].replace(/"/g, '')
-        + '</td><td>' + s['"Total Snow (cm)"'].replace(/"/g, '')
-        + '</td><td>' + s['"Spd of Max Gust (km/h)"'].replace(/"/g, '') + '</td></tr>'
-    })
+    .forEach(s => {
+      baliseFinale += '<tr>';
+      columns.forEach(col => {
+        baliseFinale += `<td>${s[col].replace(/"/g, '')}</td>`;
+      });
+      baliseFinale += '</tr>';
+    });
 
   baliseFinale += '</table>';
   document.getElementById("tableau").innerHTML = baliseFinale;
