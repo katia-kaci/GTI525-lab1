@@ -171,10 +171,13 @@ function afficherNomsStations(value) {
   provinceSelectionnee.map((e) => {
     if (!listeStationsAfficher.includes(e['"Station Name"'])) {
       listeStationsAfficher.push(e['"Station Name"']);
-      baliseAfficher += '<ul> <button id="' + e['"Station Name"'].replace(/"/g, '') + '" value="' + e['"Station Name"'].replace(/"/g, '') + '" onclick="recupererStations(this.value)">' + e['"Station Name"'].replace(/"/g, '') + '</button></ul>';
+      // baliseAfficher += '<ul> <button id="' + e['"Station Name"'].replace(/"/g, '') + '" value="' + e['"Station Name"'].replace(/"/g, '') + '" onclick="recupererStations(this.value)">' + e['"Station Name"'].replace(/"/g, '') + '</button></ul>';
     }
   })
 
+  listeStationsAfficher.sort().map((e)=>{  
+    baliseAfficher += '<ul> <button id="' + e.replace(/"/g, '') + '" value="' + e.replace(/"/g, '') + '" onclick="recupererStations(this.value)">' + e.replace(/"/g, '') + '</button></ul>';
+  })
   document.getElementById("province" + value).innerHTML = baliseAfficher;
 }
 
