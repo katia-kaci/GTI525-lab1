@@ -30,7 +30,7 @@ body {
 }
 
 .special {
-    background-color: blueviolet;
+    background-color: rgb(0, 179, 255);
 }
 
 table {
@@ -49,4 +49,19 @@ td {
 
 select {
     margin-bottom: 2px;
+}
+
+.province-btn {
+    margin: 5px;
+    border-radius: 62px;
+    background: #7cebf3;
+    box-shadow: 5px 5px 5px #4e9499,
+        -5px -5px 10px #aaffff;
+}
+
+.province-btn:disabled {
+    border-radius: 62px;
+    background: #7be273;
+    box-shadow: 5px 5px 10px #4d8e48,
+        -5px -5px 10px #a9ff9e;
 }
