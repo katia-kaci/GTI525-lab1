@@ -151,11 +151,25 @@ function getCodeAeroport(stationName) {
 }
 
 function showProvinces() {
-  let htmlButtons = ""
-  for (i in provinces) {
-    htmlButtons += '<ul> <button id="province-' + i + '" value="' + i + '"  class="province-btn">' + provinces[i] + '</button><ul id="province' + i + '" ></ul></ul>';
+  let listeprovince = document.getElementById("listeprovince");
+  listeprovince.innerHTML = '';
+
+  for (let i in provinces) {
+    let button = document.createElement('button');
+    button.id = 'province-' + i;
+    button.value = i;
+    button.className = 'province-btn';
+    button.textContent = provinces[i];
+
+    let ulContainer = document.createElement('ul');
+    ulContainer.appendChild(button);
+
+    let stationList = document.createElement('ul');
+    stationList.id = 'province' + i;
+    ulContainer.appendChild(stationList);
+
+    listeprovince.appendChild(ulContainer);
   }
-  document.getElementById("listeprovince").innerHTML = htmlButtons;
 
   let previousSelectedButton = null;
   document.querySelectorAll('.province-btn').forEach(button => {
@@ -171,7 +185,7 @@ function showProvinces() {
       this.disabled = true;
       previousSelectedButton = this;
       afficherNomsStations(this.value);
-    })
+    });
   });
 }
 
