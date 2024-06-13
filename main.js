@@ -274,6 +274,17 @@ function showStatistics() {
   let qteNeige = { titre: 'Quantité de neige', valmax: '-10000', anneeMax: undefined, moisMax: undefined, valmin: '10000', anneeMin: undefined, moisMin: undefined };
   let vitesseVent = { titre: 'Vitesse du vent', valmax: '-10000', anneeMax: undefined, moisMax: undefined, valmin: '10000', anneeMin: undefined, moisMin: undefined };
 
+
+  const propertiesToCheck = ['valmax', 'valmin', 'anneeMax', 'anneeMin', 'moisMax', 'moisMin'];
+  const invalidValues = {
+    valmax: '-10000',
+    valmin: '10000',
+    anneeMax: undefined,
+    anneeMin: undefined,
+    moisMax: undefined,
+    moisMin: undefined
+  };
+
   stationSelectionee
     .filter((s) => apresDateDebut(s['"Date/Time"']))
     .filter((s) => avantDateFin(s['"Date/Time"']))
@@ -337,36 +348,12 @@ function showStatistics() {
   //tableau des données en général
   let titreTableDefeaut = '<table><tr><th>Donnée</th><th>Valeur maximale</th><th>Année</th><th>Mois</th><th>Valeur minimale</th><th>Année</th><th>Mois</th></tr>'
 
-  if (vitesseVent.valmax == '-10000') vitesseVent.valmax = ""
-  if (vitesseVent.valmin == '10000') vitesseVent.valmin = ""
-  if (tempExtreme.valmax == '-10000') tempExtreme.valmax = ""
-  if (tempExtreme.valmin == '10000') tempExtreme.valmin = ""
-  if (tempMoyenne.valmax == '-10000') tempMoyenne.valmax = ""
-  if (tempMoyenne.valmin == '10000') tempMoyenne.valmin = ""
-  if (qtePluie.valmax == '-10000') qtePluie.valmax = ""
-  if (qtePluie.valmin == '10000') qtePluie.valmin = ""
-  if (qteNeige.valmax == '-10000') qteNeige.valmax = ""
-  if (qteNeige.valmin == '10000') qteNeige.valmin = ""
-  if (vitesseVent.anneeMax == undefined) vitesseVent.anneeMax = ""
-  if (vitesseVent.anneeMin == undefined) vitesseVent.anneeMin = ""
-  if (tempExtreme.anneeMax == undefined) tempExtreme.anneeMax = ""
-  if (tempExtreme.anneeMin == undefined) tempExtreme.anneeMin = ""
-  if (tempMoyenne.anneeMax == undefined) tempMoyenne.anneeMax = ""
-  if (tempMoyenne.anneeMin == undefined) tempMoyenne.anneeMin = ""
-  if (qtePluie.anneeMax == undefined) qtePluie.anneeMax = ""
-  if (qtePluie.anneeMin == undefined) qtePluie.anneeMin = ""
-  if (qteNeige.anneeMax == undefined) qteNeige.anneeMax = ""
-  if (qteNeige.anneeMin == undefined) qteNeige.anneeMin = ""
-  if (vitesseVent.moisMax == undefined) vitesseVent.moisMax = ""
-  if (vitesseVent.moisMin == undefined) vitesseVent.moisMin = ""
-  if (tempExtreme.moisMax == undefined) tempExtreme.moisMax = ""
-  if (tempExtreme.moisMin == undefined) tempExtreme.moisMin = ""
-  if (tempMoyenne.moisMax == undefined) tempMoyenne.moisMax = ""
-  if (tempMoyenne.moisMin == undefined) tempMoyenne.moisMin = ""
-  if (qtePluie.moisMax == undefined) qtePluie.moisMax = ""
-  if (qtePluie.moisMin == undefined) qtePluie.moisMin = ""
-  if (qteNeige.moisMax == undefined) qteNeige.moisMax = ""
-  if (qteNeige.moisMin == undefined) qteNeige.moisMin = ""
+
+  checkAndReplace(vitesseVent, propertiesToCheck, invalidValues);
+  checkAndReplace(tempExtreme, propertiesToCheck, invalidValues);
+  checkAndReplace(tempMoyenne, propertiesToCheck, invalidValues);
+  checkAndReplace(qtePluie, propertiesToCheck, invalidValues);
+  checkAndReplace(qteNeige, propertiesToCheck, invalidValues);
 
   let valeurTable = '<tr><td>' + tempMoyenne.titre + '</td><td>' + tempMoyenne.valmax + '</td><td>' + tempMoyenne.anneeMax + '</td><td>' + tempMoyenne.moisMax + '</td><td>' + tempMoyenne.valmin + '</td><td>' + tempMoyenne.anneeMin + '</td><td>' + tempMoyenne.moisMin + '</td></tr>';
   valeurTable += '<tr><td>' + tempExtreme.titre + '</td><td>' + tempExtreme.valmax + '</td><td>' + tempExtreme.anneeMax + '</td><td>' + tempExtreme.moisMax + '</td><td>' + tempExtreme.valmin + '</td><td>' + tempExtreme.anneeMin + '</td><td>' + tempExtreme.moisMin + '</td></tr>';
@@ -439,36 +426,12 @@ function showStatistics() {
       }
     })
 
-    if (vitesseVent.valmax == '-10000') vitesseVent.valmax = ""
-    if (vitesseVent.valmin == '10000') vitesseVent.valmin = ""
-    if (tempExtreme.valmax == '-10000') tempExtreme.valmax = ""
-    if (tempExtreme.valmin == '10000') tempExtreme.valmin = ""
-    if (tempMoyenne.valmax == '-10000') tempMoyenne.valmax = ""
-    if (tempMoyenne.valmin == '10000') tempMoyenne.valmin = ""
-    if (qtePluie.valmax == '-10000') qtePluie.valmax = ""
-    if (qtePluie.valmin == '10000') qtePluie.valmin = ""
-    if (qteNeige.valmax == '-10000') qteNeige.valmax = ""
-    if (qteNeige.valmin == '10000') qteNeige.valmin = ""
-    if (vitesseVent.anneeMax == undefined) vitesseVent.anneeMax = ""
-    if (vitesseVent.anneeMin == undefined) vitesseVent.anneeMin = ""
-    if (tempExtreme.anneeMax == undefined) tempExtreme.anneeMax = ""
-    if (tempExtreme.anneeMin == undefined) tempExtreme.anneeMin = ""
-    if (tempMoyenne.anneeMax == undefined) tempMoyenne.anneeMax = ""
-    if (tempMoyenne.anneeMin == undefined) tempMoyenne.anneeMin = ""
-    if (qtePluie.anneeMax == undefined) qtePluie.anneeMax = ""
-    if (qtePluie.anneeMin == undefined) qtePluie.anneeMin = ""
-    if (qteNeige.anneeMax == undefined) qteNeige.anneeMax = ""
-    if (qteNeige.anneeMin == undefined) qteNeige.anneeMin = ""
-    if (vitesseVent.moisMax == undefined) vitesseVent.moisMax = ""
-    if (vitesseVent.moisMin == undefined) vitesseVent.moisMin = ""
-    if (tempExtreme.moisMax == undefined) tempExtreme.moisMax = ""
-    if (tempExtreme.moisMin == undefined) tempExtreme.moisMin = ""
-    if (tempMoyenne.moisMax == undefined) tempMoyenne.moisMax = ""
-    if (tempMoyenne.moisMin == undefined) tempMoyenne.moisMin = ""
-    if (qtePluie.moisMax == undefined) qtePluie.moisMax = ""
-    if (qtePluie.moisMin == undefined) qtePluie.moisMin = ""
-    if (qteNeige.moisMax == undefined) qteNeige.moisMax = ""
-    if (qteNeige.moisMin == undefined) qteNeige.moisMin = ""
+    checkAndReplace(vitesseVent, propertiesToCheck, invalidValues);
+    checkAndReplace(tempExtreme, propertiesToCheck, invalidValues);
+    checkAndReplace(tempMoyenne, propertiesToCheck, invalidValues);
+    checkAndReplace(qtePluie, propertiesToCheck, invalidValues);
+    checkAndReplace(qteNeige, propertiesToCheck, invalidValues);
+
 
     titreTableDefeaut = '<table><tr><th>Donnée</th><th>Valeur maximale</th><th>Année</th><th>Valeur minimale</th><th>Année</th></tr>'
 
@@ -537,4 +500,12 @@ function showData() {
   tableau.appendChild(table);
 
   statistiqueChoisis = false;
+}
+
+function checkAndReplace(obj, properties, invalidValues) {
+  properties.forEach(prop => {
+    if (obj[prop] == invalidValues[prop]) {
+      obj[prop] = "";
+    }
+  });
 }
