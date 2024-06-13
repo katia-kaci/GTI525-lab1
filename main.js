@@ -399,7 +399,26 @@ function showData() {
   document.getElementById("showStatistics").disabled = false;
   document.getElementById("showData").disabled = true;
 
-  let baliseFinale = '<table><tr><th>Année</th><th>Mois</th><th>Temp max moyenne (°C)</th><th>Temp min moyenne (°C)</th><th>Temp moyenne (°C)</th><th>Temp max enregistrée (°C)</th><th>Temp min enregistrée (°C)</th><th>Pluie totale (mm)</th><th>Neige totale (cm)</th><th>Vitesse du vent max (km/h)</th></tr>'
+  let table = document.createElement('table');
+  let thead = document.createElement('thead');
+  let headerRow = document.createElement('tr');
+
+  const headers = [
+    'Année', 'Mois', 'Temp max moyenne (°C)', 'Temp min moyenne (°C)', 'Temp moyenne (°C)',
+    'Temp max enregistrée (°C)', 'Temp min enregistrée (°C)', 'Pluie totale (mm)',
+    'Neige totale (cm)', 'Vitesse du vent max (km/h)'
+  ];
+
+  headers.forEach(headerText => {
+    let th = document.createElement('th');
+    th.textContent = headerText;
+    headerRow.appendChild(th);
+  });
+
+  thead.appendChild(headerRow);
+  table.appendChild(thead);
+
+  let tbody = document.createElement('tbody');
 
   const columns = [
     '"Year"', '"Month"', '"Mean Max Temp (°C)"', '"Mean Min Temp (°C)"', '"Mean Temp (°C)"',
@@ -412,15 +431,20 @@ function showData() {
     .filter((s) => avantDateFin(s['"Date/Time"']))
     .filter(e => columns.every(col => e[col] !== undefined))
     .forEach(s => {
-      baliseFinale += '<tr>';
+      let row = document.createElement('tr');
       columns.forEach(col => {
-        baliseFinale += `<td>${s[col].replace(/"/g, '')}</td>`;
+        let cell = document.createElement('td');
+        cell.textContent = s[col].replace(/"/g, '');
+        row.appendChild(cell);
       });
-      baliseFinale += '</tr>';
+      tbody.appendChild(row);
     });
 
-  baliseFinale += '</table>';
-  document.getElementById("tableau").innerHTML = baliseFinale;
+  table.appendChild(tbody);
+
+  let tableau = document.getElementById("tableau");
+  tableau.innerHTML = '';  // Vider le contenu existant
+  tableau.appendChild(table);  // Ajouter la nouvelle table
 
   statistiqueChoisis = false;
 }
