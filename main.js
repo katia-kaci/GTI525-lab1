@@ -511,3 +511,9 @@ function checkAndReplace(obj, properties, invalidValues) {
     }
   });
 }
+
+function initDate() {
+  updateDateFilter()
+  if (document.getElementById('showData').disabled) showData();
+  else if (document.getElementById('showStatistics').disabled) showStatistics();
+}
