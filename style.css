@@ -65,3 +65,8 @@ select {
     box-shadow: 5px 5px 10px #4d8e48,
         -5px -5px 10px #a9ff9e;
 }
+
+.station-btn {
+    margin: 2px;
+    border-radius: 10px;
+}

@@ -223,6 +223,7 @@ function afficherNomsStations(value) {
     stationButton.id = stationName.replace(/"/g, '');
     stationButton.value = stationName.replace(/"/g, '');
     stationButton.onclick = function () { getStations(this.value); };
+    stationButton.className = 'station-btn';
     stationButton.textContent = `${stationName.replace(/"/g, '')} (${getCodeAeroport(stationName)})`;
 
     let listItem = document.createElement('ul');
