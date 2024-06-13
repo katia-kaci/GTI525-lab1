@@ -179,35 +179,45 @@ function afficherNomsStations(value) {
   if (value == 0) stationSelectionee = stations;
 
   let listeStationsAfficher = [];
-  let val = stationInventory.filter(e => e["Province"] === provinces[value])
+  let val = stationInventory.filter(e => e["Province"] === provinces[value]);
 
   val.forEach((element) => {
-    let test = stations.filter((e) => e['"Climate ID"'].replace(/"/g, '') == element["Climate ID"])
+    let test = stations.filter((e) => e['"Climate ID"'].replace(/"/g, '') == element["Climate ID"]);
     listeStationsAfficher = listeStationsAfficher.concat(test);
   });
 
   provinceSelectionnee = listeStationsAfficher;
 
   listeStationsAfficher = [];
-  let baliseAfficher = "";
-  let ancienBtn = document.getElementById(provinceId)
+  let ancienBtn = document.getElementById(provinceId);
   ancienBtn.classList.remove('special');
-  ancienBtn.innerHTML = provinces[provinceId.split('-')[1]];
+  ancienBtn.textContent = provinces[provinceId.split('-')[1]];
   document.getElementById('province' + provinceId.split('-')[1]).innerHTML = '';
   provinceId = 'province-' + value;
   document.getElementById(provinceId).classList.add('special');
 
-  provinceSelectionnee.map((e) => {
+  provinceSelectionnee.forEach((e) => {
     if (!listeStationsAfficher.includes(e['"Station Name"'])) {
       listeStationsAfficher.push(e['"Station Name"']);
     }
-  })
+  });
 
-  listeStationsAfficher.sort().map((e) => {
-    baliseAfficher += '<ul> <button id="' + e.replace(/"/g, '') + '" value="' + e.replace(/"/g, '') + '" onclick="getStations(this.value)">' + e.replace(/"/g, '') + " (" + getCodeAeroport(e) + ") " + '</button></ul>';
-  })
+  listeStationsAfficher.sort();
 
-  document.getElementById("province" + value).innerHTML = baliseAfficher;
+  let provinceContainer = document.getElementById('province' + value);
+  provinceContainer.innerHTML = '';
+
+  listeStationsAfficher.forEach((stationName) => {
+    let stationButton = document.createElement('button');
+    stationButton.id = stationName.replace(/"/g, '');
+    stationButton.value = stationName.replace(/"/g, '');
+    stationButton.onclick = function () { getStations(this.value); };
+    stationButton.textContent = `${stationName.replace(/"/g, '')} (${getCodeAeroport(stationName)})`;
+
+    let listItem = document.createElement('ul');
+    listItem.appendChild(stationButton);
+    provinceContainer.appendChild(listItem);
+  });
 }
 
 let previousButton = null;
