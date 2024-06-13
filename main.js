@@ -239,7 +239,7 @@ function getStations(value) {
   stationSelectionee = provinceSelectionnee.filter((e) => e['"Station Name"'].replace(/"/g, '') === value);
   updateDateFilter();
 
-  document.getElementById("nom").innerHTML = value + " (" + getCodeAeroport(value) + ")";
+  document.getElementById("nom").textContent = `${value} (${getCodeAeroport(value)})`;
 
   if (previousButton !== null) previousButton.classList.remove('special');
   document.getElementById(value).classList.add('special');
@@ -354,7 +354,10 @@ function showStatistics() {
     let qteNeige = { titre: 'Quantité de neige', valmax: '-10000', anneeMax: undefined, moisMax: undefined, valmin: '10000', anneeMin: undefined, moisMin: undefined };
     let vitesseVent = { titre: 'Vitesse du vent', valmax: '-10000', anneeMax: undefined, moisMax: undefined, valmin: '10000', anneeMin: undefined, moisMin: undefined };
 
-    let listeFiltrer = stationSelectionee.filter((e) => e['"Date/Time"'].split("-")[1].replace(/"/g, '') == '0' + i + 1
+    let listeFiltrer = stationSelectionee
+    .filter((s) => apresDateDebut(s['"Date/Time"']))
+    .filter((s) => avantDateFin(s['"Date/Time"']))
+    .filter((e) => e['"Date/Time"'].split("-")[1].replace(/"/g, '') == '0' + i + 1
       || e['"Date/Time"'].split("-")[1].replace(/"/g, '') == i + 1);
 
     baliseFinale += '<h1>' + months[i] + '</h1>'
