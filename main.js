@@ -174,9 +174,6 @@ function showProvinces() {
   let previousSelectedButton = null;
   document.querySelectorAll('.province-btn').forEach(button => {
     button.addEventListener('click', function () {
-      // stationSelectionee = provinceSelectionnee.filter((e) => e['"Station Name"'].replace(/"/g, '') === value);
-      // update stationSelectionee pour pouvoir faire :
-      // updateDateFilter();
       if (previousSelectedButton !== null) {
         previousSelectedButton.classList.remove('special');
         previousSelectedButton.disabled = false;
@@ -267,7 +264,6 @@ function showStatistics() {
   document.getElementById("showStatistics").disabled = true;
   document.getElementById("showData").disabled = false;
 
-  // il faut enlever les valeurs par default pcq ca les affiche qd ya pas de donnees qd les filtres sont restreints
   let tempExtreme = { titre: 'Température extrême', valmax: '-10000', anneeMax: undefined, moisMax: undefined, valmin: '10000', anneeMin: undefined, moisMin: undefined };
   let tempMoyenne = { titre: 'Température moyenne mensuelle', valmax: '-10000', anneeMax: undefined, moisMax: undefined, valmin: '10000', anneeMin: undefined, moisMin: undefined };
   let qtePluie = { titre: 'Quantité de pluie', valmax: '-10000', anneeMax: undefined, moisMax: undefined, valmin: '10000', anneeMin: undefined, moisMin: undefined };
@@ -337,6 +333,37 @@ function showStatistics() {
   //tableau des données en général
   let titreTableDefeaut = '<table><tr><th>Donnée</th><th>Valeur maximale</th><th>Année</th><th>Mois</th><th>Valeur minimale</th><th>Année</th><th>Mois</th></tr>'
 
+  if (vitesseVent.valmax == '-10000') vitesseVent.valmax = ""
+  if (vitesseVent.valmin == '10000') vitesseVent.valmin = ""
+  if (tempExtreme.valmax == '-10000') tempExtreme.valmax = ""
+  if (tempExtreme.valmin == '10000') tempExtreme.valmin = ""
+  if (tempMoyenne.valmax == '-10000') tempMoyenne.valmax = ""
+  if (tempMoyenne.valmin == '10000') tempMoyenne.valmin = ""
+  if (qtePluie.valmax == '-10000') qtePluie.valmax = ""
+  if (qtePluie.valmin == '10000') qtePluie.valmin = ""
+  if (qteNeige.valmax == '-10000') qteNeige.valmax = ""
+  if (qteNeige.valmin == '10000') qteNeige.valmin = ""
+  if (vitesseVent.anneeMax == undefined) vitesseVent.anneeMax = ""
+  if (vitesseVent.anneeMin == undefined) vitesseVent.anneeMin = ""
+  if (tempExtreme.anneeMax == undefined) tempExtreme.anneeMax = ""
+  if (tempExtreme.anneeMin == undefined) tempExtreme.anneeMin = ""
+  if (tempMoyenne.anneeMax == undefined) tempMoyenne.anneeMax = ""
+  if (tempMoyenne.anneeMin == undefined) tempMoyenne.anneeMin = ""
+  if (qtePluie.anneeMax == undefined) qtePluie.anneeMax = ""
+  if (qtePluie.anneeMin == undefined) qtePluie.anneeMin = ""
+  if (qteNeige.anneeMax == undefined) qteNeige.anneeMax = ""
+  if (qteNeige.anneeMin == undefined) qteNeige.anneeMin = ""
+  if (vitesseVent.moisMax == undefined) vitesseVent.moisMax = ""
+  if (vitesseVent.moisMin == undefined) vitesseVent.moisMin = ""
+  if (tempExtreme.moisMax == undefined) tempExtreme.moisMax = ""
+  if (tempExtreme.moisMin == undefined) tempExtreme.moisMin = ""
+  if (tempMoyenne.moisMax == undefined) tempMoyenne.moisMax = ""
+  if (tempMoyenne.moisMin == undefined) tempMoyenne.moisMin = ""
+  if (qtePluie.moisMax == undefined) qtePluie.moisMax = ""
+  if (qtePluie.moisMin == undefined) qtePluie.moisMin = ""
+  if (qteNeige.moisMax == undefined) qteNeige.moisMax = ""
+  if (qteNeige.moisMin == undefined) qteNeige.moisMin = ""
+
   let valeurTable = '<tr><td>' + tempMoyenne.titre + '</td><td>' + tempMoyenne.valmax + '</td><td>' + tempMoyenne.anneeMax + '</td><td>' + tempMoyenne.moisMax + '</td><td>' + tempMoyenne.valmin + '</td><td>' + tempMoyenne.anneeMin + '</td><td>' + tempMoyenne.moisMin + '</td></tr>';
   valeurTable += '<tr><td>' + tempExtreme.titre + '</td><td>' + tempExtreme.valmax + '</td><td>' + tempExtreme.anneeMax + '</td><td>' + tempExtreme.moisMax + '</td><td>' + tempExtreme.valmin + '</td><td>' + tempExtreme.anneeMin + '</td><td>' + tempExtreme.moisMin + '</td></tr>';
   valeurTable += '<tr><td>' + qtePluie.titre + '</td><td>' + qtePluie.valmax + '</td><td>' + qtePluie.anneeMax + '</td><td>' + qtePluie.moisMax + '</td><td>' + qtePluie.valmin + '</td><td>' + qtePluie.anneeMin + '</td><td>' + qtePluie.moisMin + '</td></tr>';
@@ -346,7 +373,6 @@ function showStatistics() {
   let baliseFinale = titreTableDefeaut + valeurTable;
 
   //tableau des mois
-  // TODO AJOUTER CAS OU CEST LA MM ANNEE ON AFFICHE PAS TT LES MOIS
   for (var i = 0; i <= 11; i++) {
     let tempExtreme = { titre: 'Température extrême', valmax: '-10000', anneeMax: undefined, moisMax: undefined, valmin: '10000', anneeMin: undefined, moisMin: undefined };
     let tempMoyenne = { titre: 'Température moyenne mensuelle', valmax: '-10000', anneeMax: undefined, moisMax: undefined, valmin: '10000', anneeMin: undefined, moisMin: undefined };
@@ -355,10 +381,10 @@ function showStatistics() {
     let vitesseVent = { titre: 'Vitesse du vent', valmax: '-10000', anneeMax: undefined, moisMax: undefined, valmin: '10000', anneeMin: undefined, moisMin: undefined };
 
     let listeFiltrer = stationSelectionee
-    .filter((s) => apresDateDebut(s['"Date/Time"']))
-    .filter((s) => avantDateFin(s['"Date/Time"']))
-    .filter((e) => e['"Date/Time"'].split("-")[1].replace(/"/g, '') == '0' + i + 1
-      || e['"Date/Time"'].split("-")[1].replace(/"/g, '') == i + 1);
+      .filter((s) => apresDateDebut(s['"Date/Time"']))
+      .filter((s) => avantDateFin(s['"Date/Time"']))
+      .filter((e) => e['"Date/Time"'].split("-")[1].replace(/"/g, '') == '0' + i + 1
+        || e['"Date/Time"'].split("-")[1].replace(/"/g, '') == i + 1);
 
     baliseFinale += '<h1>' + months[i] + '</h1>'
 
@@ -408,6 +434,38 @@ function showStatistics() {
         tempMoyenne.anneeMin = e['"Date/Time"'].split("-")[0].replace(/"/g, '');
       }
     })
+
+    if (vitesseVent.valmax == '-10000') vitesseVent.valmax = ""
+    if (vitesseVent.valmin == '10000') vitesseVent.valmin = ""
+    if (tempExtreme.valmax == '-10000') tempExtreme.valmax = ""
+    if (tempExtreme.valmin == '10000') tempExtreme.valmin = ""
+    if (tempMoyenne.valmax == '-10000') tempMoyenne.valmax = ""
+    if (tempMoyenne.valmin == '10000') tempMoyenne.valmin = ""
+    if (qtePluie.valmax == '-10000') qtePluie.valmax = ""
+    if (qtePluie.valmin == '10000') qtePluie.valmin = ""
+    if (qteNeige.valmax == '-10000') qteNeige.valmax = ""
+    if (qteNeige.valmin == '10000') qteNeige.valmin = ""
+    if (vitesseVent.anneeMax == undefined) vitesseVent.anneeMax = ""
+    if (vitesseVent.anneeMin == undefined) vitesseVent.anneeMin = ""
+    if (tempExtreme.anneeMax == undefined) tempExtreme.anneeMax = ""
+    if (tempExtreme.anneeMin == undefined) tempExtreme.anneeMin = ""
+    if (tempMoyenne.anneeMax == undefined) tempMoyenne.anneeMax = ""
+    if (tempMoyenne.anneeMin == undefined) tempMoyenne.anneeMin = ""
+    if (qtePluie.anneeMax == undefined) qtePluie.anneeMax = ""
+    if (qtePluie.anneeMin == undefined) qtePluie.anneeMin = ""
+    if (qteNeige.anneeMax == undefined) qteNeige.anneeMax = ""
+    if (qteNeige.anneeMin == undefined) qteNeige.anneeMin = ""
+    if (vitesseVent.moisMax == undefined) vitesseVent.moisMax = ""
+    if (vitesseVent.moisMin == undefined) vitesseVent.moisMin = ""
+    if (tempExtreme.moisMax == undefined) tempExtreme.moisMax = ""
+    if (tempExtreme.moisMin == undefined) tempExtreme.moisMin = ""
+    if (tempMoyenne.moisMax == undefined) tempMoyenne.moisMax = ""
+    if (tempMoyenne.moisMin == undefined) tempMoyenne.moisMin = ""
+    if (qtePluie.moisMax == undefined) qtePluie.moisMax = ""
+    if (qtePluie.moisMin == undefined) qtePluie.moisMin = ""
+    if (qteNeige.moisMax == undefined) qteNeige.moisMax = ""
+    if (qteNeige.moisMin == undefined) qteNeige.moisMin = ""
+
     titreTableDefeaut = '<table><tr><th>Donnée</th><th>Valeur maximale</th><th>Année</th><th>Valeur minimale</th><th>Année</th></tr>'
 
     valeurTable = '<tr><td>' + tempMoyenne.titre + '</td><td>' + tempMoyenne.valmax + '</td><td>' + tempMoyenne.anneeMax + '</td><td>' + tempMoyenne.valmin + '</td><td>' + tempMoyenne.anneeMin + '</td></tr>';
@@ -421,6 +479,7 @@ function showStatistics() {
   statistiqueChoisis = true;
   document.getElementById("tableau").innerHTML = baliseFinale;
 }
+
 
 function showData() {
   document.getElementById("showStatistics").disabled = false;
@@ -470,8 +529,8 @@ function showData() {
   table.appendChild(tbody);
 
   let tableau = document.getElementById("tableau");
-  tableau.innerHTML = '';  // Vider le contenu existant
-  tableau.appendChild(table);  // Ajouter la nouvelle table
+  tableau.innerHTML = '';
+  tableau.appendChild(table);
 
   statistiqueChoisis = false;
 }
