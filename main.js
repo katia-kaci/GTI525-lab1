@@ -229,6 +229,10 @@ function afficherNomsStations(value) {
     listItem.appendChild(stationButton);
     provinceContainer.appendChild(listItem);
   });
+
+
+  if (statistiqueChoisis) showStatistics();
+  else showData();
 }
 
 let previousButton = null;
