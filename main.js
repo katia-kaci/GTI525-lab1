@@ -182,6 +182,7 @@ function showProvinces() {
       this.disabled = true;
       previousSelectedButton = this;
       afficherNomsStations(this.value);
+      document.getElementById("nom").textContent = provinces[button.value];
     });
   });
 }
