@@ -1,9 +1,27 @@
 import express from 'express';
-import fetch from 'node-fetch';
+// import fetch from 'node-fetch';
+// import fs from 'fs/promises';
+import path from 'path';
 
 const app = express();
-const PORT = 5000;
-const router = express.Router();
+const PORT = process.env.PORT || 3000;
+const __dirname = path.resolve();
+
+app.use(express.static('public'))
+
+app.get('/', function (req, res) {
+  res.sendFile(path.join(__dirname, 'public/vues/accueil.html'));
+});
+app.get('/info_journaliere', function (req, res) {
+  res.sendFile(path.join(__dirname, 'public/vues/info_journaliere.html'));
+});
+app.get('/previsions_meteo', function (req, res) {
+  res.sendFile(path.join(__dirname, 'public/vues/previsions_meteo.html'));
+});
+
+app.listen(PORT, () => {
+  console.log(`Server started at http://localhost:${PORT}`);
+});
 
 // app.get('/', async (req, res) => {
 //   const { stationId } = req.query;
@@ -22,6 +40,7 @@ const router = express.Router();
 //   if (!day) {
 //     return res.status(400).send({ error: 'day is required' });
 //   }
+// });
 
 //   try {
 //     const response = await fetch(`https://climate.weather.gc.ca/climate_data/bulk_data_e.html?format=csv&stationID=${stationId}&Year=${year}Month=${month}&Day=${day}&timeframe=1&submit=%20Download+Data`);
@@ -36,35 +55,24 @@ const router = express.Router();
 //   }
 // });
 
-const fetchHistoricalWeather = async (stationId, year, month, day) => {
-  const url = `https://climate.weather.gc.ca/climate_data/bulk_data_e.html?format=csv&stationID=${stationId}&Year=${year}&Month=${month}&Day=${day}&timeframe=1&submit=%20Download+Data`;
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error(`Error fetching historical weather data: ${response.statusText}`);
-  }
-  const data = await response.text();
-  return data; // parser csv
-};
+// const fetchHistoricalWeather = async (stationId, year, month, day) => {
+//   const url = `https://climate.weather.gc.ca/climate_data/bulk_data_e.html?format=csv&stationID=${stationId}&Year=${year}&Month=${month}&Day=${day}&timeframe=1&submit=%20Download+Data`;
+//   const response = await fetch(url);
+//   if (!response.ok) {
+//     throw new Error(`Error fetching historical weather data: ${response.statusText}`);
+//   }
+//   const data = await response.text();
+//   return data; // parser csv
+// };
 
-const getHistoricalWeather = async (req, res) => {
-  const { stationId, year, month, day } = req.query;
-  try {
-    const data = await fetchHistoricalWeather(stationId, year, month, day);
-    res.json(data);
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch historical weather data' });
-  }
-};
+// const getHistoricalWeather = async (req, res) => {
+//   const { stationId, year, month, day } = req.query;
+//   try {
+//     const data = await fetchHistoricalWeather(stationId, year, month, day);
+//     res.json(data);
+//   } catch (error) {
+//     res.status(500).json({ error: 'Failed to fetch historical weather data' });
+//   }
+// };
 
-router.get('/', getHistoricalWeather);
-
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
-
-// app.get('/', (req, res) => {
-//   res.send('Test')
-// });
-
-// npm start
-// http://localhost:5000/
+// router.get('/', getHistoricalWeather);
