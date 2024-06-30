@@ -170,7 +170,18 @@ function getStations(value) {
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function showPrevisions() {
+async function showPrevisions() {
 
+    let code = "ab-50" // mettre le bon code selon stationSelectionnee et rss_url dans station_mapping.json
+
+    const response = await fetch(`/api-previsions?code=${code}`);
+    if (!response.ok) {
+        console.error(`Error fetching weather forecast : ${response.statusText}`);
+        return;
+    }
+    const donneesMeteo = await response.text();
+    console.log("DONNEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEES");
+    console.log(donneesMeteo);
+    // Exemple: https://meteo.gc.ca/rss/city/ab-50_f.xml
 
 }
