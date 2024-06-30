@@ -85,8 +85,26 @@ function updateDateFilter() {
   fromYear = Math.min(...years);
   toYear = Math.max(...years);
 
-  document.getElementById('fromYear').querySelector('option[value="' + Math.min(...years) + '"]').selected = "selected";
-  document.getElementById('toYear').querySelector('option[value="' + Math.max(...years) + '"]').selected = "selected";
+  // réinitialiser les options du select
+  let fromYearSelector = document.getElementById('fromYear');
+  let toYearSelector = document.getElementById('toYear');
+
+  fromYearSelector.options.length = 0;
+  toYearSelector.options.length = 0;
+  for (let year of years) {
+    var option = document.createElement("option");
+    option.value = year;
+    option.text = year;
+    fromYearSelector.appendChild(option);
+
+    var optionTo = document.createElement("option");
+    optionTo.value = year;
+    optionTo.text = year;
+    toYearSelector.appendChild(optionTo);
+  }
+
+  fromYearSelector.querySelector('option[value="' + Math.min(...years) + '"]').selected = "selected";
+  toYearSelector.querySelector('option[value="' + Math.max(...years) + '"]').selected = "selected";
 }
 
 function getProvinces() {
