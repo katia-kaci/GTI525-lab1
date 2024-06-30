@@ -7,8 +7,10 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const __dirname = path.resolve();
 
-// Lire le fichier station_mapping.json et le parser
-const jsonFilePath = path.join(__dirname, 'station_mapping.json'); // ou ./station_mapping.json pas sur!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+app.use(express.static('public'))
+
+// Lire et parser le fichier station_mapping.json
+const jsonFilePath = path.join(__dirname, 'station_mapping.json');
 let stationMappingData;
 fs.readFile(jsonFilePath, 'utf8', (err, data) => {
   if (err) {
@@ -17,7 +19,6 @@ fs.readFile(jsonFilePath, 'utf8', (err, data) => {
   }
   try {
     stationMappingData = JSON.parse(data);
-    console.log('Données du fichier station_mapping.json chargées avec succès.');
   } catch (parseErr) {
     console.error('Erreur lors du parsing du fichier station_mapping.json :', parseErr);
   }
@@ -50,21 +51,18 @@ async function fetchPrevisions(code) {
   return data;
 }
 
-// Routes
-app.use(express.static('public'))
-
-// pages html :
+// Routes pour les pages HTML :
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public/vues/accueil.html'));
+  res.sendFile(path.join(__dirname, 'vues/accueil.html'));
 });
 app.get('/info_journaliere', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public/vues/info_journaliere.html'));
+  res.sendFile(path.join(__dirname, 'vues/info_journaliere.html'));
 });
 app.get('/previsions_meteo', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public/vues/previsions_meteo.html'));
+  res.sendFile(path.join(__dirname, 'vues/previsions_meteo.html'));
 });
 
-// données :
+// Routes pour les données
 app.get('/station_mapping', (req, res) => {
   if (stationMappingData) {
     res.json(stationMappingData);
@@ -92,6 +90,7 @@ app.get('/api-previsions', async (req, res) => {
     res.status(500).send(error.message);
   }
 });
+
 
 app.listen(PORT, () => {
   console.log(`Server started at http://localhost:${PORT}`);

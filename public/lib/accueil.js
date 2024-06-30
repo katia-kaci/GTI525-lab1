@@ -452,7 +452,6 @@ function showStatistics() {
     checkAndReplace(qtePluie, propertiesToCheck, invalidValues);
     checkAndReplace(qteNeige, propertiesToCheck, invalidValues);
 
-
     titreTableDefeaut = '<table><tr><th>Donnée</th><th>Valeur maximale</th><th>Année</th><th>Valeur minimale</th><th>Année</th></tr>'
 
     valeurTable = '<tr><td>' + tempMoyenne.titre + '</td><td>' + tempMoyenne.valmax + '</td><td>' + tempMoyenne.anneeMax + '</td><td>' + tempMoyenne.valmin + '</td><td>' + tempMoyenne.anneeMin + '</td></tr>';

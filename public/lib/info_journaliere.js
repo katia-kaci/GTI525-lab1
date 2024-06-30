@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function () {
   for (var i = 1; i <= months.length; i++) {
     var option = document.createElement("option");
     option.value = i;
-    option.text = months[i];
+    option.text = months[i - 1];
     monthSelector.appendChild(option);
   }
 
