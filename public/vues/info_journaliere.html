@@ -49,32 +49,31 @@
         </div>
 
         <div class="buttons">
-            <ul id="listeprovince" class="scrollable-listeprovince">
-            </ul>
+            <ul id="listeprovince" class="scrollable-listeprovince"></ul>
             <span>
                 <h3 id="nom"></h3>
-                <label for="from">De:</label>
-                <select name="fromYear" id="fromYear"></select>
-                <select name="fromMonth" id="fromMonth"></select>
-                <br>
-                <label for="to">À:</label>
-                <select name="toYear" id="toYear"></select>
-                <select name="toMonth" id="toMonth"></select>
+
+                <label for="yearLabel">Année:</label>
+                <select name="year" id="year"></select>
+
+                <label for="monthLabel">Mois:</label>
+                <select name="month" id="month"></select>
+
+                <label for="dayLabel">Jour:</label>
+                <select name="day" id="day"></select>
 
                 <br>
-                <button id="showData" class="bn" onclick="showData()"> Données</button>
-                <button id="showStatistics" class="bn" onclick="showStatistics()"> Statistiques</button>
-                <button id="initDate" class="bn" onclick="initDate()"> Réinitialiser</button>
+                <button id="showHistory" class="bn" onclick="showHistory()"> Voir historique</button>
 
-                <div id="tableau" class="scrollable-listestations""></div>
+                <div id="tableau" class="scrollable-listestations"></div>
 
-      </span>
+            </span>
         </div>
 
     </div>
 </body>
 
-<script src=" main.js">
+<script src="info_journaliere.js">
 </script>
 
 </html>
