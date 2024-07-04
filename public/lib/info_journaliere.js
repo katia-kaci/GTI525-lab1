@@ -101,6 +101,8 @@ async function showHistory() {
   // il faut prendre juste les 24 premieres lignes de donneesMeteo jsp pk ca affiche plus que 24h je vais demander a la prof jeudi prochain
   // Exemple: https://climate.weather.gc.ca/climate_data/bulk_data_e.html?format=csv&stationID=51157&Year=2020&Month=01&Day=07&timeframe=1&submit=%20Download+Data
 
+  console.log(historicalDataToArray(donneesMeteo,day));
+
   let table = document.createElement('table');
   let thead = document.createElement('thead');
   let headerRow = document.createElement('tr');
@@ -315,4 +317,34 @@ function getStations(value) {
   previousButton = document.getElementById(value);
 
   showHistory();
+}
+
+
+function historicalDataToArray(data,day){
+  let listSta = [];
+  let valeurs = data.split('\n').map(e=> e.replace('\r',"").split(","));
+
+  let headers = valeurs[0];
+
+  // console.log(headers);
+  // console.log(valeurs[0]);
+
+  valeurs.splice(0,1);
+
+  let rows = valeurs;
+  // console.log(rows[0]);
+
+  let temp = rows.map(row => {
+    // const values = row.split(separator)
+    return headers.reduce((obj, actuel, i) => (obj[actuel] = row[i], obj), {})
+  });
+  // listSta = listSta.concat(temp);
+
+  console.log(temp[0]['"Day"'])
+
+  temp = temp.filter(e=> e['"Day"'] != undefined);
+  let histoData = temp.filter(e=> parseInt(e['"Day"'].replace('"',"").replace('"',"")) == day);
+  console.log(temp);
+
+  return histoData;
 }
