@@ -101,7 +101,7 @@ async function showHistory() {
   // il faut prendre juste les 24 premieres lignes de donneesMeteo jsp pk ca affiche plus que 24h je vais demander a la prof jeudi prochain
   // Exemple: https://climate.weather.gc.ca/climate_data/bulk_data_e.html?format=csv&stationID=51157&Year=2020&Month=01&Day=07&timeframe=1&submit=%20Download+Data
 
-  console.log(historicalDataToArray(donneesMeteo,day));
+  let valHistorique = historicalDataToArray(donneesMeteo,day);
 
   let table = document.createElement('table');
   let thead = document.createElement('thead');
@@ -111,34 +111,80 @@ async function showHistory() {
     'Vitesse du vent (km/h)', 'Pression atmosphérique'
   ];
 
-  headers.forEach(headerText => {
-    let th = document.createElement('th');
-    th.textContent = headerText;
-    headerRow.appendChild(th);
-  });
-  thead.appendChild(headerRow);
-  table.appendChild(thead);
-
-  let tbody = document.createElement('tbody');
-
-  for (let i = 0; i < 24; i++) {
-    let row = document.createElement('tr');
-    let cellHour = document.createElement('td');
-    cellHour.textContent = i + ":00";
-    row.appendChild(cellHour);
-
-    for (let i = 0; i < 7; i++) {
+  if(valHistorique.length>0){
+    headers.forEach(headerText => {
+      let th = document.createElement('th');
+      th.textContent = headerText;
+      headerRow.appendChild(th);
+    });
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
+  
+    let tbody = document.createElement('tbody');
+  
+    for (let i = 0; i < 24; i++) {
+      let row = document.createElement('tr');
+      let cellHour = document.createElement('td');
+      // cellHour.textContent = i + ":00";
+      cellHour.textContent = valHistorique[i]['"Time (LST)"'].replace(/"/g, '') ;
+      row.appendChild(cellHour);
+  
+      // for (let i = 0; i < 7; i++) {
+      //   let cell = document.createElement('td');
+      //   cell.textContent = "data"; // mettre ici les trucs de donneesMeteo
+      //   row.appendChild(cell);
+      // }
       let cell = document.createElement('td');
-      cell.textContent = "data"; // mettre ici les trucs de donneesMeteo
+      cell.textContent = valHistorique[i]['"Temp (°C)"'].replace(/"/g, ''); // mettre ici les trucs de donneesMeteo
       row.appendChild(cell);
+      cell = document.createElement('td');
+      cell.textContent = valHistorique[i]['"Dew Point Temp (°C)"'].replace(/"/g, ''); // mettre ici les trucs de donneesMeteo
+      row.appendChild(cell);
+      cell = document.createElement('td');
+      cell.textContent = valHistorique[i]['"Weather"'].replace(/"/g, ''); // mettre ici les trucs de donneesMeteo
+      row.appendChild(cell);
+      cell = document.createElement('td');
+      cell.textContent = valHistorique[i]['"Rel Hum (%)"'].replace(/"/g, ''); // mettre ici les trucs de donneesMeteo
+      row.appendChild(cell);
+      cell = document.createElement('td');
+      cell.textContent = valHistorique[i]['"Wind Dir (10s deg)"'].replace(/"/g, ''); // mettre ici les trucs de donneesMeteo
+      row.appendChild(cell);
+      cell = document.createElement('td');
+      cell.textContent = valHistorique[i]['"Wind Spd (km/h)"'].replace(/"/g, ''); // mettre ici les trucs de donneesMeteo
+      row.appendChild(cell);
+      cell = document.createElement('td');
+      cell.textContent = valHistorique[i]['"Stn Press (kPa)"'].replace(/"/g, ''); // mettre ici les trucs de donneesMeteo
+      row.appendChild(cell);
+      cell = document.createElement('td');
+  
+      tbody.appendChild(row);
     }
-
-    tbody.appendChild(row);
+  
+    // for (let i = 0; i < 24; i++) {
+    //   let row = document.createElement('tr');
+    //   let cellHour = document.createElement('td');
+    //   cellHour.textContent = i + ":00";
+    //   row.appendChild(cellHour);
+  
+    //   for (let i = 0; i < 7; i++) {
+    //     let cell = document.createElement('td');
+    //     cell.textContent = "data"; // mettre ici les trucs de donneesMeteo
+    //     row.appendChild(cell);
+    //   }
+  
+    //   tbody.appendChild(row);
+    // }
+    table.appendChild(tbody);
+    let tableau = document.getElementById("tableau");
+    tableau.innerHTML = '';
+    tableau.appendChild(table);
   }
-  table.appendChild(tbody);
-  let tableau = document.getElementById("tableau");
-  tableau.innerHTML = '';
-  tableau.appendChild(table);
+  else{
+    let tableau = document.getElementById("tableau");
+    tableau.innerHTML = "<h2>Aucune données historiques disponibles.</h2>";
+  }
+
+  
 }
 
 function updateDateFilter() {
@@ -321,30 +367,20 @@ function getStations(value) {
 
 
 function historicalDataToArray(data,day){
-  let listSta = [];
   let valeurs = data.split('\n').map(e=> e.replace('\r',"").split(","));
 
   let headers = valeurs[0];
 
-  // console.log(headers);
-  // console.log(valeurs[0]);
-
   valeurs.splice(0,1);
 
   let rows = valeurs;
-  // console.log(rows[0]);
 
   let temp = rows.map(row => {
-    // const values = row.split(separator)
     return headers.reduce((obj, actuel, i) => (obj[actuel] = row[i], obj), {})
   });
-  // listSta = listSta.concat(temp);
-
-  console.log(temp[0]['"Day"'])
 
   temp = temp.filter(e=> e['"Day"'] != undefined);
   let histoData = temp.filter(e=> parseInt(e['"Day"'].replace('"',"").replace('"',"")) == day);
-  console.log(temp);
 
   return histoData;
 }
