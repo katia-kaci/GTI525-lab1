@@ -96,8 +96,8 @@ async function showHistory() {
     return;
   }
   const donneesMeteo = await response.text();
-  console.log("DONNEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEES");
-  console.log(donneesMeteo);
+  // console.log("DONNEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEES");
+  // console.log(donneesMeteo);
   // il faut prendre juste les 24 premieres lignes de donneesMeteo jsp pk ca affiche plus que 24h je vais demander a la prof jeudi prochain
   // Exemple: https://climate.weather.gc.ca/climate_data/bulk_data_e.html?format=csv&stationID=51157&Year=2020&Month=01&Day=07&timeframe=1&submit=%20Download+Data
 
@@ -126,6 +126,7 @@ async function showHistory() {
       let row = document.createElement('tr');
       let cellHour = document.createElement('td');
       // cellHour.textContent = i + ":00";
+      // console.log(valHistorique[i]['"Time (LST)"'])
       cellHour.textContent = valHistorique[i]['"Time (LST)"'].replace(/"/g, '') ;
       row.appendChild(cellHour);
   
@@ -368,7 +369,6 @@ function getStations(value) {
 
 function historicalDataToArray(data,day){
   let valeurs = data.split('\n').map(e=> e.replace('\r',"").split(","));
-
   let headers = valeurs[0];
 
   valeurs.splice(0,1);
@@ -380,7 +380,17 @@ function historicalDataToArray(data,day){
   });
 
   temp = temp.filter(e=> e['"Day"'] != undefined);
-  let histoData = temp.filter(e=> parseInt(e['"Day"'].replace('"',"").replace('"',"")) == day);
-
+  let histoData = temp.filter(e=> parseInt(e['"Day"'].replace('"',"").replace('"',"")) == day)
+  histoData.map(e=>validateData(e))
   return histoData;
+}
+
+function validateData(e){
+  if(e['"Temp (°C)"'] == undefined) e['"Temp (°C)"']="";
+  if(e['"Dew Point Temp (°C)"']==undefined)e['"Dew Point Temp (°C)"']="";
+  if(e['"Weather"']==undefined||e['"Weather"'].replace(/"/g, '')=="NA")e['"Weather"']=""; 
+  if(e['"Rel Hum (%)"']==undefined)e['"Rel Hum (%)"']="";
+  if(e['"Wind Dir (10s deg)"']==undefined)e['"Wind Dir (10s deg)"']="";
+  if(e['"Wind Spd (km/h)"']==undefined)e['"Wind Spd (km/h)"']="";
+  if(e['"Stn Press (kPa)"']==undefined)e['"Stn Press (kPa)"']="";
 }
