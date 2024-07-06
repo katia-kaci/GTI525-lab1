@@ -35,45 +35,40 @@
     <script src="scripts/6633.csv.js"></script>
     <script src="scripts/6720.csv.js"></script>
 
-    <div>
-
-        <div class="navbar">
-            <a href="/">Accueil</a>
-            <a href="/info_journaliere" style="color: blue;">Informations journalières historiques</a>
-            <a href="/previsions_meteo">Prévisions météo</a>
-        </div>
-
-        <div class="header">
-            <img class="welcome" src="images/historique.png" alt="historique">
-            <div class="overlay-text">Historique</div>
-        </div>
-
-        <div class="buttons">
-            <ul id="listeprovince" class="scrollable-listeprovince"></ul>
-            <span>
-                <h3 id="nom"></h3>
-
-                <label for="yearLabel">Année:</label>
-                <select name="year" id="year"></select>
-
-                <label for="monthLabel">Mois:</label>
-                <select name="month" id="month"></select>
-
-                <label for="dayLabel">Jour:</label>
-                <select name="day" id="day"></select>
-
-                <br>
-                <button id="showHistory" class="bn" onclick="showHistory()"> Voir historique</button>
-
-                <div id="tableau" class="scrollable-listestations"></div>
-
-            </span>
-        </div>
-
+    <div class="navbar">
+        <a href="/">Accueil</a>
+        <a href="/info_journaliere" style="color: blue;">Informations journalières historiques</a>
+        <a href="/previsions_meteo">Prévisions météo</a>
     </div>
+
+    <div class="header">
+        <img class="welcome" src="images/historique.png" alt="historique">
+        <div class="overlay-text">Historique</div>
+    </div>
+
+    <div class="buttons">
+        <ul id="listeprovince" class="scrollable-listeprovince"></ul>
+        <span>
+            <h3 id="nom"></h3>
+
+            <label for="yearLabel">Année:</label>
+            <select name="year" id="year"></select>
+
+            <label for="monthLabel">Mois:</label>
+            <select name="month" id="month"></select>
+
+            <label for="dayLabel">Jour:</label>
+            <select name="day" id="day"></select>
+
+            <br>
+            <button id="showHistory" class="bn" onclick="showHistory()">Voir historique</button>
+
+            <div id="tableau" class="scrollable-listestations"></div>
+        </span>
+    </div>
+
 </body>
 
-<script src="lib/info_journaliere.js">
-</script>
+<script src="lib/info_journaliere.js"></script>
 
 </html>

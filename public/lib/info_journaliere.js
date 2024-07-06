@@ -4,7 +4,6 @@ let stationInventory = csvToArray(StationInventoryEN, '","', false);
 let provinces = getProvinces();
 let provinceSelectionnee = [];
 let stationSelectionee = stations;
-
 let codeAeroportSelectionne = "";
 
 const months = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"];
@@ -14,198 +13,6 @@ let year = Math.min(...years), month = 1, day = 1;
 showProvinces()
 let provinceId = 'province-0';
 document.getElementById(provinceId).classList.add('special');
-
-document.addEventListener('DOMContentLoaded', function () {
-  const yearSelector = document.getElementById('year');
-  const monthSelector = document.getElementById('month');
-  const daySelector = document.getElementById('day');
-
-  for (var i = 1; i <= months.length; i++) {
-    var option = document.createElement("option");
-    option.value = i;
-    option.text = months[i - 1];
-    monthSelector.appendChild(option);
-  }
-
-  for (var i = 1; i <= 31; i++) {
-    var option = document.createElement("option");
-    option.value = i;
-    option.text = i;
-    daySelector.appendChild(option);
-  }
-
-  for (let year of years) {
-    var option = document.createElement("option");
-    option.value = year;
-    option.text = year;
-    yearSelector.appendChild(option);
-  }
-
-  yearSelector.addEventListener('change', function () {
-    year = document.getElementById('year').value
-
-    // update les jours si février est sélectionné (année bissextile)
-    if (month == 2) {
-      let daySelector = document.getElementById('day');
-      daySelector.options.length = 0;
-      for (var i = 1; i <= getNbJoursDansMois(); i++) {
-        var option = document.createElement("option");
-        option.value = i;
-        option.text = i;
-        daySelector.appendChild(option);
-      }
-    }
-
-    showHistory();
-  });
-
-  monthSelector.addEventListener('change', function () {
-    month = document.getElementById('month').value
-    // update les jours selon le mois sélectionné
-    let daySelector = document.getElementById('day');
-    daySelector.options.length = 0;
-    for (var i = 1; i <= getNbJoursDansMois(); i++) {
-      var option = document.createElement("option");
-      option.value = i;
-      option.text = i;
-      daySelector.appendChild(option);
-    }
-    showHistory();
-  });
-
-  daySelector.addEventListener('change', function () {
-    day = document.getElementById('day').value
-    showHistory();
-  });
-
-});
-
-function getNbJoursDansMois() {
-  if (month == 2 && year % 4 == 0) return 29;
-  else if (month == 2) return 28;
-  else if (month == 4 || month == 6 || month == 9 || month == 11) return 30;
-  else return 31;
-}
-
-async function showHistory() {
-  let stationId = '51157'; // avec codeAeroportSelectionne (ex YUL) recuperer les station_ids dans station_mapping.json
-
-  const response = await fetch(`/api-history?stationId=${stationId}&year=${year}&month=${month}&day=${day}`);
-  if (!response.ok) {
-    console.error(`Error fetching weather history: ${response.statusText}`);
-    return;
-  }
-  const donneesMeteo = await response.text();
-  // console.log("DONNEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEES");
-  // console.log(donneesMeteo);
-  // il faut prendre juste les 24 premieres lignes de donneesMeteo jsp pk ca affiche plus que 24h je vais demander a la prof jeudi prochain
-  // Exemple: https://climate.weather.gc.ca/climate_data/bulk_data_e.html?format=csv&stationID=51157&Year=2020&Month=01&Day=07&timeframe=1&submit=%20Download+Data
-
-  let valHistorique = historicalDataToArray(donneesMeteo,day);
-
-  let table = document.createElement('table');
-  let thead = document.createElement('thead');
-  let headerRow = document.createElement('tr');
-
-  const headers = ['Heure', 'Température réelle', 'Température ressentie', 'Météo', 'Humidité', 'Direction du vent',
-    'Vitesse du vent (km/h)', 'Pression atmosphérique'
-  ];
-
-  if(valHistorique.length>0){
-    headers.forEach(headerText => {
-      let th = document.createElement('th');
-      th.textContent = headerText;
-      headerRow.appendChild(th);
-    });
-    thead.appendChild(headerRow);
-    table.appendChild(thead);
-  
-    let tbody = document.createElement('tbody');
-  
-    for (let i = 0; i < 24; i++) {
-      let row = document.createElement('tr');
-      let cellHour = document.createElement('td');
-      // cellHour.textContent = i + ":00";
-      // console.log(valHistorique[i]['"Time (LST)"'])
-      cellHour.textContent = valHistorique[i]['"Time (LST)"'].replace(/"/g, '') ;
-      row.appendChild(cellHour);
-  
-      // for (let i = 0; i < 7; i++) {
-      //   let cell = document.createElement('td');
-      //   cell.textContent = "data"; // mettre ici les trucs de donneesMeteo
-      //   row.appendChild(cell);
-      // }
-      let cell = document.createElement('td');
-      cell.textContent = valHistorique[i]['"Temp (°C)"'].replace(/"/g, ''); // mettre ici les trucs de donneesMeteo
-      row.appendChild(cell);
-      cell = document.createElement('td');
-      cell.textContent = valHistorique[i]['"Dew Point Temp (°C)"'].replace(/"/g, ''); // mettre ici les trucs de donneesMeteo
-      row.appendChild(cell);
-      cell = document.createElement('td');
-      cell.textContent = valHistorique[i]['"Weather"'].replace(/"/g, ''); // mettre ici les trucs de donneesMeteo
-      row.appendChild(cell);
-      cell = document.createElement('td');
-      cell.textContent = valHistorique[i]['"Rel Hum (%)"'].replace(/"/g, ''); // mettre ici les trucs de donneesMeteo
-      row.appendChild(cell);
-      cell = document.createElement('td');
-      cell.textContent = valHistorique[i]['"Wind Dir (10s deg)"'].replace(/"/g, ''); // mettre ici les trucs de donneesMeteo
-      row.appendChild(cell);
-      cell = document.createElement('td');
-      cell.textContent = valHistorique[i]['"Wind Spd (km/h)"'].replace(/"/g, ''); // mettre ici les trucs de donneesMeteo
-      row.appendChild(cell);
-      cell = document.createElement('td');
-      cell.textContent = valHistorique[i]['"Stn Press (kPa)"'].replace(/"/g, ''); // mettre ici les trucs de donneesMeteo
-      row.appendChild(cell);
-      cell = document.createElement('td');
-  
-      tbody.appendChild(row);
-    }
-  
-    // for (let i = 0; i < 24; i++) {
-    //   let row = document.createElement('tr');
-    //   let cellHour = document.createElement('td');
-    //   cellHour.textContent = i + ":00";
-    //   row.appendChild(cellHour);
-  
-    //   for (let i = 0; i < 7; i++) {
-    //     let cell = document.createElement('td');
-    //     cell.textContent = "data"; // mettre ici les trucs de donneesMeteo
-    //     row.appendChild(cell);
-    //   }
-  
-    //   tbody.appendChild(row);
-    // }
-    table.appendChild(tbody);
-    let tableau = document.getElementById("tableau");
-    tableau.innerHTML = '';
-    tableau.appendChild(table);
-  }
-  else{
-    let tableau = document.getElementById("tableau");
-    tableau.innerHTML = "<h2>Aucune données historiques disponibles.</h2>";
-  }
-
-  
-}
-
-function updateDateFilter() {
-  years = Array.from(new Set(stationSelectionee.map((s) => s['"Year"'].replace(/"/g, '')))).sort();
-  year = Math.min(...years);
-  month = 1;
-  day = 1;
-
-  // réinitialiser les options du select
-  let yearSelector = document.getElementById('year');
-  yearSelector.options.length = 0;
-  for (let year of years) {
-    var option = document.createElement("option");
-    option.value = year;
-    option.text = year;
-    yearSelector.appendChild(option);
-  }
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function getProvinces() {
   var provinces = Array.from(new Set(stationInventory.map(station => station['Province'])));
@@ -367,11 +174,197 @@ function getStations(value) {
 }
 
 
-function historicalDataToArray(data,day){
-  let valeurs = data.split('\n').map(e=> e.replace('\r',"").split(","));
+
+/* ----------------------- NOUVELLES FONCTIONS --------------------------------------------------*/
+
+document.addEventListener('DOMContentLoaded', function () {
+  const yearSelector = document.getElementById('year');
+  const monthSelector = document.getElementById('month');
+  const daySelector = document.getElementById('day');
+
+  for (var i = 1; i <= months.length; i++) {
+    var option = document.createElement("option");
+    option.value = i;
+    option.text = months[i - 1];
+    monthSelector.appendChild(option);
+  }
+
+  for (var i = 1; i <= 31; i++) {
+    var option = document.createElement("option");
+    option.value = i;
+    option.text = i;
+    daySelector.appendChild(option);
+  }
+
+  for (let year of years) {
+    var option = document.createElement("option");
+    option.value = year;
+    option.text = year;
+    yearSelector.appendChild(option);
+  }
+
+  yearSelector.addEventListener('change', function () {
+    year = document.getElementById('year').value
+    // update les jours si février est sélectionné (année bissextile)
+    if (month == 2) {
+      let daySelector = document.getElementById('day');
+      daySelector.options.length = 0;
+      for (var i = 1; i <= getNbJoursDansMois(); i++) {
+        var option = document.createElement("option");
+        option.value = i;
+        option.text = i;
+        daySelector.appendChild(option);
+      }
+    }
+    showHistory();
+  });
+
+  monthSelector.addEventListener('change', function () {
+    month = document.getElementById('month').value
+    // update les jours selon le mois sélectionné
+    let daySelector = document.getElementById('day');
+    daySelector.options.length = 0;
+    for (var i = 1; i <= getNbJoursDansMois(); i++) {
+      var option = document.createElement("option");
+      option.value = i;
+      option.text = i;
+      daySelector.appendChild(option);
+    }
+    showHistory();
+  });
+
+  daySelector.addEventListener('change', function () {
+    day = document.getElementById('day').value
+    showHistory();
+  });
+});
+
+function getNbJoursDansMois() {
+  if (month == 2 && year % 4 == 0) return 29;
+  else if (month == 2) return 28;
+  else if (month == 4 || month == 6 || month == 9 || month == 11) return 30;
+  else return 31;
+}
+
+async function showHistory() {
+  let stationId = '51157'; // avec codeAeroportSelectionne (ex YUL) recuperer les station_ids dans station_mapping.json
+
+  const response = await fetch(`/api-history?stationId=${stationId}&year=${year}&month=${month}&day=${day}`);
+  if (!response.ok) {
+    console.error(`Error fetching weather history: ${response.statusText}`);
+    return;
+  }
+  const donneesMeteo = await response.text();
+  // il faut prendre juste les 24 premieres lignes de donneesMeteo
+  // Exemple: https://climate.weather.gc.ca/climate_data/bulk_data_e.html?format=csv&stationID=51157&Year=2020&Month=01&Day=07&timeframe=1&submit=%20Download+Data
+
+  let valHistorique = historicalDataToArray(donneesMeteo, day);
+
+  let table = document.createElement('table');
+  let thead = document.createElement('thead');
+  let headerRow = document.createElement('tr');
+
+  const headers = ['Heure', 'Température réelle', 'Température ressentie', 'Météo', 'Humidité', 'Direction du vent',
+    'Vitesse du vent (km/h)', 'Pression atmosphérique'
+  ];
+
+  if (valHistorique.length > 0) {
+    headers.forEach(headerText => {
+      let th = document.createElement('th');
+      th.textContent = headerText;
+      headerRow.appendChild(th);
+    });
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
+
+    let tbody = document.createElement('tbody');
+
+    for (let i = 0; i < 24; i++) {
+      let row = document.createElement('tr');
+      let cellHour = document.createElement('td');
+      // cellHour.textContent = i + ":00";
+      // console.log(valHistorique[i]['"Time (LST)"'])
+      cellHour.textContent = valHistorique[i]['"Time (LST)"'].replace(/"/g, '');
+      row.appendChild(cellHour);
+
+      // for (let i = 0; i < 7; i++) {
+      //   let cell = document.createElement('td');
+      //   cell.textContent = "data"; // mettre ici les trucs de donneesMeteo
+      //   row.appendChild(cell);
+      // }
+      let cell = document.createElement('td');
+      cell.textContent = valHistorique[i]['"Temp (°C)"'].replace(/"/g, ''); // mettre ici les trucs de donneesMeteo
+      row.appendChild(cell);
+      cell = document.createElement('td');
+      cell.textContent = valHistorique[i]['"Dew Point Temp (°C)"'].replace(/"/g, ''); // mettre ici les trucs de donneesMeteo
+      row.appendChild(cell);
+      cell = document.createElement('td');
+      cell.textContent = valHistorique[i]['"Weather"'].replace(/"/g, ''); // mettre ici les trucs de donneesMeteo
+      row.appendChild(cell);
+      cell = document.createElement('td');
+      cell.textContent = valHistorique[i]['"Rel Hum (%)"'].replace(/"/g, ''); // mettre ici les trucs de donneesMeteo
+      row.appendChild(cell);
+      cell = document.createElement('td');
+      cell.textContent = valHistorique[i]['"Wind Dir (10s deg)"'].replace(/"/g, ''); // mettre ici les trucs de donneesMeteo
+      row.appendChild(cell);
+      cell = document.createElement('td');
+      cell.textContent = valHistorique[i]['"Wind Spd (km/h)"'].replace(/"/g, ''); // mettre ici les trucs de donneesMeteo
+      row.appendChild(cell);
+      cell = document.createElement('td');
+      cell.textContent = valHistorique[i]['"Stn Press (kPa)"'].replace(/"/g, ''); // mettre ici les trucs de donneesMeteo
+      row.appendChild(cell);
+      cell = document.createElement('td');
+
+      tbody.appendChild(row);
+    }
+
+    // for (let i = 0; i < 24; i++) {
+    //   let row = document.createElement('tr');
+    //   let cellHour = document.createElement('td');
+    //   cellHour.textContent = i + ":00";
+    //   row.appendChild(cellHour);
+
+    //   for (let i = 0; i < 7; i++) {
+    //     let cell = document.createElement('td');
+    //     cell.textContent = "data"; // mettre ici les trucs de donneesMeteo
+    //     row.appendChild(cell);
+    //   }
+
+    //   tbody.appendChild(row);
+    // }
+    table.appendChild(tbody);
+    let tableau = document.getElementById("tableau");
+    tableau.innerHTML = '';
+    tableau.appendChild(table);
+  }
+  else {
+    let tableau = document.getElementById("tableau");
+    tableau.innerHTML = "<h2>Aucune données historiques disponibles.</h2>";
+  }
+}
+
+function updateDateFilter() {
+  years = Array.from(new Set(stationSelectionee.map((s) => s['"Year"'].replace(/"/g, '')))).sort();
+  year = Math.min(...years);
+  month = 1;
+  day = 1;
+
+  // réinitialiser les options du select
+  let yearSelector = document.getElementById('year');
+  yearSelector.options.length = 0;
+  for (let year of years) {
+    var option = document.createElement("option");
+    option.value = year;
+    option.text = year;
+    yearSelector.appendChild(option);
+  }
+}
+
+function historicalDataToArray(data, day) {
+  let valeurs = data.split('\n').map(e => e.replace('\r', "").split(","));
   let headers = valeurs[0];
 
-  valeurs.splice(0,1);
+  valeurs.splice(0, 1);
 
   let rows = valeurs;
 
@@ -379,18 +372,18 @@ function historicalDataToArray(data,day){
     return headers.reduce((obj, actuel, i) => (obj[actuel] = row[i], obj), {})
   });
 
-  temp = temp.filter(e=> e['"Day"'] != undefined);
-  let histoData = temp.filter(e=> parseInt(e['"Day"'].replace('"',"").replace('"',"")) == day)
-  histoData.map(e=>validateData(e))
+  temp = temp.filter(e => e['"Day"'] != undefined);
+  let histoData = temp.filter(e => parseInt(e['"Day"'].replace('"', "").replace('"', "")) == day)
+  histoData.map(e => validateData(e))
   return histoData;
 }
 
-function validateData(e){
-  if(e['"Temp (°C)"'] == undefined) e['"Temp (°C)"']="";
-  if(e['"Dew Point Temp (°C)"']==undefined)e['"Dew Point Temp (°C)"']="";
-  if(e['"Weather"']==undefined||e['"Weather"'].replace(/"/g, '')=="NA")e['"Weather"']=""; 
-  if(e['"Rel Hum (%)"']==undefined)e['"Rel Hum (%)"']="";
-  if(e['"Wind Dir (10s deg)"']==undefined)e['"Wind Dir (10s deg)"']="";
-  if(e['"Wind Spd (km/h)"']==undefined)e['"Wind Spd (km/h)"']="";
-  if(e['"Stn Press (kPa)"']==undefined)e['"Stn Press (kPa)"']="";
+function validateData(e) {
+  if (e['"Temp (°C)"'] == undefined) e['"Temp (°C)"'] = "";
+  if (e['"Dew Point Temp (°C)"'] == undefined) e['"Dew Point Temp (°C)"'] = "";
+  if (e['"Weather"'] == undefined || e['"Weather"'].replace(/"/g, '') == "NA") e['"Weather"'] = "";
+  if (e['"Rel Hum (%)"'] == undefined) e['"Rel Hum (%)"'] = "";
+  if (e['"Wind Dir (10s deg)"'] == undefined) e['"Wind Dir (10s deg)"'] = "";
+  if (e['"Wind Spd (km/h)"'] == undefined) e['"Wind Spd (km/h)"'] = "";
+  if (e['"Stn Press (kPa)"'] == undefined) e['"Stn Press (kPa)"'] = "";
 }
