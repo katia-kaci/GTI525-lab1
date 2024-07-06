@@ -5,10 +5,8 @@ let provinces = getProvinces();
 let provinceSelectionnee = [];
 let stationSelectionee = stations;
 let codeAeroportSelectionne = "";
-
-const months = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"];
 let years = Array.from(new Set(stations.map((s) => s['"Year"'].replace(/"/g, '')))).sort();
-let year = Math.min(...years), month = 1, day = 1;
+let year = years[0], month = "01", day = "01";
 
 let idStationsMapper = []; // a voir si on le garde
 
@@ -181,90 +179,20 @@ function getStations(value) {
 /* ----------------------- NOUVELLES FONCTIONS --------------------------------------------------*/
 
 document.addEventListener('DOMContentLoaded', function () {
-  const yearSelector = document.getElementById('year');
-  const monthSelector = document.getElementById('month');
-  const daySelector = document.getElementById('day');
+  let date = document.getElementById("dateChoice");
+  date.min = years[0] + '-01-01'
+  date.max = years[years.length - 1] + '-12-31'
+  date.value = years[0] + '-01-01';
 
-  for (var i = 1; i <= months.length; i++) {
-    var option = document.createElement("option");
-    option.value = i;
-    option.text = months[i - 1];
-    monthSelector.appendChild(option);
-  }
-
-  for (var i = 1; i <= 31; i++) {
-    var option = document.createElement("option");
-    option.value = i;
-    option.text = i;
-    daySelector.appendChild(option);
-  }
-
-  for (let year of years) {
-    var option = document.createElement("option");
-    option.value = year;
-    option.text = year;
-    yearSelector.appendChild(option);
-  }
-
-  yearSelector.addEventListener('change', function () {
-    year = document.getElementById('year').value
-    // update les jours si février est sélectionné (année bissextile)
-    if (month == 2) {
-      let daySelector = document.getElementById('day');
-      daySelector.options.length = 0;
-      for (var i = 1; i <= getNbJoursDansMois(); i++) {
-        var option = document.createElement("option");
-        option.value = i;
-        option.text = i;
-        daySelector.appendChild(option);
-      }
-    }
-    // showHistory();
-  });
-
-  monthSelector.addEventListener('change', function () {
-    month = document.getElementById('month').value
-    // update les jours selon le mois sélectionné
-    let daySelector = document.getElementById('day');
-    daySelector.options.length = 0;
-    for (var i = 1; i <= getNbJoursDansMois(); i++) {
-      var option = document.createElement("option");
-      option.value = i;
-      option.text = i;
-      daySelector.appendChild(option);
-    }
+  date.addEventListener('change', function () {
+    let tabVal = date.value.split('-');
+    year = tabVal[0];
+    month = tabVal[1];
+    day = tabVal[2];
+    console.log(`date: ${day}/${month}/${year}`);
     showHistory();
-  });
-
-  daySelector.addEventListener('change', function () {
-    day = document.getElementById('day').value
-    showHistory();
-  });
-
-  let dateee = document.getElementById("dateChose");
-  dateee.setAttribute('min',years[0]+'-01-01');
-  dateee.setAttribute('max',years[years.length-1]+'-12-31')
-  dateee.setAttribute('value',years[0]+'-01-01')
-  dateee.addEventListener('change',function(){
-    let tabVal = dateee.value.split('-');
-    let anneeee = tabVal[0];
-    let moiiis = tabVal[1];
-    let jouurs = tabVal[2];
-    
-
-    console.log(anneeee);
-    console.log(moiiis);
-    console.log(jouurs);
   })
-
 });
-
-function getNbJoursDansMois() {
-  if (month == 2 && year % 4 == 0) return 29;
-  else if (month == 2) return 28;
-  else if (month == 4 || month == 6 || month == 9 || month == 11) return 30;
-  else return 31;
-}
 
 async function showHistory() {
   // let stationId = '51157'; // avec codeAeroportSelectionne (ex YUL) recuperer les station_ids dans station_mapping.json
@@ -368,18 +296,13 @@ async function showHistory() {
 function updateDateFilter() {
   years = Array.from(new Set(stationSelectionee.map((s) => s['"Year"'].replace(/"/g, '')))).sort();
   year = Math.min(...years);
-  month = 1;
-  day = 1;
+  month = "01";
+  day = "01";
 
-  // réinitialiser les options du select
-  let yearSelector = document.getElementById('year');
-  yearSelector.options.length = 0;
-  for (let year of years) {
-    var option = document.createElement("option");
-    option.value = year;
-    option.text = year;
-    yearSelector.appendChild(option);
-  }
+  let date = document.getElementById("dateChoice");
+  date.min = years[0] + '-01-01'
+  date.max = Math.max(...years) + '-12-31'
+  date.value = years[0] + '-01-01';
 }
 
 function historicalDataToArray(data, day) {
@@ -389,19 +312,19 @@ function historicalDataToArray(data, day) {
   valeurs.splice(0, 1);
 
   let rows = valeurs;
-console.log(headers.length)
-console.log(rows[0].length)
+  console.log(headers.length)
+  console.log(rows[0].length)
   let temp = rows.map(row => {
     // console.log('headers:');
     // console.log(headers);
     // console.log('row:');
     // console.log(row);
-    if(row.length == headers.length)
-    return headers.reduce((obj, actuel, i) => (obj[actuel] = row[i], obj), {})
+    if (row.length == headers.length)
+      return headers.reduce((obj, actuel, i) => (obj[actuel] = row[i], obj), {})
     // return headers.reduce((obj, actuel, i) => (obj[actuel] = row[i], obj), {})
     else return undefined;
   });
-  temp = temp.filter(e=> e != undefined)
+  temp = temp.filter(e => e != undefined)
   temp = temp.filter(e => e['"Day"'] != undefined);
   // console.log(temp);
   // temp = temp.filter(e => e['"Day"'] != undefined);
