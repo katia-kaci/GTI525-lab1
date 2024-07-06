@@ -219,7 +219,7 @@ document.addEventListener('DOMContentLoaded', function () {
         daySelector.appendChild(option);
       }
     }
-    showHistory();
+    // showHistory();
   });
 
   monthSelector.addEventListener('change', function () {
@@ -359,10 +359,10 @@ async function showHistory() {
     tableau.innerHTML = '';
     tableau.appendChild(table);
   }
-  else {
-    let tableau = document.getElementById("tableau");
-    tableau.innerHTML = "<h2>Aucune données historiques disponibles.</h2>";
-  }
+  // else {
+  //   let tableau = document.getElementById("tableau");
+  //   tableau.innerHTML = "<h2>Aucune données historiques disponibles.</h2>";
+  // }
 }
 
 function updateDateFilter() {
@@ -389,16 +389,26 @@ function historicalDataToArray(data, day) {
   valeurs.splice(0, 1);
 
   let rows = valeurs;
-
+console.log(headers.length)
+console.log(rows[0].length)
   let temp = rows.map(row => {
-    // if(row.length == headers.length)
+    // console.log('headers:');
+    // console.log(headers);
+    // console.log('row:');
+    // console.log(row);
+    if(row.length == headers.length)
     return headers.reduce((obj, actuel, i) => (obj[actuel] = row[i], obj), {})
+    // return headers.reduce((obj, actuel, i) => (obj[actuel] = row[i], obj), {})
+    else return undefined;
   });
-  // temp = temp.filter(e=> e != undefined)
-  // console.log(temp);
+  temp = temp.filter(e=> e != undefined)
   temp = temp.filter(e => e['"Day"'] != undefined);
+  // console.log(temp);
+  // temp = temp.filter(e => e['"Day"'] != undefined);
   let histoData = temp.filter(e => parseInt(e['"Day"'].replace('"', "").replace('"', "")) == day)
-  histoData.map(e => validateData(e))
+  // let histoData = temp;
+  // histoData.map(e => validateData(e))
+  console.log(histoData);
   return histoData;
 }
 
