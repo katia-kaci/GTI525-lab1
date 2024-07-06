@@ -11,7 +11,7 @@ showProvinces()
 let provinceId = 'province-0';
 document.getElementById(provinceId).classList.add('special');
 
-showPrevisions();
+// showPrevisions();
 
 function getProvinces() {
     var provinces = Array.from(new Set(stationInventory.map(station => station['Province'])));
@@ -176,10 +176,8 @@ function getStations(value) {
 /* ----------------------- NOUVELLES FONCTIONS --------------------------------------------------*/
 
 async function showPrevisions() {
-    // avec codeAeroportSelectionne (ex YUL) recuperer les station_ids dans station_mapping.json
-    let code = "ab-50" // mettre le bon code selon stationSelectionnee et rss_url dans station_mapping.json
-
-    const response = await fetch(`/api-previsions?code=${code}`);
+    const rss_feed = stationJsonMap[codeAeroportSelectionne]['rss_feed'];
+    const response = await fetch(`/api-previsions?rss_feed=${rss_feed}`);
     if (!response.ok) {
         console.error(`Error fetching weather forecast : ${response.statusText}`);
         return;
@@ -192,29 +190,36 @@ async function showPrevisions() {
         return;
     }
 
-    document.getElementById("station-name").textContent = "station name"; // changer
+    document.getElementById("station-name").textContent = xmlDoc.getElementsByTagName("title")[0].textContent;
     document.getElementById("station-name").href = xmlDoc.getElementsByTagName("link")[0].getAttribute("href");
-    document.getElementById("updated").textContent = xmlDoc.getElementsByTagName("updated")[0].innerHTML;
+    document.getElementById("updated").textContent = xmlDoc.getElementsByTagName("updated")[0].textContent;
 
     const entries = xmlDoc.getElementsByTagName("entry");
     for (let entry of entries) {
         const category = entry.getElementsByTagName("category")[0].getAttribute("term");
         switch (category) {
             case "Veilles et avertissements":
-                document.getElementById("veilles-et-avertissements").innerHTML = entry.getElementsByTagName("summary")[0].innerHTML;
+                document.getElementById("veilles-et-avertissements").textContent = entry.getElementsByTagName("summary")[0].textContent;
                 break;
             case "Conditions actuelles":
-                document.getElementById("conditions-actuelles").innerHTML = entry.getElementsByTagName("summary")[0].innerHTML.replace(']]>', '').replace('<![CDATA[', '');
+                document.getElementById("conditions-actuelles").textContent = entry.getElementsByTagName("summary")[0].textContent.replace(']]>', '').replace('<![CDATA[', '');
                 break;
             case "Prévisions météo":
                 var previsionSommaire = document.createElement("li");
-                previsionSommaire.textContent = entry.getElementsByTagName("title")[0].innerHTML;
+                previsionSommaire.textContent = entry.getElementsByTagName("title")[0].textContent;
                 document.getElementById("previsions-sommaires").appendChild(previsionSommaire);
 
                 var previsionDetaillee = document.createElement("li");
-                previsionDetaillee.textContent = entry.getElementsByTagName("summary")[0].innerHTML;
+                previsionDetaillee.textContent = entry.getElementsByTagName("summary")[0].textContent;
                 document.getElementById("previsions-detaillees").appendChild(previsionDetaillee);
                 break;
         }
     }
 }
+
+let stationJsonMap = [];
+document.addEventListener('DOMContentLoaded', async function () {
+    const response = await fetch('/station_mapping');
+    stationJsonMap = await response.json()
+    // console.log("Station JSON Map:", stationJsonMap);
+});
