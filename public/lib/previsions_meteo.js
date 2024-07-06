@@ -6,12 +6,14 @@ let provinceSelectionnee = [];
 let stationSelectionee = stations;
 let codeAeroportSelectionne = "";
 const parser = new DOMParser();
+const monthNames = [
+    "janvier", "février", "mars", "avril", "mai", "juin",
+    "juillet", "août", "septembre", "octobre", "novembre", "décembre"
+];
 
 showProvinces()
 let provinceId = 'province-0';
 document.getElementById(provinceId).classList.add('special');
-
-// showPrevisions();
 
 function getProvinces() {
     var provinces = Array.from(new Set(stationInventory.map(station => station['Province'])));
@@ -107,6 +109,8 @@ function showProvinces() {
             previousSelectedButton = this;
             afficherNomsStations(this.value);
             document.getElementById("nom").textContent = provinces[button.value];
+            codeAeroportSelectionne = "null";
+            showPrevisions();
         });
     });
 }
@@ -176,6 +180,12 @@ function getStations(value) {
 /* ----------------------- NOUVELLES FONCTIONS --------------------------------------------------*/
 
 async function showPrevisions() {
+    if (codeAeroportSelectionne == "null") {
+        document.getElementById("infos-previsions").style.visibility = "hidden";
+        return;
+    }
+    document.getElementById("infos-previsions").style.visibility = "visible";
+
     const rss_feed = stationJsonMap[codeAeroportSelectionne]['rss_feed'];
     const response = await fetch(`/api-previsions?rss_feed=${rss_feed}`);
     if (!response.ok) {
@@ -192,7 +202,7 @@ async function showPrevisions() {
 
     document.getElementById("station-name").textContent = xmlDoc.getElementsByTagName("title")[0].textContent;
     document.getElementById("station-name").href = xmlDoc.getElementsByTagName("link")[0].getAttribute("href");
-    document.getElementById("updated").textContent = xmlDoc.getElementsByTagName("updated")[0].textContent;
+    document.getElementById("updated").textContent = getDate(xmlDoc.getElementsByTagName("updated")[0].textContent);
 
     const entries = xmlDoc.getElementsByTagName("entry");
     for (let entry of entries) {
@@ -202,7 +212,7 @@ async function showPrevisions() {
                 document.getElementById("veilles-et-avertissements").textContent = entry.getElementsByTagName("summary")[0].textContent;
                 break;
             case "Conditions actuelles":
-                document.getElementById("conditions-actuelles").textContent = entry.getElementsByTagName("summary")[0].textContent.replace(']]>', '').replace('<![CDATA[', '');
+                document.getElementById("conditions-actuelles").innerHTML = entry.getElementsByTagName("summary")[0].textContent.replace(']]>', '').replace('<![CDATA[', '');
                 break;
             case "Prévisions météo":
                 var previsionSommaire = document.createElement("li");
@@ -223,3 +233,17 @@ document.addEventListener('DOMContentLoaded', async function () {
     stationJsonMap = await response.json()
     // console.log("Station JSON Map:", stationJsonMap);
 });
+
+function getDate(dateString) {
+    let date = new Date(dateString);
+    let day = date.getUTCDate();
+    let month = monthNames[date.getUTCMonth()]
+    let year = date.getUTCFullYear();
+    let hours = date.getUTCHours();
+    let minutes = date.getUTCMinutes();
+    let seconds = date.getUTCSeconds();
+    minutes = minutes < 10 ? '0' + minutes : minutes;
+    seconds = seconds < 10 ? '0' + seconds : seconds;
+    day = day < 10 ? '0' + day : day;
+    return `${day} ${month} ${year} à ${hours}:${minutes}:${seconds} (${dateString})`;
+}
