@@ -4,6 +4,8 @@ let stationInventory = csvToArray(StationInventoryEN, '","', false);
 let provinces = getProvinces();
 let provinceSelectionnee = [];
 let stationSelectionee = stations;
+let codeAeroportSelectionne = "";
+const parser = new DOMParser();
 
 showProvinces()
 let provinceId = 'province-0';
@@ -160,6 +162,7 @@ function getStations(value) {
     stationSelectionee = provinceSelectionnee.filter((e) => e['"Station Name"'].replace(/"/g, '') === value);
 
     document.getElementById("nom").textContent = `${value} (${getCodeAeroport(value)})`;
+    codeAeroportSelectionne = getCodeAeroport(value);
 
     if (previousButton !== null) previousButton.classList.remove('special');
     document.getElementById(value).classList.add('special');
@@ -168,11 +171,14 @@ function getStations(value) {
     showPrevisions();
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+/* ----------------------- NOUVELLES FONCTIONS --------------------------------------------------*/
 
 async function showPrevisions() {
-
+    // avec codeAeroportSelectionne (ex YUL) recuperer les station_ids dans station_mapping.json
     let code = "ab-50" // mettre le bon code selon stationSelectionnee et rss_url dans station_mapping.json
+    // Exemple: https://meteo.gc.ca/rss/city/ab-50_f.xml
 
     const response = await fetch(`/api-previsions?code=${code}`);
     if (!response.ok) {
@@ -180,8 +186,46 @@ async function showPrevisions() {
         return;
     }
     const donneesMeteo = await response.text();
-    console.log("DONNEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEES");
-    console.log(donneesMeteo);
-    // Exemple: https://meteo.gc.ca/rss/city/ab-50_f.xml
 
+    const xmlDoc = parser.parseFromString(donneesMeteo, "application/xml");
+    if (xmlDoc.getElementsByTagName("parsererror").length > 0) {
+        console.error("Error parsing XML");
+        return;
+    }
+    const namespace = "http://www.w3.org/2005/Atom";
+    // ne pas hardcoder
+    // console.log("namespace : ", xmlDoc.getElementsByTagNameNS(null, "feed")[0].getAttribute("xmlns"));
+    // console.log("namespace : ", xmlDoc.getElementsByTagName("feed")[0].getAttribute("xmlns"));
+
+    document.getElementById("station-name").textContent = "station name"; // changer
+    document.getElementById("link-related").href = xmlDoc.getElementsByTagNameNS(namespace, "link")[0].getAttribute("href");
+    // document.getElementById("link-related").textContent = xmlDoc.getElementsByTagNameNS(namespace, "link")[0].getAttribute("href");
+    document.getElementById("updated").textContent = xmlDoc.getElementsByTagNameNS(namespace, "updated")[0].innerHTML;
+    // verifier si cest la bonne date
+    // console.log("updated 0 ", xmlDoc.getElementsByTagNameNS(namespace, "updated")[0]);
+    // console.log("updated 1", xmlDoc.getElementsByTagNameNS(namespace, "updated")[1]);
+    // console.log("updated 2 ", xmlDoc.getElementsByTagNameNS(namespace, "updated")[2]);
+    // console.log("updated 3 ", xmlDoc.getElementsByTagNameNS(namespace, "updated")[3]);
+
+    const entries = xmlDoc.getElementsByTagNameNS(namespace, "entry");
+    for (let entry of entries) {
+        const category = entry.getElementsByTagNameNS(namespace, "category")[0].getAttribute("term");
+        switch (category) {
+            case "Veilles et avertissements":
+                document.getElementById("veilles-et-avertissements").innerHTML = entry.getElementsByTagNameNS(namespace, "summary")[0].innerHTML;
+                break;
+            case "Conditions actuelles":
+                document.getElementById("conditions-actuelles").innerHTML = entry.getElementsByTagNameNS(namespace, "summary")[0].innerHTML;
+                break;
+            case "Prévisions météo":
+                var previsionSommaire = document.createElement("li");
+                previsionSommaire.textContent = entry.getElementsByTagNameNS(namespace, "title")[0].innerHTML;
+                document.getElementById("previsions-sommaires").appendChild(previsionSommaire);
+
+                var previsionDetaillee = document.createElement("li");
+                previsionDetaillee.textContent = entry.getElementsByTagNameNS(namespace, "summary")[0].innerHTML;
+                document.getElementById("previsions-detaillees").appendChild(previsionDetaillee);
+                break;
+        }
+    }
 }
