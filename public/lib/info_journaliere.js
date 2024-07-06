@@ -240,6 +240,23 @@ document.addEventListener('DOMContentLoaded', function () {
     day = document.getElementById('day').value
     showHistory();
   });
+
+  let dateee = document.getElementById("dateChose");
+  dateee.setAttribute('min',years[0]+'-01-01');
+  dateee.setAttribute('max',years[years.length-1]+'-12-31')
+  dateee.setAttribute('value',years[0]+'-01-01')
+  dateee.addEventListener('change',function(){
+    let tabVal = dateee.value.split('-');
+    let anneeee = tabVal[0];
+    let moiiis = tabVal[1];
+    let jouurs = tabVal[2];
+    
+
+    console.log(anneeee);
+    console.log(moiiis);
+    console.log(jouurs);
+  })
+
 });
 
 function getNbJoursDansMois() {
