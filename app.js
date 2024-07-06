@@ -39,9 +39,8 @@ async function fetchHistoricalWeather(stationId, year, month, day) {
   return data;
 }
 
-async function fetchPrevisions(code) {
-  const url = `https://meteo.gc.ca/rss/city/${code}_f.xml`;
-  const data = await fetch(url)
+async function fetchPrevisions(rss_feed) {
+  const data = await fetch(rss_feed)
     .then(response => {
       if (!response.ok) {
         throw new Error(`Error fetching weather forecast data: ${response.statusText}`);
@@ -90,15 +89,14 @@ app.get('/api-history', async (req, res) => {
 });
 
 app.get('/api-previsions', async (req, res) => {
-  const { code } = req.query;
+  const { rss_feed } = req.query;
   try {
-    const data = await fetchPrevisions(code);
+    const data = await fetchPrevisions(rss_feed);
     res.send(data);
   } catch (error) {
     res.status(500).send(error.message);
   }
 });
-
 
 app.listen(PORT, () => {
   console.log(`Server started at http://localhost:${PORT}`);

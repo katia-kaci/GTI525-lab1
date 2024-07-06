@@ -412,7 +412,7 @@ function validateData(e) {
   if (e['"Stn Press (kPa)"'] == undefined) e['"Stn Press (kPa)"'] = "";
 }
 
-async function getStationsInJson(code){
+async function getStationsInJson(code) {
   const response = await fetch('/station_mapping');
   let stationJsonMap = await response.json()
 
