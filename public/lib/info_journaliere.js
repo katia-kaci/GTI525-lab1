@@ -10,6 +10,8 @@ const months = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet"
 let years = Array.from(new Set(stations.map((s) => s['"Year"'].replace(/"/g, '')))).sort();
 let year = Math.min(...years), month = 1, day = 1;
 
+let idStationsMapper = []; // a voir si on le garde
+
 showProvinces()
 let provinceId = 'province-0';
 document.getElementById(provinceId).classList.add('special');
@@ -169,7 +171,8 @@ function getStations(value) {
   if (previousButton !== null) previousButton.classList.remove('special');
   document.getElementById(value).classList.add('special');
   previousButton = document.getElementById(value);
-
+  //**** */
+  getStationsInJson(codeAeroportSelectionne);
   showHistory();
 }
 
@@ -247,7 +250,9 @@ function getNbJoursDansMois() {
 }
 
 async function showHistory() {
-  let stationId = '51157'; // avec codeAeroportSelectionne (ex YUL) recuperer les station_ids dans station_mapping.json
+  // let stationId = '51157'; // avec codeAeroportSelectionne (ex YUL) recuperer les station_ids dans station_mapping.json
+
+  let stationId = idStationsMapper[0]; //pour l'instant mais je vais faire tt les stations après
 
   const response = await fetch(`/api-history?stationId=${stationId}&year=${year}&month=${month}&day=${day}`);
   if (!response.ok) {
@@ -369,9 +374,11 @@ function historicalDataToArray(data, day) {
   let rows = valeurs;
 
   let temp = rows.map(row => {
+    // if(row.length == headers.length)
     return headers.reduce((obj, actuel, i) => (obj[actuel] = row[i], obj), {})
   });
-
+  // temp = temp.filter(e=> e != undefined)
+  // console.log(temp);
   temp = temp.filter(e => e['"Day"'] != undefined);
   let histoData = temp.filter(e => parseInt(e['"Day"'].replace('"', "").replace('"', "")) == day)
   histoData.map(e => validateData(e))
@@ -386,4 +393,11 @@ function validateData(e) {
   if (e['"Wind Dir (10s deg)"'] == undefined) e['"Wind Dir (10s deg)"'] = "";
   if (e['"Wind Spd (km/h)"'] == undefined) e['"Wind Spd (km/h)"'] = "";
   if (e['"Stn Press (kPa)"'] == undefined) e['"Stn Press (kPa)"'] = "";
+}
+
+async function getStationsInJson(code){
+  const response = await fetch('/station_mapping');
+  let stationJsonMap = await response.json()
+
+  idStationsMapper = stationJsonMap[code]['station_ids'];
 }

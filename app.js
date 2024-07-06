@@ -2,6 +2,7 @@ import express from 'express';
 import fetch from 'node-fetch';
 import fs from 'fs/promises';
 import path from 'path';
+import test from './station_mapping.json' assert { type: 'json' }; // a revoir
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -64,11 +65,18 @@ app.get('/previsions_meteo', (req, res) => {
 
 // Routes pour les données
 app.get('/station_mapping', (req, res) => {
-  if (stationMappingData) {
-    res.json(stationMappingData);
+  //possible que ce soit pas la bonne facon de faire mais ca marche pour l'instant.
+  // console.log(test);
+  if (test) {
+    res.json(test);
   } else {
     res.status(500).send('Les données du fichier station_mapping.json ne sont pas disponibles.');
   }
+  // if (stationMappingData) {
+  //   res.json(stationMappingData);
+  // } else {
+  //   res.status(500).send('Les données du fichier station_mapping.json ne sont pas disponibles.');
+  // }
 });
 
 app.get('/api-history', async (req, res) => {
