@@ -18,7 +18,7 @@ document.getElementById(provinceId).classList.add('special');
 function getProvinces() {
     var provinces = Array.from(new Set(stationInventory.map(station => station['Province'])));
     provinces.sort().pop();
-    return ["Toutes les stations"].concat(provinces);
+    return provinces;
 }
 
 function csvToArray(data, separator, skipLigne1) {
@@ -186,52 +186,60 @@ async function showPrevisions() {
     }
     document.getElementById("infos-previsions").style.visibility = "visible";
 
-    const rss_feed = stationJsonMap[codeAeroportSelectionne]['rss_feed'];
-    const response = await fetch(`/api-previsions?rss_feed=${rss_feed}`);
-    if (!response.ok) {
-        console.error(`Error fetching weather forecast : ${response.statusText}`);
-        return;
-    }
-    const donneesMeteo = await response.text();
+    try {
+        const rss_feed = stationJsonMap[codeAeroportSelectionne]?.rss_feed;
+        if (!rss_feed) throw new Error('RSS feed not found for the selected airport.');
 
-    const xmlDoc = parser.parseFromString(donneesMeteo, "application/xml");
-    if (xmlDoc.getElementsByTagName("parsererror").length > 0) {
-        console.error("Error parsing XML");
-        return;
-    }
+        const response = await fetch(`/api-previsions?rss_feed=${rss_feed}`);
+        if (!response.ok) throw new Error(`Error fetching weather forecast: ${response.statusText}`);
 
-    document.getElementById("station-name").textContent = xmlDoc.getElementsByTagName("title")[0].textContent;
-    document.getElementById("station-name").href = xmlDoc.getElementsByTagName("link")[0].getAttribute("href");
-    document.getElementById("updated").textContent = getDate(xmlDoc.getElementsByTagName("updated")[0].textContent);
+        const donneesMeteo = await response.text();
 
-    const entries = xmlDoc.getElementsByTagName("entry");
-    for (let entry of entries) {
-        const category = entry.getElementsByTagName("category")[0].getAttribute("term");
-        switch (category) {
-            case "Veilles et avertissements":
-                document.getElementById("veilles-et-avertissements").textContent = entry.getElementsByTagName("summary")[0].textContent;
-                break;
-            case "Conditions actuelles":
-                document.getElementById("conditions-actuelles").innerHTML = entry.getElementsByTagName("summary")[0].textContent.replace(']]>', '').replace('<![CDATA[', '');
-                break;
-            case "Prévisions météo":
-                var previsionSommaire = document.createElement("li");
-                previsionSommaire.textContent = entry.getElementsByTagName("title")[0].textContent;
-                document.getElementById("previsions-sommaires").appendChild(previsionSommaire);
+        const xmlDoc = parser.parseFromString(donneesMeteo, "application/xml");
+        if (xmlDoc.getElementsByTagName("parsererror").length > 0) throw new Error("Error parsing XML");
 
-                var previsionDetaillee = document.createElement("li");
-                previsionDetaillee.textContent = entry.getElementsByTagName("summary")[0].textContent;
-                document.getElementById("previsions-detaillees").appendChild(previsionDetaillee);
-                break;
+        document.getElementById("station-name").textContent = xmlDoc.getElementsByTagName("title")[0].textContent;
+        document.getElementById("station-name").href = xmlDoc.getElementsByTagName("link")[0].getAttribute("href");
+        document.getElementById("updated").textContent = getDate(xmlDoc.getElementsByTagName("updated")[0].textContent);
+
+        const entries = xmlDoc.getElementsByTagName("entry");
+        for (let entry of entries) {
+            const category = entry.getElementsByTagName("category")[0].getAttribute("term");
+            const summary = entry.getElementsByTagName("summary")[0].textContent;
+
+            switch (category) {
+                case "Veilles et avertissements":
+                    document.getElementById("veilles-et-avertissements").textContent = summary;
+                    break;
+                case "Conditions actuelles":
+                    document.getElementById("conditions-actuelles").innerHTML = summary.replace(']]>', '').replace('<![CDATA[', '');
+                    break;
+                case "Prévisions météo":
+                    var previsionSommaire = document.createElement("li");
+                    previsionSommaire.textContent = entry.getElementsByTagName("title")[0].textContent;
+                    document.getElementById("previsions-sommaires").appendChild(previsionSommaire);
+
+                    var previsionDetaillee = document.createElement("li");
+                    previsionDetaillee.textContent = summary;
+                    document.getElementById("previsions-detaillees").appendChild(previsionDetaillee);
+                    break;
+            }
         }
+    }
+    catch (error) {
+        console.error(error.message);
     }
 }
 
-let stationJsonMap = [];
+let stationJsonMap = {};
 document.addEventListener('DOMContentLoaded', async function () {
-    const response = await fetch('/station_mapping');
-    stationJsonMap = await response.json()
-    // console.log("Station JSON Map:", stationJsonMap);
+    try {
+        const response = await fetch('/station_mapping');
+        if (!response.ok) throw new Error(`Error fetching station mapping: ${response.statusText}`);
+        stationJsonMap = await response.json();
+    } catch (error) {
+        console.error(error.message);
+    }
 });
 
 function getDate(dateString) {
