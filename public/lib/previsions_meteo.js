@@ -215,12 +215,13 @@ async function showPrevisions() {
                     document.getElementById("conditions-actuelles").innerHTML = summary.replace(']]>', '').replace('<![CDATA[', '');
                     break;
                 case "Prévisions météo":
+                    let sommaire = entry.getElementsByTagName("title")[0].textContent;
                     var previsionSommaire = document.createElement("li");
-                    previsionSommaire.textContent = entry.getElementsByTagName("title")[0].textContent;
+                    previsionSommaire.textContent = sommaire;
                     document.getElementById("previsions-sommaires").appendChild(previsionSommaire);
 
                     var previsionDetaillee = document.createElement("li");
-                    previsionDetaillee.textContent = summary;
+                    previsionDetaillee.textContent = sommaire.split(':')[0] + ': ' + summary;
                     document.getElementById("previsions-detaillees").appendChild(previsionDetaillee);
                     break;
             }
