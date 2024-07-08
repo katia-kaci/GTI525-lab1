@@ -196,19 +196,46 @@ document.addEventListener('DOMContentLoaded', function () {
 
 async function showHistory() {
   // let stationId = '51157'; // avec codeAeroportSelectionne (ex YUL) recuperer les station_ids dans station_mapping.json
-
-  let stationId = idStationsMapper[0]; //pour l'instant mais je vais faire tt les stations après
-
-  const response = await fetch(`/api-history?stationId=${stationId}&year=${year}&month=${month}&day=${day}`);
-  if (!response.ok) {
-    console.error(`Error fetching weather history: ${response.statusText}`);
-    return;
-  }
-  const donneesMeteo = await response.text();
+ 
   // il faut prendre juste les 24 premieres lignes de donneesMeteo
   // Exemple: https://climate.weather.gc.ca/climate_data/bulk_data_e.html?format=csv&stationID=51157&Year=2020&Month=01&Day=07&timeframe=1&submit=%20Download+Data
 
-  let valHistorique = historicalDataToArray(donneesMeteo, day);
+  // let stationId = idStationsMapper[0]; //pour l'instant mais je vais faire tt les stations après
+  // const response = await fetch(`/api-history?stationId=${stationId}&year=${year}&month=${month}&day=${day}`);
+  // if (!response.ok) {
+  //   console.error(`Error fetching weather history: ${response.statusText}`);
+  //   return;
+  // }
+  // const donneesMeteo = await response.text();
+  // let valHistorique = historicalDataToArray(donneesMeteo, day);
+  let valHistorique = [];
+
+  for(let i=0; i<idStationsMapper.length;i++){
+    let stationId = idStationsMapper[i]; //pour l'instant mais je vais faire tt les stations après
+    const response = await fetch(`/api-history?stationId=${stationId}&year=${year}&month=${month}&day=${day}`);
+    if (!response.ok) {
+      console.error(`Error fetching weather history: ${response.statusText}`);
+      return;
+    }
+    const donneesMeteo = await response.text();
+    let temp = historicalDataToArray(donneesMeteo, day);
+    if(temp.length == 24){
+      valHistorique = temp;
+      break;
+    }
+    else if(i==idStationsMapper.length-1){
+      valHistorique = temp;
+    }
+  }
+
+  if(valHistorique.length ==0){
+    valHistorique = emptyValues();
+  }
+  else valHistorique.map(e=> cleaningData(e));
+  
+  console.log(valHistorique)
+  
+
 
   let table = document.createElement('table');
   let thead = document.createElement('thead');
@@ -312,30 +339,37 @@ function historicalDataToArray(data, day) {
   valeurs.splice(0, 1);
 
   let rows = valeurs;
-  console.log(headers.length)
-  console.log(rows[0].length)
   let temp = rows.map(row => {
-    // console.log('headers:');
-    // console.log(headers);
-    // console.log('row:');
-    // console.log(row);
     if (row.length == headers.length)
       return headers.reduce((obj, actuel, i) => (obj[actuel] = row[i], obj), {})
-    // return headers.reduce((obj, actuel, i) => (obj[actuel] = row[i], obj), {})
-    else return undefined;
+    return headers.reduce((obj, actuel, i) => (obj[actuel] = row[i], obj), {})
   });
   temp = temp.filter(e => e != undefined)
   temp = temp.filter(e => e['"Day"'] != undefined);
-  // console.log(temp);
-  // temp = temp.filter(e => e['"Day"'] != undefined);
+  console.log(day)
   let histoData = temp.filter(e => parseInt(e['"Day"'].replace('"', "").replace('"', "")) == day)
-  // let histoData = temp;
-  // histoData.map(e => validateData(e))
-  console.log(histoData);
+  histoData = histoData.filter(e => validateData(e))
   return histoData;
 }
 
 function validateData(e) {
+  if (e['"Temp (°C)"'] == undefined && (e['"Dew Point Temp (°C)"'] == undefined)
+  && (e['"Weather"'] == undefined || e['"Weather"'].replace(/"/g, '') == "NA")
+  &&  e['"Rel Hum (%)"'] == undefined && e['"Wind Dir (10s deg)"'] == undefined
+  && e['"Wind Spd (km/h)"'] == undefined && e['"Stn Press (kPa)"'] == undefined)
+  return false;
+
+  return true;
+}
+
+async function getStationsInJson(code) {
+  const response = await fetch('/station_mapping');
+  let stationJsonMap = await response.json()
+
+  idStationsMapper = stationJsonMap[code]['station_ids'];
+}
+
+function cleaningData(e) {
   if (e['"Temp (°C)"'] == undefined) e['"Temp (°C)"'] = "";
   if (e['"Dew Point Temp (°C)"'] == undefined) e['"Dew Point Temp (°C)"'] = "";
   if (e['"Weather"'] == undefined || e['"Weather"'].replace(/"/g, '') == "NA") e['"Weather"'] = "";
@@ -345,9 +379,39 @@ function validateData(e) {
   if (e['"Stn Press (kPa)"'] == undefined) e['"Stn Press (kPa)"'] = "";
 }
 
-async function getStationsInJson(code) {
-  const response = await fetch('/station_mapping');
-  let stationJsonMap = await response.json()
+function emptyValues(){
+  let table = [];
+  let ajout;
 
-  idStationsMapper = stationJsonMap[code]['station_ids'];
+  for(i=0;i<24;i++){
+    if(i<10){
+      ajout = {
+        '"Time (LST)"':'0'+i+':00',
+        '"Temp (°C)"': "",
+        '"Dew Point Temp (°C)"': "",
+        '"Weather"': "",
+        '"Rel Hum (%)"': "",
+        '"Wind Dir (10s deg)"': "",
+        '"Wind Spd (km/h)"': "",
+        '"Stn Press (kPa)"': "",
+      } 
+    }
+    else{
+      ajout = {
+        '"Time (LST)"': i+'00',
+        '"Temp (°C)"': "",
+        '"Dew Point Temp (°C)"': "",
+        '"Weather"': "",
+        '"Rel Hum (%)"': "",
+        '"Wind Dir (10s deg)"': "",
+        '"Wind Spd (km/h)"': "",
+        '"Stn Press (kPa)"': "",
+      } 
+    }
+    
+    console.log(ajout['"Stn Press (kPa)"']);
+    table.push(ajout);
+  }
+
+  return table;
 }
