@@ -16,6 +16,7 @@ document.getElementById(provinceId).classList.add('special');
 
 function getProvinces() {
   var provinces = Array.from(new Set(stationInventory.map(station => station['Province'])));
+  provinces = provinces.filter(province => province !== 'NUNAVUT' && province !== "NORTHWEST TERRITORIES" && province !== "YUKON TERRITORY" && province !== "PRINCE EDWARD ISLAND");
   provinces.sort().pop();
   return ["Toutes les stations"].concat(provinces);
 }
@@ -196,7 +197,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 async function showHistory() {
   // let stationId = '51157'; // avec codeAeroportSelectionne (ex YUL) recuperer les station_ids dans station_mapping.json
- 
+
   // il faut prendre juste les 24 premieres lignes de donneesMeteo
   // Exemple: https://climate.weather.gc.ca/climate_data/bulk_data_e.html?format=csv&stationID=51157&Year=2020&Month=01&Day=07&timeframe=1&submit=%20Download+Data
 
@@ -210,7 +211,7 @@ async function showHistory() {
   // let valHistorique = historicalDataToArray(donneesMeteo, day);
   let valHistorique = [];
 
-  for(let i=0; i<idStationsMapper.length;i++){
+  for (let i = 0; i < idStationsMapper.length; i++) {
     let stationId = idStationsMapper[i]; //pour l'instant mais je vais faire tt les stations après
     const response = await fetch(`/api-history?stationId=${stationId}&year=${year}&month=${month}&day=${day}`);
     if (!response.ok) {
@@ -219,22 +220,22 @@ async function showHistory() {
     }
     const donneesMeteo = await response.text();
     let temp = historicalDataToArray(donneesMeteo, day);
-    if(temp.length == 24){
+    if (temp.length == 24) {
       valHistorique = temp;
       break;
     }
-    else if(i==idStationsMapper.length-1){
+    else if (i == idStationsMapper.length - 1) {
       valHistorique = temp;
     }
   }
 
-  if(valHistorique.length ==0){
+  if (valHistorique.length == 0) {
     valHistorique = emptyValues();
   }
-  else valHistorique.map(e=> cleaningData(e));
-  
+  else valHistorique.map(e => cleaningData(e));
+
   console.log(valHistorique)
-  
+
 
 
   let table = document.createElement('table');
@@ -354,10 +355,10 @@ function historicalDataToArray(data, day) {
 
 function validateData(e) {
   if (e['"Temp (°C)"'] == undefined && (e['"Dew Point Temp (°C)"'] == undefined)
-  && (e['"Weather"'] == undefined || e['"Weather"'].replace(/"/g, '') == "NA")
-  &&  e['"Rel Hum (%)"'] == undefined && e['"Wind Dir (10s deg)"'] == undefined
-  && e['"Wind Spd (km/h)"'] == undefined && e['"Stn Press (kPa)"'] == undefined)
-  return false;
+    && (e['"Weather"'] == undefined || e['"Weather"'].replace(/"/g, '') == "NA")
+    && e['"Rel Hum (%)"'] == undefined && e['"Wind Dir (10s deg)"'] == undefined
+    && e['"Wind Spd (km/h)"'] == undefined && e['"Stn Press (kPa)"'] == undefined)
+    return false;
 
   return true;
 }
@@ -379,14 +380,14 @@ function cleaningData(e) {
   if (e['"Stn Press (kPa)"'] == undefined) e['"Stn Press (kPa)"'] = "";
 }
 
-function emptyValues(){
+function emptyValues() {
   let table = [];
   let ajout;
 
-  for(i=0;i<24;i++){
-    if(i<10){
+  for (i = 0; i < 24; i++) {
+    if (i < 10) {
       ajout = {
-        '"Time (LST)"':'0'+i+':00',
+        '"Time (LST)"': '0' + i + ':00',
         '"Temp (°C)"': "",
         '"Dew Point Temp (°C)"': "",
         '"Weather"': "",
@@ -394,11 +395,11 @@ function emptyValues(){
         '"Wind Dir (10s deg)"': "",
         '"Wind Spd (km/h)"': "",
         '"Stn Press (kPa)"': "",
-      } 
+      }
     }
-    else{
+    else {
       ajout = {
-        '"Time (LST)"': i+'00',
+        '"Time (LST)"': i + '00',
         '"Temp (°C)"': "",
         '"Dew Point Temp (°C)"': "",
         '"Weather"': "",
@@ -406,9 +407,9 @@ function emptyValues(){
         '"Wind Dir (10s deg)"': "",
         '"Wind Spd (km/h)"': "",
         '"Stn Press (kPa)"': "",
-      } 
+      }
     }
-    
+
     console.log(ajout['"Stn Press (kPa)"']);
     table.push(ajout);
   }

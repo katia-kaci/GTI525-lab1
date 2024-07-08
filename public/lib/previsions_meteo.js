@@ -17,6 +17,7 @@ document.getElementById(provinceId).classList.add('special');
 
 function getProvinces() {
     var provinces = Array.from(new Set(stationInventory.map(station => station['Province'])));
+    provinces = provinces.filter(province => province !== 'NUNAVUT' && province !== "NORTHWEST TERRITORIES" && province !== "YUKON TERRITORY" && province !== "PRINCE EDWARD ISLAND");
     provinces.sort().pop();
     return provinces;
 }
