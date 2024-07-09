@@ -229,6 +229,7 @@ async function showPrevisions() {
         }
     }
     catch (error) {
+        alert("Une erreur est survenue.");
         console.error(error.message);
     }
 }
@@ -240,6 +241,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         if (!response.ok) throw new Error(`Error fetching station mapping: ${response.statusText}`);
         stationJsonMap = await response.json();
     } catch (error) {
+        alert("Une erreur est survenue.");
         console.error(error.message);
     }
 });

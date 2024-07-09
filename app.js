@@ -2,7 +2,7 @@ import express from 'express';
 import fetch from 'node-fetch';
 import fs from 'fs/promises';
 import path from 'path';
-import test from './station_mapping.json' assert { type: 'json' }; // a revoir
+import stationMapping from './station_mapping.json' assert { type: 'json' };
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -66,8 +66,8 @@ app.get('/previsions_meteo', (req, res) => {
 app.get('/station_mapping', (req, res) => {
   //possible que ce soit pas la bonne facon de faire mais ca marche pour l'instant.
   // console.log(test);
-  if (test) {
-    res.json(test);
+  if (stationMapping) {
+    res.json(stationMapping);
   } else {
     res.status(500).send('Les données du fichier station_mapping.json ne sont pas disponibles.');
   }
@@ -84,6 +84,7 @@ app.get('/api-history', async (req, res) => {
     const data = await fetchHistoricalWeather(stationId, year, month, day);
     res.send(data);
   } catch (error) {
+    alert("Une erreur est survenue.");
     res.status(500).send(error.message);
   }
 });
@@ -94,6 +95,7 @@ app.get('/api-previsions', async (req, res) => {
     const data = await fetchPrevisions(rss_feed);
     res.send(data);
   } catch (error) {
+    alert("Une erreur est survenue.");
     res.status(500).send(error.message);
   }
 });
