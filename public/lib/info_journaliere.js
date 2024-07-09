@@ -214,11 +214,13 @@ async function showHistory() {
   }
 
   if (valHistorique.length == 0) {
-    valHistorique = emptyValues();
+    emptyValues();
+    return;
   }
   else valHistorique.map(e => cleaningData(e));
 
   let table = document.createElement('table');
+  table.id = "historique";
   let thead = document.createElement('thead');
   let headerRow = document.createElement('tr');
 
@@ -335,36 +337,9 @@ function cleaningData(e) {
 }
 
 function emptyValues() {
-  let table = [];
-  let ajout;
-
-  for (i = 0; i < 24; i++) {
-    if (i < 10) {
-      ajout = {
-        '"Time (LST)"': '0' + i + ':00',
-        '"Temp (°C)"': "",
-        '"Dew Point Temp (°C)"': "",
-        '"Weather"': "",
-        '"Rel Hum (%)"': "",
-        '"Wind Dir (10s deg)"': "",
-        '"Wind Spd (km/h)"': "",
-        '"Stn Press (kPa)"': "",
-      }
-    }
-    else {
-      ajout = {
-        '"Time (LST)"': i + '00',
-        '"Temp (°C)"': "",
-        '"Dew Point Temp (°C)"': "",
-        '"Weather"': "",
-        '"Rel Hum (%)"': "",
-        '"Wind Dir (10s deg)"': "",
-        '"Wind Spd (km/h)"': "",
-        '"Stn Press (kPa)"': "",
-      }
-    }
-    table.push(ajout);
+  var table = document.getElementById("historique");
+  if (table) {
+    table.remove();
   }
-
-  return table;
+  alert("Les données ne sont pas disponibles pour cette date, veuillez choisir une autre journée.");
 }
