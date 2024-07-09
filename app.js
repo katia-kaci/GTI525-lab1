@@ -1,6 +1,5 @@
 import express from 'express';
 import fetch from 'node-fetch';
-import fs from 'fs/promises';
 import path from 'path';
 import stationMapping from './station_mapping.json' assert { type: 'json' };
 
@@ -9,21 +8,6 @@ const PORT = process.env.PORT || 3000;
 const __dirname = path.resolve();
 
 app.use(express.static('public'))
-
-// Lire et parser le fichier station_mapping.json
-const jsonFilePath = path.join(__dirname, 'station_mapping.json');
-let stationMappingData;
-fs.readFile(jsonFilePath, 'utf8', (err, data) => {
-  if (err) {
-    console.error('Erreur lors de la lecture du fichier station_mapping.json:', err);
-    return;
-  }
-  try {
-    stationMappingData = JSON.parse(data);
-  } catch (parseErr) {
-    console.error('Erreur lors du parsing du fichier station_mapping.json :', parseErr);
-  }
-});
 
 // Fetch les deux APIs
 async function fetchHistoricalWeather(stationId, year, month, day) {
@@ -64,18 +48,11 @@ app.get('/previsions_meteo', (req, res) => {
 
 // Routes pour les données
 app.get('/station_mapping', (req, res) => {
-  //possible que ce soit pas la bonne facon de faire mais ca marche pour l'instant.
-  // console.log(test);
   if (stationMapping) {
     res.json(stationMapping);
   } else {
     res.status(500).send('Les données du fichier station_mapping.json ne sont pas disponibles.');
   }
-  // if (stationMappingData) {
-  //   res.json(stationMappingData);
-  // } else {
-  //   res.status(500).send('Les données du fichier station_mapping.json ne sont pas disponibles.');
-  // }
 });
 
 app.get('/api-history', async (req, res) => {

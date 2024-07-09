@@ -7,8 +7,7 @@ let stationSelectionee = stations;
 let codeAeroportSelectionne = "";
 let years = Array.from(new Set(stations.map((s) => s['"Year"'].replace(/"/g, '')))).sort();
 let year = years[0], month = "01", day = "01";
-
-let idStationsMapper = []; // a voir si on le garde
+let idStationsMapper = [];
 
 showProvinces()
 let provinceId = 'province-0';
@@ -18,7 +17,7 @@ function getProvinces() {
   var provinces = Array.from(new Set(stationInventory.map(station => station['Province'])));
   provinces = provinces.filter(province => province !== 'NUNAVUT' && province !== "NORTHWEST TERRITORIES" && province !== "YUKON TERRITORY" && province !== "PRINCE EDWARD ISLAND");
   provinces.sort().pop();
-  return ["Toutes les stations"].concat(provinces);
+  return provinces;
 }
 
 function csvToArray(data, separator, skipLigne1) {
@@ -170,7 +169,6 @@ function getStations(value) {
   if (previousButton !== null) previousButton.classList.remove('special');
   document.getElementById(value).classList.add('special');
   previousButton = document.getElementById(value);
-  //**** */
   getStationsInJson(codeAeroportSelectionne);
   showHistory();
 }
@@ -190,29 +188,15 @@ document.addEventListener('DOMContentLoaded', function () {
     year = tabVal[0];
     month = tabVal[1];
     day = tabVal[2];
-    console.log(`date: ${day}/${month}/${year}`);
+    // console.log(`date: ${day}/${month}/${year}`);
     showHistory();
   })
 });
 
 async function showHistory() {
-  // let stationId = '51157'; // avec codeAeroportSelectionne (ex YUL) recuperer les station_ids dans station_mapping.json
-
-  // il faut prendre juste les 24 premieres lignes de donneesMeteo
-  // Exemple: https://climate.weather.gc.ca/climate_data/bulk_data_e.html?format=csv&stationID=51157&Year=2020&Month=01&Day=07&timeframe=1&submit=%20Download+Data
-
-  // let stationId = idStationsMapper[0]; //pour l'instant mais je vais faire tt les stations après
-  // const response = await fetch(`/api-history?stationId=${stationId}&year=${year}&month=${month}&day=${day}`);
-  // if (!response.ok) {
-  //   console.error(`Error fetching weather history: ${response.statusText}`);
-  //   return;
-  // }
-  // const donneesMeteo = await response.text();
-  // let valHistorique = historicalDataToArray(donneesMeteo, day);
   let valHistorique = [];
-
   for (let i = 0; i < idStationsMapper.length; i++) {
-    let stationId = idStationsMapper[i]; //pour l'instant mais je vais faire tt les stations après
+    let stationId = idStationsMapper[i];
     const response = await fetch(`/api-history?stationId=${stationId}&year=${year}&month=${month}&day=${day}`);
     if (!response.ok) {
       console.error(`Error fetching weather history: ${response.statusText}`);
@@ -233,10 +217,6 @@ async function showHistory() {
     valHistorique = emptyValues();
   }
   else valHistorique.map(e => cleaningData(e));
-
-  console.log(valHistorique)
-
-
 
   let table = document.createElement('table');
   let thead = document.createElement('thead');
@@ -260,65 +240,40 @@ async function showHistory() {
     for (let i = 0; i < 24; i++) {
       let row = document.createElement('tr');
       let cellHour = document.createElement('td');
-      // cellHour.textContent = i + ":00";
-      // console.log(valHistorique[i]['"Time (LST)"'])
       cellHour.textContent = valHistorique[i]['"Time (LST)"'].replace(/"/g, '');
       row.appendChild(cellHour);
 
-      // for (let i = 0; i < 7; i++) {
-      //   let cell = document.createElement('td');
-      //   cell.textContent = "data"; // mettre ici les trucs de donneesMeteo
-      //   row.appendChild(cell);
-      // }
       let cell = document.createElement('td');
-      cell.textContent = valHistorique[i]['"Temp (°C)"'].replace(/"/g, ''); // mettre ici les trucs de donneesMeteo
+      cell.textContent = valHistorique[i]['"Temp (°C)"'].replace(/"/g, '');
       row.appendChild(cell);
       cell = document.createElement('td');
-      cell.textContent = valHistorique[i]['"Dew Point Temp (°C)"'].replace(/"/g, ''); // mettre ici les trucs de donneesMeteo
+      cell.textContent = valHistorique[i]['"Dew Point Temp (°C)"'].replace(/"/g, '');
       row.appendChild(cell);
       cell = document.createElement('td');
-      cell.textContent = valHistorique[i]['"Weather"'].replace(/"/g, ''); // mettre ici les trucs de donneesMeteo
+      cell.textContent = valHistorique[i]['"Weather"'].replace(/"/g, '');
       row.appendChild(cell);
       cell = document.createElement('td');
-      cell.textContent = valHistorique[i]['"Rel Hum (%)"'].replace(/"/g, ''); // mettre ici les trucs de donneesMeteo
+      cell.textContent = valHistorique[i]['"Rel Hum (%)"'].replace(/"/g, '');
       row.appendChild(cell);
       cell = document.createElement('td');
-      cell.textContent = valHistorique[i]['"Wind Dir (10s deg)"'].replace(/"/g, ''); // mettre ici les trucs de donneesMeteo
+      cell.textContent = valHistorique[i]['"Wind Dir (10s deg)"'].replace(/"/g, '');
       row.appendChild(cell);
       cell = document.createElement('td');
-      cell.textContent = valHistorique[i]['"Wind Spd (km/h)"'].replace(/"/g, ''); // mettre ici les trucs de donneesMeteo
+      cell.textContent = valHistorique[i]['"Wind Spd (km/h)"'].replace(/"/g, '');
       row.appendChild(cell);
       cell = document.createElement('td');
-      cell.textContent = valHistorique[i]['"Stn Press (kPa)"'].replace(/"/g, ''); // mettre ici les trucs de donneesMeteo
+      cell.textContent = valHistorique[i]['"Stn Press (kPa)"'].replace(/"/g, '');
       row.appendChild(cell);
       cell = document.createElement('td');
 
       tbody.appendChild(row);
     }
 
-    // for (let i = 0; i < 24; i++) {
-    //   let row = document.createElement('tr');
-    //   let cellHour = document.createElement('td');
-    //   cellHour.textContent = i + ":00";
-    //   row.appendChild(cellHour);
-
-    //   for (let i = 0; i < 7; i++) {
-    //     let cell = document.createElement('td');
-    //     cell.textContent = "data"; // mettre ici les trucs de donneesMeteo
-    //     row.appendChild(cell);
-    //   }
-
-    //   tbody.appendChild(row);
-    // }
     table.appendChild(tbody);
     let tableau = document.getElementById("tableau");
     tableau.innerHTML = '';
     tableau.appendChild(table);
   }
-  // else {
-  //   let tableau = document.getElementById("tableau");
-  //   tableau.innerHTML = "<h2>Aucune données historiques disponibles.</h2>";
-  // }
 }
 
 function updateDateFilter() {
@@ -347,7 +302,6 @@ function historicalDataToArray(data, day) {
   });
   temp = temp.filter(e => e != undefined)
   temp = temp.filter(e => e['"Day"'] != undefined);
-  console.log(day)
   let histoData = temp.filter(e => parseInt(e['"Day"'].replace('"', "").replace('"', "")) == day)
   histoData = histoData.filter(e => validateData(e))
   return histoData;
@@ -409,8 +363,6 @@ function emptyValues() {
         '"Stn Press (kPa)"': "",
       }
     }
-
-    console.log(ajout['"Stn Press (kPa)"']);
     table.push(ajout);
   }
 
