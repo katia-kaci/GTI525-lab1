@@ -108,6 +108,7 @@ function showProvinces() {
       previousSelectedButton = this;
       afficherNomsStations(this.value);
       document.getElementById("nom").textContent = provinces[button.value];
+      document.getElementById("historique-div").style.visibility = "hidden";
     });
   });
 }
@@ -170,6 +171,7 @@ function getStations(value) {
   document.getElementById(value).classList.add('special');
   previousButton = document.getElementById(value);
   getStationsInJson(codeAeroportSelectionne);
+  document.getElementById("historique-div").style.visibility = "visible";
   showHistory();
 }
 
@@ -194,6 +196,11 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 async function showHistory() {
+  var tableAncienne = document.getElementById("historique");
+  if (tableAncienne) {
+    tableAncienne.remove();
+  }
+
   let valHistorique = [];
   for (let i = 0; i < idStationsMapper.length; i++) {
     let stationId = idStationsMapper[i];
