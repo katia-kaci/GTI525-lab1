@@ -51,10 +51,15 @@
         <span>
             <h3 id="nom"></h3>
 
-            <label>Sélectionner une date:</label>
-            <input type="date" id="dateChoice">
+            <div id="historique-div" class="scrollable-listestations" style="visibility: hidden">
+                <label>Sélectionner une date:</label>
+                <input type="date" id="dateChoice">
 
-            <div id="tableau" class="scrollable-listestations"></div>
+                <div id="tableau" class="scrollable-listestations"></div>
+                <p id="date-indisponible">Les données ne sont pas disponibles pour cette date, veuillez choisir une
+                    autre journée.</p>
+            </div>
+
         </span>
     </div>
 

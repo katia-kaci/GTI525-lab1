@@ -218,7 +218,7 @@ async function showHistory() {
     return;
   }
   else valHistorique.map(e => cleaningData(e));
-
+  document.getElementById("date-indisponible").style.visibility = "hidden";
   let table = document.createElement('table');
   table.id = "historique";
   let thead = document.createElement('thead');
@@ -341,5 +341,5 @@ function emptyValues() {
   if (table) {
     table.remove();
   }
-  alert("Les données ne sont pas disponibles pour cette date, veuillez choisir une autre journée.");
+  document.getElementById("date-indisponible").style.visibility = "visible";
 }
