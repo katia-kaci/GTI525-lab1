@@ -108,7 +108,9 @@ function showProvinces() {
       previousSelectedButton = this;
       afficherNomsStations(this.value);
       document.getElementById("nom").textContent = provinces[button.value];
+      document.getElementById("aucune-station-selectionnee").style.display = "block";
       document.getElementById("historique-div").style.visibility = "hidden";
+      document.getElementById("date-indisponible").style.visibility = "hidden";
     });
   });
 }
@@ -197,6 +199,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 async function showHistory() {
   document.getElementById("date-indisponible").style.visibility = "hidden";
+  document.getElementById("aucune-station-selectionnee").style.display = "none"
   var tableAncienne = document.getElementById("historique");
   if (tableAncienne) {
     tableAncienne.remove();
