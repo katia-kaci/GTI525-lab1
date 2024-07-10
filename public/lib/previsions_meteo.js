@@ -181,12 +181,9 @@ function getStations(value) {
 /* ----------------------- NOUVELLES FONCTIONS --------------------------------------------------*/
 
 async function showPrevisions() {
-    if (codeAeroportSelectionne == "null") {
-        document.getElementById("infos-previsions").style.visibility = "hidden";
-        return;
-    }
-    document.getElementById("infos-previsions").style.visibility = "visible";
-
+    document.getElementById("infos-previsions").style.visibility = "hidden";
+    if (codeAeroportSelectionne == "null") return;
+    
     try {
         const rss_feed = stationJsonMap[codeAeroportSelectionne]?.rss_feed;
         if (!rss_feed) throw new Error('RSS feed not found for the selected airport.');
@@ -227,6 +224,7 @@ async function showPrevisions() {
                     break;
             }
         }
+        document.getElementById("infos-previsions").style.visibility = "visible";
     }
     catch (error) {
         alert("Une erreur est survenue.");
