@@ -196,6 +196,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 async function showHistory() {
+  document.getElementById("date-indisponible").style.visibility = "hidden";
   var tableAncienne = document.getElementById("historique");
   if (tableAncienne) {
     tableAncienne.remove();
@@ -225,7 +226,7 @@ async function showHistory() {
     return;
   }
   else valHistorique.map(e => cleaningData(e));
-  document.getElementById("date-indisponible").style.visibility = "hidden";
+
   let table = document.createElement('table');
   table.id = "historique";
   let thead = document.createElement('thead');

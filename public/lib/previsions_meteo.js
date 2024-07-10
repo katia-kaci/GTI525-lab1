@@ -111,6 +111,7 @@ function showProvinces() {
             afficherNomsStations(this.value);
             document.getElementById("nom").textContent = provinces[button.value];
             codeAeroportSelectionne = "null";
+            document.getElementById("aucune-station-selectionnee").style.display = "block";
             showPrevisions();
         });
     });
@@ -224,6 +225,7 @@ async function showPrevisions() {
                     break;
             }
         }
+        document.getElementById("aucune-station-selectionnee").style.display = "none"
         document.getElementById("infos-previsions").style.visibility = "visible";
     }
     catch (error) {
