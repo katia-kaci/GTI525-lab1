@@ -45,6 +45,9 @@ app.get('/info_journaliere', (req, res) => {
 app.get('/previsions_meteo', (req, res) => {
   res.sendFile(path.join(__dirname, 'vues/previsions_meteo.html'));
 });
+app.get('/carte', (req, res) => {
+  res.sendFile(path.join(__dirname, 'vues/carte.html'));
+});
 
 // Routes pour les données
 app.get('/station_mapping', (req, res) => {
