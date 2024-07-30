@@ -2,10 +2,49 @@ import express from 'express';
 import fetch from 'node-fetch';
 import path from 'path';
 import stationMapping from './station_mapping.json' assert { type: 'json' };
+// import * as mdbClient from 'mongodb' ;
+import { MongoClient } from 'mongodb'
+// import { default as mongoose } from 'mongoose'
+
+// var MongoClient = require('mongodb').MongoClient ;
+
+
+// const url = "mongodb://localhost:27017/";
+
+const url = 'mongodb://127.0.0.1:27017/';
+const client = new MongoClient(url);
+
+// Database Name
+const dbName = 'Labo3';
+
 
 const app = express();
+
 const PORT = process.env.PORT || 3000;
 const __dirname = path.resolve();
+
+
+  // Use connect method to connect to the server
+  await client.connect();
+  console.log('Connected successfully to server');
+  let db = client.db(dbName);
+  await db.createCollection('stations');
+
+  client.close();
+  // the following code examples can be pasted here...
+
+
+
+// MongoClient.connect ( url , function ( err , db) {
+//   console.log('mongo');
+//   if ( err ) throw err ;
+//  var dbo = db.db("mydb") ;
+//  dbo.createCollection("stations" ,function ( err , res ) {
+//  if (err ) throw err ;
+//  console.log("Collection created!") ;
+//  db.close () ;
+//  }) ;
+// });
 
 app.use(express.static('public'))
 
@@ -83,3 +122,7 @@ app.get('/api-previsions', async (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server started at http://localhost:${PORT}`);
 });
+
+
+
+// mongoose.connect(url,{useNewUrlParser: true, useUnifiedTopology: true});
