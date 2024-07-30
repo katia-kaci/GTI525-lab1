@@ -58,7 +58,7 @@ app.get('/station_mapping', (req, res) => {
   }
 });
 
-app.get('/api-history', async (req, res) => {
+app.get('/api/history', async (req, res) => {
   const { stationId, year, month, day } = req.query;
   try {
     const data = await fetchHistoricalWeather(stationId, year, month, day);
@@ -69,7 +69,7 @@ app.get('/api-history', async (req, res) => {
   }
 });
 
-app.get('/api-previsions', async (req, res) => {
+app.get('/api/previsions', async (req, res) => {
   const { rss_feed } = req.query;
   try {
     const data = await fetchPrevisions(rss_feed);

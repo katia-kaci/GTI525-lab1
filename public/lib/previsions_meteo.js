@@ -189,7 +189,7 @@ async function showPrevisions() {
         const rss_feed = stationJsonMap[codeAeroportSelectionne]?.rss_feed;
         if (!rss_feed) throw new Error('RSS feed not found for the selected airport.');
 
-        const response = await fetch(`/api-previsions?rss_feed=${rss_feed}`);
+        const response = await fetch(`/api/previsions?rss_feed=${rss_feed}`);
         if (!response.ok) throw new Error(`Error fetching weather forecast: ${response.statusText}`);
 
         const donneesMeteo = await response.text();

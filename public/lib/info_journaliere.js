@@ -208,7 +208,7 @@ async function showHistory() {
   let valHistorique = [];
   for (let i = 0; i < idStationsMapper.length; i++) {
     let stationId = idStationsMapper[i];
-    const response = await fetch(`/api-history?stationId=${stationId}&year=${year}&month=${month}&day=${day}`);
+    const response = await fetch(`/api/history?stationId=${stationId}&year=${year}&month=${month}&day=${day}`);
     if (!response.ok) {
       console.error(`Error fetching weather history: ${response.statusText}`);
       return;
