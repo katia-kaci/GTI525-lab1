@@ -184,7 +184,8 @@ function getStations(value) {
 document.addEventListener('DOMContentLoaded', function () {
   let date = document.getElementById("dateChoice");
   date.min = years[0] + '-01-01'
-  date.max = years[years.length - 1] + '-12-31'
+  const today = new Date();
+  date.max = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
   date.value = years[0] + '-01-01';
 
   date.addEventListener('change', function () {
@@ -297,8 +298,10 @@ function updateDateFilter() {
 
   let date = document.getElementById("dateChoice");
   date.min = years[0] + '-01-01'
-  date.max = Math.max(...years) + '-12-31'
   date.value = years[0] + '-01-01';
+
+  const today = new Date();
+  date.max = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
 }
 
 function historicalDataToArray(data, day) {
