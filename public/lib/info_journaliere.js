@@ -1,4 +1,5 @@
-var stations = csvToArray(stations, ",", true);
+var stations = [];// csvToArray(stations, ",", true);
+getAllStations();
 let stationInventory = csvToArray(StationInventoryEN, '","', false);
 
 let provinces = getProvinces();
@@ -356,4 +357,10 @@ function emptyValues() {
     table.remove();
   }
   document.getElementById("date-indisponible").style.visibility = "visible";
+}
+
+async function getAllStations(){
+  let res = await fetch('/api/stations')
+  stations = await res.json();
+  // console.log(JSON.stringify(stations)); // enlever
 }

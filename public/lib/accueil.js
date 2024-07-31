@@ -22,6 +22,7 @@ selectDateRange();
 async function getAllStations(){
   let res = await fetch('/api/stations')
   stations = await res.json();
+  console.log(JSON.stringify(stations)); // enlever
 }
 
 function selectDateRange() {

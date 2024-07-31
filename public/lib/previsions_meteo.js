@@ -1,4 +1,5 @@
-var stations = csvToArray(stations, ",", true);
+var stations =[];// csvToArray(stations, ",", true);
+getAllStations();
 let stationInventory = csvToArray(StationInventoryEN, '","', false);
 
 let provinces = getProvinces();
@@ -259,3 +260,9 @@ function getDate(dateString) {
     day = day < 10 ? '0' + day : day;
     return `${day} ${month} ${year} à ${hours}:${minutes}:${seconds} (${dateString})`;
 }
+
+async function getAllStations(){
+    let res = await fetch('/api/stations')
+    stations = await res.json();
+    // console.log(JSON.stringify(stations)); // enlever
+  }
