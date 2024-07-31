@@ -1,3 +1,4 @@
+const parser = new DOMParser();
 var map = L.map('map').setView([52, -90], 4);
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
@@ -12,36 +13,27 @@ async function showTemperature() {
                 if (stations[id]) {
                     let longitude = stations[id].split('\n')[3].split(',')[0].replace(/"/g, '');
                     let latitude = stations[id].split('\n')[3].split(',')[1].replace(/"/g, '');
-                    // var circle = L.circle([latitude, longitude], {
-                    //     color: 'red',
-                    //     fillColor: '#f03',
-                    //     fillOpacity: 0.5,
-                    //     radius: 500
-                    // }).addTo(map);
                     var marker = L.marker([latitude, longitude]).addTo(map);
-                    marker.bindPopup(`<b>${province}</b><br>mettre temp ici`).openPopup();
 
                     const rss_feed = stationJsonMap[province].rss_feed;
+                    const response = await fetch(`/api/previsions?rss_feed=${rss_feed}`);
+                    if (!response.ok) throw new Error(`Error fetching weather forecast: ${response.statusText}`);
+                    const donneesMeteo = await response.text();
+                    const xmlDoc = parser.parseFromString(donneesMeteo, "application/xml");
+                    if (xmlDoc.getElementsByTagName("parsererror").length > 0) throw new Error("Error parsing XML");
 
-                    // const response = await fetch(`/api/previsions?rss_feed=${rss_feed}`);
-                    // if (!response.ok) throw new Error(`Error fetching weather forecast: ${response.statusText}`);
+                    const entries = xmlDoc.getElementsByTagName("entry");
+                    for (let entry of entries) {
+                        const category = entry.getElementsByTagName("category")[0].getAttribute("term");
+                        const summary = entry.getElementsByTagName("summary")[0].textContent;
 
-                    // const donneesMeteo = await response.text();
-                    // const xmlDoc = parser.parseFromString(donneesMeteo, "application/xml");
-                    // if (xmlDoc.getElementsByTagName("parsererror").length > 0) throw new Error("Error parsing XML");
-
-                    // const entries = xmlDoc.getElementsByTagName("entry");
-                    // for (let entry of entries) {
-                    //     const category = entry.getElementsByTagName("category")[0].getAttribute("term");
-                    //     const summary = entry.getElementsByTagName("summary")[0].textContent;
-
-                    //     switch (category) {
-                    //         case "Conditions actuelles":
-                    //             // document.getElementById("conditions-actuelles").innerHTML = summary.replace(']]>', '').replace('<![CDATA[', '');
-                    //             break;
-
-                    //     }
-                    // }
+                        switch (category) {
+                            case "Conditions actuelles":
+                                const htmlTxt = summary.replace(']]>', '').replace('<![CDATA[', '');
+                                marker.bindPopup(`<b>${province}</b><br>${htmlTxt}`).openPopup();
+                                break;
+                        }
+                    }
                 }
             }
         }
