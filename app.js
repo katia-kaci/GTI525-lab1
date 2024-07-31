@@ -119,6 +119,20 @@ app.get('/api/previsions', async (req, res) => {
   }
 });
 
+app.get('/api/stations', async (req, res) => {
+  try{
+    await client.connect();
+    console.log('Connected successfully to server');
+    let db = client.db(dbName);
+    let collection =  db.collection('stations');
+    let stations = await collection.find({}).toArray()
+    client.close();
+    res.json(stations);
+    }catch(error){
+    res.status(500).send(error.message);
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Server started at http://localhost:${PORT}`);
 });

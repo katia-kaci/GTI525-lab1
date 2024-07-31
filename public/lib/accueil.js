@@ -1,4 +1,6 @@
-var stations = csvToArray(stations, ",", true);
+// var stations = csvToArray(stations, ",", true);
+var stations = []; //await fetch('/api/stations')
+getAllStations();
 let stationInventory = csvToArray(StationInventoryEN, '","', false);
 
 let provinces = getProvinces();
@@ -16,6 +18,11 @@ document.getElementById(provinceId).classList.add('special');
 
 showStatistics()
 selectDateRange();
+
+async function getAllStations(){
+  let res = await fetch('/api/stations')
+  stations = await res.json();
+}
 
 function selectDateRange() {
   const fromMonthSelector = document.getElementById('fromMonth');
