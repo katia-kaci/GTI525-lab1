@@ -1,5 +1,5 @@
-var stations = [];// csvToArray(stations, ",", true);
-getAllStations();
+var stations =  csvToArray(stations, ",", true);
+// getAllStations();
 let stationInventory = csvToArray(StationInventoryEN, '","', false);
 
 let provinces = getProvinces();
@@ -363,4 +363,4 @@ async function getAllStations(){
   let res = await fetch('/api/stations')
   stations = await res.json();
   // console.log(JSON.stringify(stations)); // enlever
-}
+} ///il faut JSON.stringify(stationsEN)..... envoyer dans l'autre et ramener comme les autres ******************************

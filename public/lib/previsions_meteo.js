@@ -1,5 +1,5 @@
-var stations =[];// csvToArray(stations, ",", true);
-getAllStations();
+var stations = csvToArray(stations, ",", true);
+// getAllStations();
 let stationInventory = csvToArray(StationInventoryEN, '","', false);
 
 let provinces = getProvinces();

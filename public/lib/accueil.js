@@ -1,5 +1,5 @@
-// var stations = csvToArray(stations, ",", true);
-var stations = []; //await fetch('/api/stations')
+var stations = csvToArray(stations, ",", true);
+// var stations = []; //await fetch('/api/stations')
 getAllStations();
 let stationInventory = csvToArray(StationInventoryEN, '","', false);
 
