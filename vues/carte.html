@@ -10,6 +10,9 @@
     content="Application web qui permet de visualiser de différentes manières les données météo historiques de différentes villes canadiennes.">
   <title>Météo</title>
   <link rel="stylesheet" href="style.css">
+
+  <link rel="stylesheet" href="/leaflet.css" />
+  <script src="/leaflet.js"></script>
 </head>
 
 <body>
@@ -44,43 +47,14 @@
   </div>
 
   <div class="header">
-    <img class="welcome" src="images/previsions.png" alt="previsions">
+    <img class="welcome" src="images/carte.png" alt="carte">
     <div class="overlay-text">Carte</div>
   </div>
 
-  <div class="buttons">
-    <ul id="listeprovince" class="scrollable-listeprovince"></ul>
-    <span>
-      <h3 id="nom"></h3>
-
-      <p id="aucune-station-selectionnee">Veuillez choisir une station météo</p>
-      
-      <div id="infos-previsions" class="scrollable-listestations" style="visibility: hidden">
-
-        <a id="station-name" target="_blank"></a>
-
-        <h1>Date de la dernière mise à jour:</h1>
-        <p id="updated"></p>
-
-        <h1>Veilles et avertissements météo:</h1>
-        <p id="veilles-et-avertissements"></p>
-
-        <h1>Conditions actuelles:</h1>
-        <p id="conditions-actuelles"></p>
-
-        <h1>Prévisions pour les prochains jours:</h1>
-        <h2>Sommaires:</h2>
-        <ul id="previsions-sommaires"></ul>
-
-        <h2>Détaillées:</h2>
-        <ul id="previsions-detaillees"></ul>
-
-      </div>
-    </span>
-  </div>
+  <div class="map" id="map"></div>
 
 </body>
 
-<script src="lib/previsions_meteo.js"></script>
+<script src="lib/carte.js"></script>
 
 </html>

@@ -156,3 +156,9 @@ h2 {
 #station-name {
     font-size: 30px;
 }
+
+.map {
+    height: 450px;
+    width: 500px;
+    margin: auto;
+}

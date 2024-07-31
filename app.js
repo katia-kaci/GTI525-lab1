@@ -47,6 +47,7 @@ const __dirname = path.resolve();
 // });
 
 app.use(express.static('public'))
+app.use(express.static('node_modules/leaflet/dist'))
 
 // Fetch les deux APIs
 async function fetchHistoricalWeather(stationId, year, month, day) {
@@ -120,15 +121,15 @@ app.get('/api/previsions', async (req, res) => {
 });
 
 app.get('/api/stations', async (req, res) => {
-  try{
+  try {
     await client.connect();
     console.log('Connected successfully to server');
     let db = client.db(dbName);
-    let collection =  db.collection('stations');
+    let collection = db.collection('stations');
     let stations = await collection.find({}).toArray()
     client.close();
     res.json(stations);
-    }catch(error){
+  } catch (error) {
     res.status(500).send(error.message);
   }
 });
@@ -136,7 +137,5 @@ app.get('/api/stations', async (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server started at http://localhost:${PORT}`);
 });
-
-
 
 // mongoose.connect(url,{useNewUrlParser: true, useUnifiedTopology: true});
