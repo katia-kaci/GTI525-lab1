@@ -185,7 +185,7 @@ function getStations(value) {
 async function showPrevisions() {
     document.getElementById("infos-previsions").style.visibility = "hidden";
     if (codeAeroportSelectionne == "null") return;
-    
+
     try {
         const rss_feed = stationJsonMap[codeAeroportSelectionne]?.rss_feed;
         if (!rss_feed) throw new Error('RSS feed not found for the selected airport.');
@@ -261,7 +261,7 @@ function getDate(dateString) {
     return `${day} ${month} ${year} à ${hours}:${minutes}:${seconds} (${dateString})`;
 }
 
-async function getAllStations(){
+async function getAllStations() {
     let res = await fetch('/api/stations')
     stations = await res.json();
-  }
+}
