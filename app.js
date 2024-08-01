@@ -10,6 +10,29 @@ let cache = {};
 cache.history={};
 cache.previsions={};
 
+setInterval(function (){
+  let currentTime = new Date();
+  if(Object.keys(cache.history).length > 0){
+      Object.keys(cache.history).forEach(key => {
+          let seconds = currentTime - cache.history[key].time;
+
+          if(seconds > (60*60*1000)){
+              delete cache.history[key];
+              console.log(`${key}'s cache deleted*****************`)
+          }
+      })
+  }
+  if(Object.keys(cache.previsions).length > 0){
+    Object.keys(cache.previsions).forEach(key => {
+        let seconds = currentTime - cache.previsions[key].time;
+
+        if(seconds > (5*60*1000)){
+            delete cache.previsions[key];
+            console.log(`${key}'s cache deleted************************`)
+        }
+    })
+}
+}, 1000);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
