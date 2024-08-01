@@ -3,15 +3,32 @@ var map = L.map('map').setView([54, -90], 4);
 let previsionsSelectionnees = false, actuellesSelectionnees = true, journeeSelectionnee = false;
 let markers = [], conditionsActuelles = [], previsions = [], journees = [];
 let previsionSelectionnee = "";
+let stationsList = [];
+
+// getAllStations()
+
+async function getAllStationsCarte() {
+    let res = await fetch('/stationsCarte');
+    stationsList = await res.json();
+}
+
 
 async function showTemperature() {
+    console.log(stationsList);
     for (let province in stationJsonMap) {
         try {
             const station_ids = stationJsonMap[province].station_ids;
             for (let id of station_ids) {
-                if (stations[id]) {
-                    let longitude = stations[id].split('\n')[3].split(',')[0].replace(/"/g, '');
-                    let latitude = stations[id].split('\n')[3].split(',')[1].replace(/"/g, '');
+                console.log(id);
+                let station = stationsList.find(e => e.stationId == id)
+                // if (stations[id]) {
+                if (station) {
+                    console.log(station["Latitude (y)"] +"et"+ station["Longitude (x)"] );
+
+                    // let longitude = stations[id].split('\n')[3].split(',')[0].replace(/"/g, '');
+                    // let latitude = stations[id].split('\n')[3].split(',')[1].replace(/"/g, '');
+                    let latitude = station["Latitude (y)"]//.split('\n')[3].split(',')[0].replace(/"/g, '');
+                    let longitude = station["Longitude (x)"] //.split('\n')[3].split(',')[1].replace(/"/g, '');
                     var marker = L.marker([latitude, longitude], { icon: createIcon("", "previsions-icon") }).addTo(map);
                     markers.push(marker);
 
@@ -160,6 +177,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         const response = await fetch('/station_mapping');
         if (!response.ok) throw new Error(`Error fetching station mapping: ${response.statusText}`);
         stationJsonMap = await response.json();
+        await getAllStationsCarte();
         showTemperature();
     } catch (error) {
         alert("Une erreur est survenue.");

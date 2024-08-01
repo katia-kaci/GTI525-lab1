@@ -143,6 +143,21 @@ app.get('/stationsInventories', async (req, res) => {
   }
 });
 
+app.get('/stationsCarte', async (req, res) => {
+  try {
+    await client.connect();
+    console.log('Connected successfully to server');
+    let db = client.db(dbName);
+    let collection = db.collection('stationsCarte');
+    let stations = await collection.find({}).toArray()
+    client.close();
+    res.json(stations);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
+
+
 // GET PRÉVISION D'UNE STATION : http://localhost:3000/previsions/ab-52
 app.get('/previsions/:stationId', async (req, res) => {
   const { stationId } = req.params;
