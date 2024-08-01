@@ -492,7 +492,6 @@ function showStatistics() {
   document.getElementById("tableau").innerHTML = baliseFinale;
 }
 
-
 function showData() {
   document.getElementById("showStatistics").disabled = false;
   document.getElementById("showData").disabled = true;

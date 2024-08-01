@@ -7,31 +7,31 @@ import xml2js from 'xml2js';
 import { parse } from 'csv-parse/sync';
 
 let cache = {};
-cache.history={};
-cache.previsions={};
+cache.history = {};
+cache.previsions = {};
 
-setInterval(function (){
+setInterval(function () {
   let currentTime = new Date();
-  if(Object.keys(cache.history).length > 0){
-      Object.keys(cache.history).forEach(key => {
-          let seconds = currentTime - cache.history[key].time;
+  if (Object.keys(cache.history).length > 0) {
+    Object.keys(cache.history).forEach(key => {
+      let seconds = currentTime - cache.history[key].time;
 
-          if(seconds > (60*60*1000)){
-              delete cache.history[key];
-              console.log(`${key}'s cache deleted*****************`)
-          }
-      })
-  }
-  if(Object.keys(cache.previsions).length > 0){
-    Object.keys(cache.previsions).forEach(key => {
-        let seconds = currentTime - cache.previsions[key].time;
-
-        if(seconds > (5*60*1000)){
-            delete cache.previsions[key];
-            console.log(`${key}'s cache deleted************************`)
-        }
+      if (seconds > (60 * 60 * 1000)) {
+        delete cache.history[key];
+        console.log(`${key}'s cache deleted*****************`)
+      }
     })
-}
+  }
+  if (Object.keys(cache.previsions).length > 0) {
+    Object.keys(cache.previsions).forEach(key => {
+      let seconds = currentTime - cache.previsions[key].time;
+
+      if (seconds > (5 * 60 * 1000)) {
+        delete cache.previsions[key];
+        console.log(`${key}'s cache deleted************************`)
+      }
+    })
+  }
 }, 1000);
 
 const app = express();
@@ -102,14 +102,14 @@ app.get('/station_mapping', (req, res) => {
 
 app.get('/stations', async (req, res) => {
   try {
-    if(cache.stations !== undefined) return res.json(cache.stations.value);
+    if (cache.stations !== undefined) return res.json(cache.stations.value);
     await client.connect();
     console.log('Connected successfully to server');
     let db = client.db(dbName);
     let collection = db.collection('stations');
     let stations = await collection.find({}).toArray()
     client.close();
-    cache.stations = {time: new Date(), value: stations};
+    cache.stations = { time: new Date(), value: stations };
 
     res.json(stations);
   } catch (error) {
@@ -119,14 +119,14 @@ app.get('/stations', async (req, res) => {
 
 app.get('/stationsInventories', async (req, res) => {
   try {
-    if(cache.stationsInventories !== undefined) return res.json(cache.stationsInventories.value);
+    if (cache.stationsInventories !== undefined) return res.json(cache.stationsInventories.value);
     await client.connect();
     console.log('Connected successfully to server');
     let db = client.db(dbName);
     let collection = db.collection('stationsInventories');
     let stations = await collection.find({}).toArray()
     client.close();
-    cache.stationsInventories = {time: new Date(), value: stations};
+    cache.stationsInventories = { time: new Date(), value: stations };
     res.json(stations);
   } catch (error) {
     res.status(500).send(error.message);
@@ -135,14 +135,14 @@ app.get('/stationsInventories', async (req, res) => {
 
 app.get('/stationsCarte', async (req, res) => {
   try {
-    if(cache.stationsCarte !== undefined) return res.json(cache.stationsCarte.value);
+    if (cache.stationsCarte !== undefined) return res.json(cache.stationsCarte.value);
     await client.connect();
     console.log('Connected successfully to server');
     let db = client.db(dbName);
     let collection = db.collection('stationsCarte');
     let stations = await collection.find({}).toArray()
     client.close();
-    cache.stationsCarte = {time: new Date(), value: stations};
+    cache.stationsCarte = { time: new Date(), value: stations };
     res.json(stations);
   } catch (error) {
     res.status(500).send(error.message);
@@ -154,9 +154,9 @@ app.get('/stationsCarte', async (req, res) => {
 app.get('/previsions/:stationId', async (req, res) => {
   const { stationId } = req.params;
   try {
-    if(cache.previsions[stationId] !== undefined) return res.json(cache.previsions[stationId].value);
+    if (cache.previsions[stationId] !== undefined) return res.json(cache.previsions[stationId].value);
     const data = await fetchPrevisions(stationId);
-    cache.previsions[stationId] = {time: new Date(), value: data};
+    cache.previsions[stationId] = { time: new Date(), value: data };
     res.json(data);
   } catch (error) {
     alert("Une erreur est survenue.");
@@ -209,9 +209,9 @@ function formatPrevisions(json) {
 // GET PRÉVISION TOUTES LES STATIONS : http://localhost:3000/previsions
 app.get('/previsions', async (req, res) => {
   try {
-    if(cache.previsions.allPrevision !== undefined) return res.json(cache.previsions.allPrevision.value);
+    if (cache.previsions.allPrevision !== undefined) return res.json(cache.previsions.allPrevision.value);
     const allData = await fetchAllPrevisions();
-    cache.previsions.allPrevision = {time: new Date(), value: allData};
+    cache.previsions.allPrevision = { time: new Date(), value: allData };
     res.json(allData);
   } catch (error) {
     res.status(500).send(error.message);
@@ -229,10 +229,10 @@ async function fetchAllPrevisions() {
 app.get('/history', async (req, res) => {
   const { stationId, year, month, day } = req.query;
   try {
-    let cle = stationId+'/'+year+'/'+month;
-    if(cache.history.cle !== undefined) return res.json(cache.history.cle.value);
+    let cle = stationId + '/' + year + '/' + month;
+    if (cache.history.cle !== undefined) return res.json(cache.history.cle.value);
     const data = await fetchHistoricalWeather2(stationId, year, month, day);
-    cache.history.cle = {time: new Date(), value: data};
+    cache.history.cle = { time: new Date(), value: data };
     res.json(data);
   } catch (error) {
     alert("Une erreur est survenue.");

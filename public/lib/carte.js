@@ -3,38 +3,32 @@ let previsionsSelectionnees = false, actuellesSelectionnees = true, journeeSelec
 let markers = [], conditionsActuelles = [], previsions = [], journees = [];
 let previsionSelectionnee = "";
 let stationsList = [];
-
-// getAllStations()
+let provinces = [];
 
 async function getAllStationsCarte() {
     let res = await fetch('/stationsCarte');
     stationsList = await res.json();
 }
 
-
 async function showTemperature() {
-    console.log(stationsList);
     for (let province in stationJsonMap) {
         try {
             const station_ids = stationJsonMap[province].station_ids;
             for (let id of station_ids) {
-                console.log(id);
                 let station = stationsList.find(e => e.stationId == id)
                 // if (stations[id]) {
                 if (station) {
-                    console.log(station["Latitude (y)"] +"et"+ station["Longitude (x)"] );
-
                     // let longitude = stations[id].split('\n')[3].split(',')[0].replace(/"/g, '');
                     // let latitude = stations[id].split('\n')[3].split(',')[1].replace(/"/g, '');
-                    let latitude = station["Latitude (y)"]//.split('\n')[3].split(',')[0].replace(/"/g, '');
-                    let longitude = station["Longitude (x)"] //.split('\n')[3].split(',')[1].replace(/"/g, '');
+                    let latitude = station["Latitude (y)"];
+                    let longitude = station["Longitude (x)"];
                     var marker = L.marker([latitude, longitude], { icon: createIcon("", "previsions-icon") }).addTo(map);
                     markers.push(marker);
 
                     let rss_feed = stationJsonMap[province].rss_feed;
                     if (!rss_feed) throw new Error('RSS feed not found for the selected airport.');
                     rss_feed = rss_feed.substring(rss_feed.indexOf("city/")).replace('city/', '').replace('_f.xml', '');
-
+                    
                     const response = await fetch(`/previsions/${rss_feed}`);
                     if (!response.ok) throw new Error(`Error fetching weather forecast: ${response.statusText}`);
                     const donneesMeteo = await response.json();
@@ -42,6 +36,8 @@ async function showTemperature() {
                     const entries = donneesMeteo.entries;
                     let provinceName = donneesMeteo.title.split('- Météo -')[0].trim();
                     let previsionTxt = "";
+                    console.log(rss_feed + " - " +province + " - " +provinceName)
+                    provinces.push(provinceName + " ("+province+")");
                     for (let entry of entries) {
                         const summary = entry.summary;
                         switch (entry.category) {
@@ -127,7 +123,6 @@ function updatePopup() {
         }
         else if (journeeSelectionnee) {
             let lignes = previsions[i].split("<li>");
-            console.log(lignes)
             for (let ligne of lignes) {
                 if (ligne.includes(previsionSelectionnee + "</b>")) {
                     const start = ligne.includes('Maximum') ? ligne.indexOf('Maximum') : ligne.indexOf('Minimum');
@@ -144,11 +139,12 @@ function updatePopup() {
                         else updatedIcon = ligne.includes('nuage') || ligne.includes('Nuage') ? createIcon(temperature, "cloud") : createIcon(temperature, "sun");
                     }
                     markers[i].setIcon(updatedIcon);
-                    markers[i].bindPopup(ligne.replace('</li>', ''));
+                    markers[i].bindPopup("<b><u>"+provinces[i]+"</u></b><br>"+ligne.replace('</li>', ''));
+                    break;
                 }
-                if (!previsions[i].includes(previsionSelectionnee + "</b>")) {
+                else if (!previsions[i].includes(previsionSelectionnee + "</b>")) {
                     markers[i].setIcon(createIcon("", "prevision-inconnue"));
-                    markers[i].bindPopup("Pas encore de prévisions pour cette journée.");
+                    markers[i].bindPopup("<b><u>"+provinces[i]+"</u></b><br>Pas de prévisions pour cette journée.");
                 }
             }
         }
