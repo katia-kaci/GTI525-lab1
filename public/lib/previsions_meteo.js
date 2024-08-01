@@ -2,7 +2,7 @@ var stations = []; // csvToArray(stations, ",", true);
 let stationInventory = []; // csvToArray(StationInventoryEN, '","', false);
 
 
-let provinces =[];// getProvinces();
+let provinces = [];// getProvinces();
 let provinceSelectionnee = [];
 let stationSelectionee = []; //stations;
 let codeAeroportSelectionne = "";
@@ -19,34 +19,19 @@ let provinceId = 'province-0';
 
 getAllStationsInventories();
 
-async function getAllStations(){
-    console.log('entrée')
-    let res = await fetch('/api/stations');
+async function getAllStations() {
+    let res = await fetch('/stations');
     stations = await res.json();
-    // console.log(stations);
-    // await getAllStationsInventories();
-    // console.log(stationInventory);
-    
-    // provinces = getProvinces();
-  
-    // showProvinces()
-    // document.getElementById(provinceId).classList.add('special');
-    // showStatistics()
-    // selectDateRange();
 }
-  
-async function getAllStationsInventories(){
-    let res = await fetch('/api/stationsInventories');
+
+async function getAllStationsInventories() {
+    let res = await fetch('/stationsInventories');
     stationInventory = await res.json();
     await getAllStations()
     stationSelectionee = stations;
-    console.log(stationSelectionee)
     provinces = getProvinces();
     showProvinces()
-    
-    // showProvinces()
-    // console.log(JSON.stringify(stationInventory)); // enlever
-} 
+}
 
 function getProvinces() {
     var provinces = Array.from(new Set(stationInventory.map(station => station['Province'])));
@@ -294,6 +279,6 @@ function getDate(dateString) {
 }
 
 async function getAllStations() {
-    let res = await fetch('/api/stations')
+    let res = await fetch('/stations')
     stations = await res.json();
 }

@@ -1,5 +1,5 @@
 // var stations = csvToArray(stations, ",", true);
-var stations = []; //await fetch('/api/stations')
+var stations = []; //await fetch('/stations')
 let stationInventory = []; //csvToArray(StationInventoryEN, '","', false);
 
 // getAllStationsInventories();
@@ -22,8 +22,8 @@ let provinceId = 'province-0';
 getAllStations();
 
 
-async function getAllStations(){
-  let res = await fetch('/api/stations');
+async function getAllStations() {
+  let res = await fetch('/stations');
   stations = await res.json();
   // console.log(stations);
   await getAllStationsInventories();
@@ -36,8 +36,8 @@ async function getAllStations(){
   selectDateRange();
 }
 
-async function getAllStationsInventories(){
-  let res = await fetch('/api/stationsInventories');
+async function getAllStationsInventories() {
+  let res = await fetch('/stationsInventories');
   stationInventory = await res.json();
   // showProvinces()
   // console.log(JSON.stringify(stationInventory)); // enlever

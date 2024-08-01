@@ -111,7 +111,11 @@ app.get('/api/previsions', async (req, res) => {
   }
 });
 
-app.get('/api/stations', async (req, res) => {
+app.listen(PORT, () => {
+  console.log(`Server started at http://localhost:${PORT}`);
+});
+
+app.get('/stations', async (req, res) => {
   try {
     await client.connect();
     console.log('Connected successfully to server');
@@ -125,7 +129,7 @@ app.get('/api/stations', async (req, res) => {
   }
 });
 
-app.get('/api/stationsInventories', async (req, res) => {
+app.get('/stationsInventories', async (req, res) => {
   try {
     await client.connect();
     console.log('Connected successfully to server');
@@ -138,11 +142,6 @@ app.get('/api/stationsInventories', async (req, res) => {
     res.status(500).send(error.message);
   }
 });
-
-app.listen(PORT, () => {
-  console.log(`Server started at http://localhost:${PORT}`);
-});
-
 
 // GET PRÉVISION D'UNE STATION : http://localhost:3000/previsions/ab-52
 app.get('/previsions/:stationId', async (req, res) => {
