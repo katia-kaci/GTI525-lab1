@@ -1,4 +1,3 @@
-const parser = new DOMParser();
 var map = L.map('map').setView([54, -90], 4);
 let previsionsSelectionnees = false, actuellesSelectionnees = true, journeeSelectionnee = false;
 let markers = [], conditionsActuelles = [], previsions = [], journees = [];
@@ -142,7 +141,7 @@ function updatePopup() {
 function createIcon(temperature, imageNom) {
     return L.divIcon({
         className: 'custom-icon',
-        html: `<img src="images/${imageNom}.png" style="width: 25px; height: 25px;"/> <div style="font-size: 10px; position: absolute; left: 0; bottom: 1; width: 100%; text-align: center;">${temperature}</div>`,
+        html: `<img src="images/${imageNom}.png" style="width: 25px; height: 25px;"/> <div style="font-size: 10px; position: absolute; left: 0; bottom: 1; width: 100%; text-align: center;"><b>${temperature}</b></div>`,
         iconSize: [30, 30]
     });
 }

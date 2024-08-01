@@ -5,60 +5,31 @@ import stationMapping from './station_mapping.json' assert { type: 'json' };
 import { MongoClient } from 'mongodb'
 import xml2js from 'xml2js';
 import { parse } from 'csv-parse/sync';
-// import * as mdbClient from 'mongodb' ;
-// import { default as mongoose } from 'mongoose'
-// var MongoClient = require('mongodb').MongoClient ;
-// const url = "mongodb://localhost:27017/";
-
-const url = 'mongodb://127.0.0.1:27017/';
-const client = new MongoClient(url);
-const dbName = 'Labo3';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 const __dirname = path.resolve();
 
-// Use connect method to connect to the server
+const url = 'mongodb://127.0.0.1:27017/';
+const client = new MongoClient(url);
+const dbName = 'Labo3';
+
 await client.connect();
 console.log('Connected successfully to server');
 let db = client.db(dbName);
 await db.createCollection('stations');
-
 client.close();
-
-// MongoClient.connect ( url , function ( err , db) {
-//   console.log('mongo');
-//   if ( err ) throw err ;
-//  var dbo = db.db("mydb") ;
-//  dbo.createCollection("stations" ,function ( err , res ) {
-//  if (err ) throw err ;
-//  console.log("Collection created!") ;
-//  db.close () ;
-//  }) ;
-// });
 
 app.use(express.static('public'))
 app.use(express.static('node_modules/leaflet/dist'))
 
-// Fetch les deux APIs
+// a enlever :
 async function fetchHistoricalWeather(stationId, year, month, day) {
   const url = `https://climate.weather.gc.ca/climate_data/bulk_data_e.html?format=csv&stationID=${stationId}&Year=${year}&Month=${month}&Day=${day}&timeframe=1&submit=%20Download+Data`;
   const data = await fetch(url)
     .then(response => {
       if (!response.ok) {
         throw new Error(`Error fetching historical weather data: ${response.statusText}`);
-      }
-      return response.text();
-    })
-    .catch(error => console.error('Error:', error));
-  return data;
-}
-
-async function fetchPrevisions(rss_feed) {
-  const data = await fetch(rss_feed)
-    .then(response => {
-      if (!response.ok) {
-        throw new Error(`Error fetching weather forecast data: ${response.statusText}`);
       }
       return response.text();
     })
@@ -81,14 +52,7 @@ app.get('/carte', (req, res) => {
 });
 
 // Routes pour les données
-app.get('/station_mapping', (req, res) => {
-  if (stationMapping) {
-    res.json(stationMapping);
-  } else {
-    res.status(500).send('Les données du fichier station_mapping.json ne sont pas disponibles.');
-  }
-});
-
+// a enlever :
 app.get('/api/history', async (req, res) => {
   const { stationId, year, month, day } = req.query;
   try {
@@ -100,8 +64,12 @@ app.get('/api/history', async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`Server started at http://localhost:${PORT}`);
+app.get('/station_mapping', (req, res) => {
+  if (stationMapping) {
+    res.json(stationMapping);
+  } else {
+    res.status(500).send('Les données du fichier station_mapping.json ne sont pas disponibles.');
+  }
 });
 
 app.get('/stations', async (req, res) => {
@@ -136,7 +104,7 @@ app.get('/stationsInventories', async (req, res) => {
 app.get('/previsions/:stationId', async (req, res) => {
   const { stationId } = req.params;
   try {
-    const data = await fetchPrevisions2(stationId);
+    const data = await fetchPrevisions(stationId);
     res.json(data);
   } catch (error) {
     alert("Une erreur est survenue.");
@@ -144,7 +112,7 @@ app.get('/previsions/:stationId', async (req, res) => {
   }
 });
 
-async function fetchPrevisions2(stationId) {
+async function fetchPrevisions(stationId) {
   const rss_feed = `https://meteo.gc.ca/rss/city/${stationId}_f.xml`;
   const response = await fetch(rss_feed);
   if (!response.ok) throw new Error(`Error fetching weather forecast data: ${response.statusText}`);
@@ -198,7 +166,7 @@ app.get('/previsions', async (req, res) => {
 
 const stationss = ['ab-52', 'ab-50', 'nl-16', 'nb-36', 'ns-19', 'on-77', 'on-137', 'qc-147', 'on-118', 'qc-133', 'sk-32', 'sk-40', 'nl-24', 'on-143', 'bc-74', 'bc-85', 'mb-38'];
 async function fetchAllPrevisions() {
-  const promises = stationss.map(stationId => fetchPrevisions2(stationId));
+  const promises = stationss.map(stationId => fetchPrevisions(stationId));
   const results = await Promise.all(promises);
   return results;
 }
@@ -250,3 +218,8 @@ function formatHistoricalData(records) {
     data
   };
 }
+
+
+app.listen(PORT, () => {
+  console.log(`Server started at http://localhost:${PORT}`);
+});
