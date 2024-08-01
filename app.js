@@ -6,6 +6,11 @@ import { MongoClient } from 'mongodb'
 import xml2js from 'xml2js';
 import { parse } from 'csv-parse/sync';
 
+let cache = {};
+cache.history={};
+cache.previsions={};
+
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 const __dirname = path.resolve();
@@ -74,12 +79,15 @@ app.get('/station_mapping', (req, res) => {
 
 app.get('/stations', async (req, res) => {
   try {
+    if(cache.stations !== undefined) return res.json(cache.stations.value);
     await client.connect();
     console.log('Connected successfully to server');
     let db = client.db(dbName);
     let collection = db.collection('stations');
     let stations = await collection.find({}).toArray()
     client.close();
+    cache.stations = {time: new Date(), value: stations};
+
     res.json(stations);
   } catch (error) {
     res.status(500).send(error.message);
@@ -88,12 +96,14 @@ app.get('/stations', async (req, res) => {
 
 app.get('/stationsInventories', async (req, res) => {
   try {
+    if(cache.stationsInventories !== undefined) return res.json(cache.stationsInventories.value);
     await client.connect();
     console.log('Connected successfully to server');
     let db = client.db(dbName);
     let collection = db.collection('stationsInventories');
     let stations = await collection.find({}).toArray()
     client.close();
+    cache.stationsInventories = {time: new Date(), value: stations};
     res.json(stations);
   } catch (error) {
     res.status(500).send(error.message);
@@ -102,12 +112,14 @@ app.get('/stationsInventories', async (req, res) => {
 
 app.get('/stationsCarte', async (req, res) => {
   try {
+    if(cache.stationsCarte !== undefined) return res.json(cache.stationsCarte.value);
     await client.connect();
     console.log('Connected successfully to server');
     let db = client.db(dbName);
     let collection = db.collection('stationsCarte');
     let stations = await collection.find({}).toArray()
     client.close();
+    cache.stationsCarte = {time: new Date(), value: stations};
     res.json(stations);
   } catch (error) {
     res.status(500).send(error.message);
@@ -119,7 +131,9 @@ app.get('/stationsCarte', async (req, res) => {
 app.get('/previsions/:stationId', async (req, res) => {
   const { stationId } = req.params;
   try {
+    if(cache.previsions[stationId] !== undefined) return res.json(cache.previsions[stationId].value);
     const data = await fetchPrevisions(stationId);
+    cache.previsions[stationId] = {time: new Date(), value: data};
     res.json(data);
   } catch (error) {
     alert("Une erreur est survenue.");
@@ -172,7 +186,9 @@ function formatPrevisions(json) {
 // GET PRÉVISION TOUTES LES STATIONS : http://localhost:3000/previsions
 app.get('/previsions', async (req, res) => {
   try {
+    if(cache.previsions.allPrevision !== undefined) return res.json(cache.previsions.allPrevision.value);
     const allData = await fetchAllPrevisions();
+    cache.previsions.allPrevision = {time: new Date(), value: allData};
     res.json(allData);
   } catch (error) {
     res.status(500).send(error.message);
@@ -190,7 +206,10 @@ async function fetchAllPrevisions() {
 app.get('/history', async (req, res) => {
   const { stationId, year, month, day } = req.query;
   try {
+    let cle = stationId+'/'+year+'/'+month;
+    if(cache.history.cle !== undefined) return res.json(cache.history.cle.value);
     const data = await fetchHistoricalWeather2(stationId, year, month, day);
+    cache.history.cle = {time: new Date(), value: data};
     res.json(data);
   } catch (error) {
     alert("Une erreur est survenue.");

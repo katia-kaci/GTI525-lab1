@@ -207,7 +207,7 @@ async function showPrevisions() {
         if (!rss_feed) throw new Error('RSS feed not found for the selected airport.');
         rss_feed = rss_feed.substring(rss_feed.indexOf("city/")).replace('city/', '').replace('_f.xml', '');
 
-        const response = await fetch(`/previsions/${rss_feed}`);
+        const response = await fetch(`/previsions/${rss_feed}`,{cache:"default"});
         if (!response.ok) throw new Error(`Error fetching weather forecast: ${response.statusText}`);
         const donneesMeteo = await response.json();
         document.getElementById("station-name").textContent = donneesMeteo.title;
