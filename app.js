@@ -3,6 +3,7 @@ import fetch from 'node-fetch';
 import path from 'path';
 import stationMapping from './station_mapping.json' assert { type: 'json' };
 import { MongoClient } from 'mongodb'
+import xml2js from 'xml2js';
 // import * as mdbClient from 'mongodb' ;
 // import { default as mongoose } from 'mongoose'
 // var MongoClient = require('mongodb').MongoClient ;
@@ -142,3 +143,60 @@ app.listen(PORT, () => {
 });
 
 // mongoose.connect(url,{useNewUrlParser: true, useUnifiedTopology: true});
+
+app.get('/previsions/:stationId', async (req, res) => {
+  const { stationId } = req.params;
+  try {
+    const data = await fetchPrevisions2(stationId);
+    res.json(data);
+  } catch (error) {
+    alert("Une erreur est survenue.");
+    res.status(500).send(error.message);
+  }
+});
+
+async function fetchPrevisions2(stationId) {
+  const rss_feed = `https://meteo.gc.ca/rss/city/${stationId}_f.xml`;
+  const response = await fetch(rss_feed);
+
+  if (!response.ok) {
+    throw new Error(`Error fetching weather forecast data: ${response.statusText}`);
+  }
+
+  const xml = await response.text();
+  const json = await parseXML(xml);
+
+  // Extract relevant data and format it
+  const formattedData = formatPrevisions(json);
+  return formattedData;
+}
+
+function parseXML(xml) {
+  return new Promise((resolve, reject) => {
+    xml2js.parseString(xml, { explicitArray: false }, (err, result) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(result);
+      }
+    });
+  });
+}
+
+function formatPrevisions(data) {
+  const feed = data.feed;
+  const entries = feed.entry.map(entry => ({
+    title: entry.title,
+    link: entry.link.href,
+    updated: entry.updated,
+    summary: entry.summary._,
+    category: entry.category ? entry.category.term : null
+  }));
+
+  return {
+    title: feed.title,
+    link: feed.link.href,
+    updated: feed.updated,
+    entries: entries
+  };
+}
