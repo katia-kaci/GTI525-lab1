@@ -15,27 +15,25 @@ async function showTemperature() {
                     var marker = L.marker([latitude, longitude], { icon: createIcon("", "previsions-icon") }).addTo(map);
                     markers.push(marker);
 
-                    const rss_feed = stationJsonMap[province].rss_feed;
-                    const response = await fetch(`/api/previsions?rss_feed=${rss_feed}`);
+                    let rss_feed = stationJsonMap[province].rss_feed;
+                    if (!rss_feed) throw new Error('RSS feed not found for the selected airport.');
+                    rss_feed = rss_feed.substring(rss_feed.indexOf("city/")).replace('city/', '').replace('_f.xml', '');
+
+                    const response = await fetch(`/previsions/${rss_feed}`);
                     if (!response.ok) throw new Error(`Error fetching weather forecast: ${response.statusText}`);
-                    const donneesMeteo = await response.text();
-                    const xmlDoc = parser.parseFromString(donneesMeteo, "application/xml");
-                    if (xmlDoc.getElementsByTagName("parsererror").length > 0) throw new Error("Error parsing XML");
+                    const donneesMeteo = await response.json();
 
-                    const entries = xmlDoc.getElementsByTagName("entry");
-                    let provinceName = xmlDoc.getElementsByTagName("title")[0].textContent.split('-')[0].trim()
-
+                    const entries = donneesMeteo.entries;
+                    let provinceName = donneesMeteo.title.split('- Météo -')[0].trim();
                     let previsionTxt = "";
                     for (let entry of entries) {
-                        const category = entry.getElementsByTagName("category")[0].getAttribute("term");
-                        const summary = entry.getElementsByTagName("summary")[0].textContent;
-
-                        switch (category) {
+                        const summary = entry.summary;
+                        switch (entry.category) {
                             case "Conditions actuelles":
                                 conditionsActuelles.push(`<b><u>Conditions actuelles pour ${provinceName} (${province})</u></b><br>${summary.replace(']]>', '').replace('<![CDATA[', '')}`);
                                 break;
                             case "Prévisions météo":
-                                let sommaire = entry.getElementsByTagName("title")[0].textContent;
+                                let sommaire = entry.title;
                                 let journee = sommaire.split(':')[0];
                                 journees.push(journee);
                                 previsionTxt += '<li><b>' + journee + '</b>' + ': ' + summary + '</li>';

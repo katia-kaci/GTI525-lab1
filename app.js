@@ -100,17 +100,6 @@ app.get('/api/history', async (req, res) => {
   }
 });
 
-app.get('/api/previsions', async (req, res) => {
-  const { rss_feed } = req.query;
-  try {
-    const data = await fetchPrevisions(rss_feed);
-    res.send(data);
-  } catch (error) {
-    alert("Une erreur est survenue.");
-    res.status(500).send(error.message);
-  }
-});
-
 app.listen(PORT, () => {
   console.log(`Server started at http://localhost:${PORT}`);
 });

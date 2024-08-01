@@ -210,7 +210,6 @@ async function showPrevisions() {
         const response = await fetch(`/previsions/${rss_feed}`);
         if (!response.ok) throw new Error(`Error fetching weather forecast: ${response.statusText}`);
         const donneesMeteo = await response.json();
-        console.log(donneesMeteo)
         document.getElementById("station-name").textContent = donneesMeteo.title;
         document.getElementById("station-name").href = donneesMeteo.link;
         document.getElementById("updated").textContent = getDate(donneesMeteo.updated);
