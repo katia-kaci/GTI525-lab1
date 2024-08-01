@@ -158,15 +158,10 @@ app.get('/previsions/:stationId', async (req, res) => {
 async function fetchPrevisions2(stationId) {
   const rss_feed = `https://meteo.gc.ca/rss/city/${stationId}_f.xml`;
   const response = await fetch(rss_feed);
-
-  if (!response.ok) {
-    throw new Error(`Error fetching weather forecast data: ${response.statusText}`);
-  }
+  if (!response.ok) throw new Error(`Error fetching weather forecast data: ${response.statusText}`);
 
   const xml = await response.text();
-  const json = await parseXML(xml);
-
-  // Extract relevant data and format it
+  const json = await parseXML(xml)
   const formattedData = formatPrevisions(json);
   return formattedData;
 }
@@ -183,19 +178,20 @@ function parseXML(xml) {
   });
 }
 
-function formatPrevisions(data) {
-  const feed = data.feed;
+function formatPrevisions(json) {
+  const feed = json.feed;
   const entries = feed.entry.map(entry => ({
     title: entry.title,
-    link: entry.link.href,
     updated: entry.updated,
-    summary: entry.summary._,
-    category: entry.category ? entry.category.term : null
+    category: entry.category ? entry.category.$.term : null,
+    summary: entry.summary._
   }));
+
+  const relatedLink = feed.link.find(link => link.$.rel === 'related').$.href;
 
   return {
     title: feed.title,
-    link: feed.link.href,
+    link: relatedLink,
     updated: feed.updated,
     entries: entries
   };
