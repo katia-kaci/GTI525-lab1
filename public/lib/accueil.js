@@ -1,33 +1,32 @@
-// var stations = csvToArray(stations, ",", true);
-var stations = []; //await fetch('/stations')
-let stationInventory = []; //csvToArray(StationInventoryEN, '","', false);
+var stations = csvToArray(stations, ",", true);
+// var stations = []; //await fetch('/stations')
+// let stationInventory = [];
+let stationInventory = csvToArray(StationInventoryEN, '","', false);
 
-// getAllStationsInventories();
-
-let provinces = []// getProvinces();
+// let provinces = [];
+let provinces = getProvinces();
 let provinceSelectionnee = [];
-let stationSelectionee = [];//stations;
+// let stationSelectionee = [];
+let stationSelectionee = stations;
 
 const months = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"];
 let years = Array.from(new Set(stations.map((s) => s['"Year"'].replace(/"/g, '')))).sort();
 let fromYear = Math.min(...years), toYear = Math.max(...years), fromMonth = 0, toMonth = 11;
 let statistiqueChoisis = true;
 
-// showProvinces()
+showProvinces()
 let provinceId = 'province-0';
-// document.getElementById(provinceId).classList.add('special');
+document.getElementById(provinceId).classList.add('special');
 
-// showStatistics()
-// selectDateRange();
-getAllStations();
+showStatistics()
+selectDateRange();
+// getAllStations();
 
 
 async function getAllStations() {
   let res = await fetch('/stations');
   stations = await res.json();
-  // console.log(stations);
   await getAllStationsInventories();
-  // console.log(stationInventory);
   provinces = getProvinces();
   stationSelectionee = stations;
   showProvinces()
