@@ -1,7 +1,13 @@
 const parser = new DOMParser();
-var map;
+var map = L.map('map').setView([54, -90], 4);
 let previsionsSelectionnees = false;
 let markers = [], conditionsActuelles = [], previsions = [];
+
+var sunIcon = L.divIcon({
+    className: 'custom-icon',
+    html: '<img src="images/sun.png" style="width: 25px; height: 25px;"/> <div style="font-size: 10px; position: absolute; left: 0; bottom: 1; width: 100%; text-align: center;"></div>',
+    iconSize: [30, 30],
+});
 
 async function showTemperature() {
     for (let province in stationJsonMap) {
@@ -11,7 +17,7 @@ async function showTemperature() {
                 if (stations[id]) {
                     let longitude = stations[id].split('\n')[3].split(',')[0].replace(/"/g, '');
                     let latitude = stations[id].split('\n')[3].split(',')[1].replace(/"/g, '');
-                    var marker = L.marker([latitude, longitude]).addTo(map);
+                    var marker = L.marker([latitude, longitude], { icon: sunIcon }).addTo(map);
                     markers.push(marker);
 
                     const rss_feed = stationJsonMap[province].rss_feed;
@@ -54,13 +60,39 @@ async function showTemperature() {
 function updatePopup() {
     console.log("update")
     for (let i = 0; i < markers.length; i++) {
-        if (previsionsSelectionnees) markers[i].bindPopup(`<div class="scrollable-popup">${previsions[i]}</div>`);
-        else markers[i].bindPopup(conditionsActuelles[i]);
+        if (previsionsSelectionnees) {
+            markers[i].bindPopup(`<div class="scrollable-popup">${previsions[i]}</div>`);
+        }
+        else {
+            let conditionsString = conditionsActuelles[i];
+            const start = conditionsString.indexOf('<b>Température:</b>');
+            const end = conditionsString.indexOf('&deg');
+            const temperature = conditionsString.substring(start, end).replace('<b>Température:</b>', '').trim();
+            let updatedIcon = conditionsString.includes('nuage') ? createCloudIcon(temperature) : createSunIcon(temperature);
+            markers[i].setIcon(updatedIcon);
+            markers[i].bindPopup(conditionsString);
+
+        }
     }
 }
 
+function createCloudIcon(temperature) {
+    return L.divIcon({
+        className: 'custom-icon',
+        html: `<img src="images/cloud.png" style="width: 25px; height: 25px;"/> <div style="font-size: 10px; position: absolute; left: 0; bottom: 1; width: 100%; text-align: center;">${temperature}°C</div>`,
+        iconSize: [30, 30]
+    });
+}
+
+function createSunIcon(temperature) {
+    return L.divIcon({
+        className: 'custom-icon',
+        html: `<img src="images/sun.png" style="width: 25px; height: 25px;"/> <div style="font-size: 10px; position: absolute; left: 0; bottom: 1; width: 100%; text-align: center;">${temperature}°C</div>`,
+        iconSize: [30, 30]
+    });
+}
+
 let stationJsonMap = {};
-map = L.map('map').setView([55, -90], 4);
 document.addEventListener('DOMContentLoaded', async function () {
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
