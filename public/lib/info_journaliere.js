@@ -1,18 +1,19 @@
-var stations =  csvToArray(stations, ",", true);
-// getAllStations();
-let stationInventory = csvToArray(StationInventoryEN, '","', false);
+var stations = [];// csvToArray(stations, ",", true);
+let stationInventory = []; //csvToArray(StationInventoryEN, '","', false);
 
-let provinces = getProvinces();
+let provinces = []; //getProvinces();
 let provinceSelectionnee = [];
-let stationSelectionee = stations;
+let stationSelectionee = [];// stations;
 let codeAeroportSelectionne = "";
 let years = Array.from(new Set(stations.map((s) => s['"Year"'].replace(/"/g, '')))).sort();
 let year = years[0], month = "01", day = "01";
 let idStationsMapper = [];
 
-showProvinces()
+// showProvinces()
 let provinceId = 'province-0';
-document.getElementById(provinceId).classList.add('special');
+// document.getElementById(provinceId).classList.add('special');
+getAllStations();
+
 
 function getProvinces() {
   var provinces = Array.from(new Set(stationInventory.map(station => station['Province'])));
@@ -359,8 +360,29 @@ function emptyValues() {
   document.getElementById("date-indisponible").style.visibility = "visible";
 }
 
+// async function getAllStations(){
+//   let res = await fetch('/api/stations')
+//   stations = await res.json();
+//   // console.log(JSON.stringify(stations)); // enlever
+// } ///il faut JSON.stringify(stationsEN)..... envoyer dans l'autre et ramener comme les autres ******************************
+
 async function getAllStations(){
-  let res = await fetch('/api/stations')
+  let res = await fetch('/api/stations');
   stations = await res.json();
-  // console.log(JSON.stringify(stations)); // enlever
-} ///il faut JSON.stringify(stationsEN)..... envoyer dans l'autre et ramener comme les autres ******************************
+  // console.log(stations);
+  await getAllStationsInventories();
+  // console.log(stationInventory);
+  provinces = getProvinces();
+  stationSelectionee = stations;
+  showProvinces()
+  document.getElementById(provinceId).classList.add('special');
+  // showStatistics()
+  // selectDateRange();
+}
+
+async function getAllStationsInventories(){
+  let res = await fetch('/api/stationsInventories');
+  stationInventory = await res.json();
+  // showProvinces()
+  // console.log(JSON.stringify(stationInventory)); // enlever
+}
