@@ -1,9 +1,7 @@
 const parser = new DOMParser();
-var map = L.map('map').setView([52, -90], 4);
-L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19,
-    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-}).addTo(map);
+var map;
+let previsionsSelectionnees = false;
+let markers = [], conditionsActuelles = [], previsions = [];
 
 async function showTemperature() {
     for (let province in stationJsonMap) {
@@ -14,6 +12,7 @@ async function showTemperature() {
                     let longitude = stations[id].split('\n')[3].split(',')[0].replace(/"/g, '');
                     let latitude = stations[id].split('\n')[3].split(',')[1].replace(/"/g, '');
                     var marker = L.marker([latitude, longitude]).addTo(map);
+                    markers.push(marker);
 
                     const rss_feed = stationJsonMap[province].rss_feed;
                     const response = await fetch(`/api/previsions?rss_feed=${rss_feed}`);
@@ -23,17 +22,24 @@ async function showTemperature() {
                     if (xmlDoc.getElementsByTagName("parsererror").length > 0) throw new Error("Error parsing XML");
 
                     const entries = xmlDoc.getElementsByTagName("entry");
+                    let provinceName = xmlDoc.getElementsByTagName("title")[0].textContent.split('-')[0].trim()
+
+                    let previsionTxt = "";
                     for (let entry of entries) {
                         const category = entry.getElementsByTagName("category")[0].getAttribute("term");
                         const summary = entry.getElementsByTagName("summary")[0].textContent;
 
                         switch (category) {
                             case "Conditions actuelles":
-                                const htmlTxt = summary.replace(']]>', '').replace('<![CDATA[', '');
-                                marker.bindPopup(`<b>${province}</b><br>${htmlTxt}`).openPopup();
+                                conditionsActuelles.push(`<b><u>Conditions actuelles pour ${provinceName} (${province})</u></b><br>${summary.replace(']]>', '').replace('<![CDATA[', '')}`);
+                                break;
+                            case "Prévisions météo":
+                                let sommaire = entry.getElementsByTagName("title")[0].textContent;
+                                previsionTxt += '<li><b>' + sommaire.split(':')[0] + '</b>' + ': ' + summary + '</li>';
                                 break;
                         }
                     }
+                    previsions.push(`<b><u>Prévisions pour ${provinceName} (${province})</u></b><br>${previsionTxt}`);
                 }
             }
         }
@@ -42,10 +48,35 @@ async function showTemperature() {
             console.error(error.message);
         }
     }
+    updatePopup();
+}
+
+function updatePopup() {
+    console.log("update")
+    for (let i = 0; i < markers.length; i++) {
+        if (previsionsSelectionnees) markers[i].bindPopup(`<div class="scrollable-popup">${previsions[i]}</div>`);
+        else markers[i].bindPopup(conditionsActuelles[i]);
+    }
 }
 
 let stationJsonMap = {};
+map = L.map('map').setView([55, -90], 4);
 document.addEventListener('DOMContentLoaded', async function () {
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+
+    const radios = document.querySelectorAll('input[type="radio"][name="options"]');
+    radios.forEach(radio => {
+        radio.addEventListener('change', () => {
+            if (radio.checked) {
+                previsionsSelectionnees = radio.value == "option previsions" ? true : false;
+            }
+            updatePopup();
+        });
+    });
+
     try {
         const response = await fetch('/station_mapping');
         if (!response.ok) throw new Error(`Error fetching station mapping: ${response.statusText}`);

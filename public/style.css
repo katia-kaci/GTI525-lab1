@@ -158,7 +158,23 @@ h2 {
 }
 
 .map {
-    height: 350px;
+    height: 450px;
     width: 900px;
-    margin: auto;
+}
+
+.scrollable-popup {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.container {
+    display: flex;
+    align-items: flex-start;
+}
+
+.boutonsChoix {
+    flex-direction: column;
+    padding-right: 100px;
+    padding-left: 70px;
+    padding-top: 100px;
 }
