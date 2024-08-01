@@ -144,6 +144,7 @@ app.listen(PORT, () => {
 
 // mongoose.connect(url,{useNewUrlParser: true, useUnifiedTopology: true});
 
+// GET PRÉVISION D'UNE STATION
 app.get('/previsions/:stationId', async (req, res) => {
   const { stationId } = req.params;
   try {
@@ -200,3 +201,21 @@ function formatPrevisions(data) {
     entries: entries
   };
 }
+
+// GET PRÉVISION TOUTES LES STATIONS
+app.get('/previsions', async (req, res) => {
+  try {
+    const allData = await fetchAllPrevisions();
+    res.json(allData);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
+
+const stationss = ['ab-52', 'ab-50', 'nl-16', 'nb-36', 'ns-19', 'on-77', 'on-137', 'qc-147', 'on-118', 'qc-133', 'sk-32', 'sk-40', 'nl-24', 'on-143', 'bc-74', 'bc-85', 'mb-38'];
+async function fetchAllPrevisions() {
+  const promises = stationss.map(stationId => fetchPrevisions2(stationId));
+  const results = await Promise.all(promises);
+  return results;
+}
+
