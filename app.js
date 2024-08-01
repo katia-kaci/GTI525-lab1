@@ -4,6 +4,7 @@ import path from 'path';
 import stationMapping from './station_mapping.json' assert { type: 'json' };
 import { MongoClient } from 'mongodb'
 import xml2js from 'xml2js';
+import { parse } from 'csv-parse/sync';
 // import * as mdbClient from 'mongodb' ;
 // import { default as mongoose } from 'mongoose'
 // var MongoClient = require('mongodb').MongoClient ;
@@ -94,7 +95,7 @@ app.get('/api/history', async (req, res) => {
     const data = await fetchHistoricalWeather(stationId, year, month, day);
     res.send(data);
   } catch (error) {
-    alert("Une erreur est survenue.");
+    // alert("Une erreur est survenue.");
     res.status(500).send(error.message);
   }
 });
@@ -142,9 +143,8 @@ app.listen(PORT, () => {
   console.log(`Server started at http://localhost:${PORT}`);
 });
 
-// mongoose.connect(url,{useNewUrlParser: true, useUnifiedTopology: true});
 
-// GET PRÉVISION D'UNE STATION
+// GET PRÉVISION D'UNE STATION : http://localhost:3000/previsions/ab-52
 app.get('/previsions/:stationId', async (req, res) => {
   const { stationId } = req.params;
   try {
@@ -202,7 +202,7 @@ function formatPrevisions(data) {
   };
 }
 
-// GET PRÉVISION TOUTES LES STATIONS
+// GET PRÉVISION TOUTES LES STATIONS : http://localhost:3000/previsions
 app.get('/previsions', async (req, res) => {
   try {
     const allData = await fetchAllPrevisions();
@@ -219,3 +219,50 @@ async function fetchAllPrevisions() {
   return results;
 }
 
+// GET HISTORIQUE D'UNE STATION : http://localhost:3000/history?stationId=1865&year=2000&month=10&day=10
+app.get('/history', async (req, res) => {
+  const { stationId, year, month, day } = req.query;
+  try {
+    const data = await fetchHistoricalWeather2(stationId, year, month, day);
+    res.json(data);
+  } catch (error) {
+    alert("Une erreur est survenue.");
+    res.status(500).send(error.message);
+  }
+});
+
+async function fetchHistoricalWeather2(stationId, year, month, day) {
+  const url = `https://climate.weather.gc.ca/climate_data/bulk_data_e.html?format=csv&stationID=${stationId}&Year=${year}&Month=${month}&Day=${day}&timeframe=1&submit=%20Download+Data`;
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`Error fetching historical weather data: ${response.statusText}`);
+  }
+  const csv = await response.text();
+  const records = parse(csv, { columns: true, skip_empty_lines: true });
+  const formattedData = formatHistoricalData(records);
+  return formattedData;
+}
+
+function formatHistoricalData(records) {
+  const stationName = records[0]["Station Name"];
+  const climateID = records[0]["Climate ID"];
+
+  const data = records.map(record => ({
+    dateTime: record["Date/Time (LST)"],
+    temperatureCelsius: parseFloat(record["Temp (°C)"]),
+    dewPointTempCelsius: parseFloat(record["Dew Point Temp (°C)"]),
+    relativeHumidityPercent: parseFloat(record["Rel Hum (%)"]),
+    windDirectionDegrees: parseFloat(record["Wind Dir (10s deg)"]),
+    windSpeedKmh: parseFloat(record["Wind Spd (km/h)"]),
+    visibilityKm: parseFloat(record["Visibility (km)"]),
+    stationPressureKpa: parseFloat(record["Stn Press (kPa)"]),
+    windChill: parseFloat(record["Wind Chill"]),
+    weather: record["Weather"]
+  }));
+
+  return {
+    stationName,
+    climateID,
+    data
+  };
+}
