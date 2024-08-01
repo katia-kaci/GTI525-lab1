@@ -1,10 +1,10 @@
-var stations = csvToArray(stations, ",", true);
-// getAllStations();
-let stationInventory = csvToArray(StationInventoryEN, '","', false);
+var stations = []; // csvToArray(stations, ",", true);
+let stationInventory = []; // csvToArray(StationInventoryEN, '","', false);
 
-let provinces = getProvinces();
+
+let provinces =[];// getProvinces();
 let provinceSelectionnee = [];
-let stationSelectionee = stations;
+let stationSelectionee = []; //stations;
 let codeAeroportSelectionne = "";
 const parser = new DOMParser();
 const monthNames = [
@@ -12,9 +12,41 @@ const monthNames = [
     "juillet", "août", "septembre", "octobre", "novembre", "décembre"
 ];
 
-showProvinces()
+
+// showProvinces()
 let provinceId = 'province-0';
-document.getElementById(provinceId).classList.add('special');
+// document.getElementById(provinceId).classList.add('special');
+
+getAllStationsInventories();
+
+async function getAllStations(){
+    console.log('entrée')
+    let res = await fetch('/api/stations');
+    stations = await res.json();
+    // console.log(stations);
+    // await getAllStationsInventories();
+    // console.log(stationInventory);
+    
+    // provinces = getProvinces();
+  
+    // showProvinces()
+    // document.getElementById(provinceId).classList.add('special');
+    // showStatistics()
+    // selectDateRange();
+}
+  
+async function getAllStationsInventories(){
+    let res = await fetch('/api/stationsInventories');
+    stationInventory = await res.json();
+    await getAllStations()
+    stationSelectionee = stations;
+    console.log(stationSelectionee)
+    provinces = getProvinces();
+    showProvinces()
+    
+    // showProvinces()
+    // console.log(JSON.stringify(stationInventory)); // enlever
+} 
 
 function getProvinces() {
     var provinces = Array.from(new Set(stationInventory.map(station => station['Province'])));
@@ -23,42 +55,42 @@ function getProvinces() {
     return provinces;
 }
 
-function csvToArray(data, separator, skipLigne1) {
-    if (skipLigne1) {
-        let listSta = [];
-        for (i in data) {
-            let valeurs = data[i]
-                .slice(data[i].indexOf('\n') + 1)
-                .split('\n')
-                .map(v => v.split(separator))
+// function csvToArray(data, separator, skipLigne1) {
+//     if (skipLigne1) {
+//         let listSta = [];
+//         for (i in data) {
+//             let valeurs = data[i]
+//                 .slice(data[i].indexOf('\n') + 1)
+//                 .split('\n')
+//                 .map(v => v.split(separator))
 
-            let rows = data[i].slice(data[i].indexOf('\n') + 1).split('\n');
-            let titles = valeurs[0];
-            rows.splice(0, 1);
+//             let rows = data[i].slice(data[i].indexOf('\n') + 1).split('\n');
+//             let titles = valeurs[0];
+//             rows.splice(0, 1);
 
-            let temp = rows.map(row => {
-                const values = row.split(separator)
-                return titles.reduce((obj, actuel, i) => (obj[actuel] = values[i], obj), {})
-            });
-            listSta = listSta.concat(temp);
-        }
-        return listSta.filter((e) => e['"Climate ID"'] !== undefined);
-    }
-    else {
-        let valeurs = data
-            .slice(data.indexOf('\n') + 1)
-            .split('\n')
-            .map(v => v.split(separator))
+//             let temp = rows.map(row => {
+//                 const values = row.split(separator)
+//                 return titles.reduce((obj, actuel, i) => (obj[actuel] = values[i], obj), {})
+//             });
+//             listSta = listSta.concat(temp);
+//         }
+//         return listSta.filter((e) => e['"Climate ID"'] !== undefined);
+//     }
+//     else {
+//         let valeurs = data
+//             .slice(data.indexOf('\n') + 1)
+//             .split('\n')
+//             .map(v => v.split(separator))
 
-        let rows = data.slice(data.indexOf('\n') + 0).split('\n');
-        let titles = valeurs[3];
-        rows.splice(0, 5);
-        return rows.map(row => {
-            const values = row.split(separator);
-            return titles.reduce((obj, actuel, i) => (obj[actuel] = values[i], obj), {})
-        });
-    }
-}
+//         let rows = data.slice(data.indexOf('\n') + 0).split('\n');
+//         let titles = valeurs[3];
+//         rows.splice(0, 5);
+//         return rows.map(row => {
+//             const values = row.split(separator);
+//             return titles.reduce((obj, actuel, i) => (obj[actuel] = values[i], obj), {})
+//         });
+//     }
+// }
 
 function getCodeAeroport(stationName) {
     let s;
