@@ -6,7 +6,6 @@ let provinces = [];// getProvinces();
 let provinceSelectionnee = [];
 let stationSelectionee = []; //stations;
 let codeAeroportSelectionne = "";
-const parser = new DOMParser();
 const monthNames = [
     "janvier", "février", "mars", "avril", "mai", "juin",
     "juillet", "août", "septembre", "octobre", "novembre", "décembre"
@@ -204,25 +203,21 @@ async function showPrevisions() {
     if (codeAeroportSelectionne == "null") return;
 
     try {
-        const rss_feed = stationJsonMap[codeAeroportSelectionne]?.rss_feed;
+        let rss_feed = stationJsonMap[codeAeroportSelectionne]?.rss_feed;
         if (!rss_feed) throw new Error('RSS feed not found for the selected airport.');
+        rss_feed = rss_feed.substring(rss_feed.indexOf("city/")).replace('city/', '').replace('_f.xml', '');
 
-        const response = await fetch(`/api/previsions?rss_feed=${rss_feed}`);
+        const response = await fetch(`/previsions/${rss_feed}`);
         if (!response.ok) throw new Error(`Error fetching weather forecast: ${response.statusText}`);
+        const donneesMeteo = await response.json();
+        console.log(donneesMeteo)
+        document.getElementById("station-name").textContent = donneesMeteo.title;
+        document.getElementById("station-name").href = donneesMeteo.link;
+        document.getElementById("updated").textContent = getDate(donneesMeteo.updated);
 
-        const donneesMeteo = await response.text();
-
-        const xmlDoc = parser.parseFromString(donneesMeteo, "application/xml");
-        if (xmlDoc.getElementsByTagName("parsererror").length > 0) throw new Error("Error parsing XML");
-
-        document.getElementById("station-name").textContent = xmlDoc.getElementsByTagName("title")[0].textContent;
-        document.getElementById("station-name").href = xmlDoc.getElementsByTagName("link")[0].getAttribute("href");
-        document.getElementById("updated").textContent = getDate(xmlDoc.getElementsByTagName("updated")[0].textContent);
-
-        const entries = xmlDoc.getElementsByTagName("entry");
-        for (let entry of entries) {
-            const category = entry.getElementsByTagName("category")[0].getAttribute("term");
-            const summary = entry.getElementsByTagName("summary")[0].textContent;
+        for (let entry of donneesMeteo.entries) {
+            const category = entry.category;
+            const summary = entry.summary;
 
             switch (category) {
                 case "Veilles et avertissements":
@@ -232,7 +227,7 @@ async function showPrevisions() {
                     document.getElementById("conditions-actuelles").innerHTML = summary.replace(']]>', '').replace('<![CDATA[', '');
                     break;
                 case "Prévisions météo":
-                    let sommaire = entry.getElementsByTagName("title")[0].textContent;
+                    let sommaire = entry.title
                     var previsionSommaire = document.createElement("li");
                     previsionSommaire.textContent = sommaire;
                     document.getElementById("previsions-sommaires").appendChild(previsionSommaire);
