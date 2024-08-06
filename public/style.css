@@ -178,3 +178,17 @@ h2 {
     padding-left: 70px;
     padding-top: 100px;
 }
+
+.custom-icon img {
+    width: 25px;
+    height: 25px;
+}
+
+.custom-icon .temperature-label {
+    font-size: 10px;
+    position: absolute;
+    left: 0;
+    bottom: 1;
+    width: 100%;
+    text-align: center;
+}
