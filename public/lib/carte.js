@@ -62,7 +62,7 @@ async function showTemperature() {
         }
     }
     chargerBoutons();
-    updatePopup();
+    updateMarkers();
 }
 
 function chargerBoutons() {
@@ -98,13 +98,12 @@ function chargerBoutons() {
                 }
                 else journeeSelectionnee = false;
             }
-            updatePopup();
+            updateMarkers();
         });
     });
 }
 
-function updatePopup() {
-    // console.log("update")
+function updateMarkers() {
     for (let i = 0; i < markers.length; i++) {
         if (previsionsSelectionnees) {
             markers[i].setIcon(createIcon("", "previsions-icon"));

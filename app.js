@@ -51,7 +51,6 @@ client.close();
 app.use(express.static('public'))
 app.use(express.static('node_modules/leaflet/dist'))
 
-// a enlever :
 async function fetchHistoricalWeather(stationId, year, month, day) {
   const url = `https://climate.weather.gc.ca/climate_data/bulk_data_e.html?format=csv&stationID=${stationId}&Year=${year}&Month=${month}&Day=${day}&timeframe=1&submit=%20Download+Data`;
   const data = await fetch(url)
@@ -80,7 +79,6 @@ app.get('/carte', (req, res) => {
 });
 
 // Routes pour les données
-// a enlever :
 app.get('/api/history', async (req, res) => {
   const { stationId, year, month, day } = req.query;
   try {
@@ -149,8 +147,7 @@ app.get('/stationsCarte', async (req, res) => {
   }
 });
 
-
-// GET PRÉVISION D'UNE STATION : http://localhost:3000/previsions/ab-52
+// GET PRÉVISION D'UNE STATION, ex : http://localhost:3000/previsions/ab-52
 app.get('/previsions/:stationId', async (req, res) => {
   const { stationId } = req.params;
   try {
@@ -206,7 +203,7 @@ function formatPrevisions(json) {
   };
 }
 
-// GET PRÉVISION TOUTES LES STATIONS : http://localhost:3000/previsions
+// GET PRÉVISION TOUTES LES STATIONS, ex : http://localhost:3000/previsions
 app.get('/previsions', async (req, res) => {
   try {
     if (cache.previsions.allPrevision !== undefined) return res.json(cache.previsions.allPrevision.value);
