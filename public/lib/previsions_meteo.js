@@ -1,20 +1,17 @@
-var stations = []; // csvToArray(stations, ",", true);
-let stationInventory = []; // csvToArray(StationInventoryEN, '","', false);
+var stations = [];
+let stationInventory = [];
 
 
-let provinces = [];// getProvinces();
+let provinces = [];
 let provinceSelectionnee = [];
-let stationSelectionee = []; //stations;
+let stationSelectionee = [];
 let codeAeroportSelectionne = "";
 const monthNames = [
     "janvier", "février", "mars", "avril", "mai", "juin",
     "juillet", "août", "septembre", "octobre", "novembre", "décembre"
 ];
 
-
-// showProvinces()
 let provinceId = 'province-0';
-// document.getElementById(provinceId).classList.add('special');
 
 getAllStationsInventories();
 
@@ -38,43 +35,6 @@ function getProvinces() {
     provinces.sort().pop();
     return provinces;
 }
-
-// function csvToArray(data, separator, skipLigne1) {
-//     if (skipLigne1) {
-//         let listSta = [];
-//         for (i in data) {
-//             let valeurs = data[i]
-//                 .slice(data[i].indexOf('\n') + 1)
-//                 .split('\n')
-//                 .map(v => v.split(separator))
-
-//             let rows = data[i].slice(data[i].indexOf('\n') + 1).split('\n');
-//             let titles = valeurs[0];
-//             rows.splice(0, 1);
-
-//             let temp = rows.map(row => {
-//                 const values = row.split(separator)
-//                 return titles.reduce((obj, actuel, i) => (obj[actuel] = values[i], obj), {})
-//             });
-//             listSta = listSta.concat(temp);
-//         }
-//         return listSta.filter((e) => e['"Climate ID"'] !== undefined);
-//     }
-//     else {
-//         let valeurs = data
-//             .slice(data.indexOf('\n') + 1)
-//             .split('\n')
-//             .map(v => v.split(separator))
-
-//         let rows = data.slice(data.indexOf('\n') + 0).split('\n');
-//         let titles = valeurs[3];
-//         rows.splice(0, 5);
-//         return rows.map(row => {
-//             const values = row.split(separator);
-//             return titles.reduce((obj, actuel, i) => (obj[actuel] = values[i], obj), {})
-//         });
-//     }
-// }
 
 function getCodeAeroport(stationName) {
     let s;
@@ -157,11 +117,21 @@ function afficherNomsStations(value) {
 
     listeStationsAfficher = [];
     let ancienBtn = document.getElementById(provinceId);
-    ancienBtn.classList.remove('special');
-    ancienBtn.textContent = provinces[provinceId.split('-')[1]];
-    document.getElementById('province' + provinceId.split('-')[1]).innerHTML = '';
+    if (ancienBtn) {
+        ancienBtn.classList.remove('special');
+        ancienBtn.textContent = provinces[provinceId.split('-')[1]];
+    }
+    let ancienProvinceContainer = document.getElementById('province' + provinceId.split('-')[1]);
+    if (ancienProvinceContainer) {
+        while (ancienProvinceContainer.firstChild) {
+            ancienProvinceContainer.removeChild(ancienProvinceContainer.firstChild);
+        }
+    }
     provinceId = 'province-' + value;
-    document.getElementById(provinceId).classList.add('special');
+    let nouveauProvinceContainer = document.getElementById(provinceId);
+    if (nouveauProvinceContainer) {
+        nouveauProvinceContainer.classList.add('special');
+    }
 
     provinceSelectionnee.forEach((e) => {
         if (!listeStationsAfficher.includes(e['"Station Name"'])) {
@@ -172,20 +142,24 @@ function afficherNomsStations(value) {
     listeStationsAfficher.sort();
 
     let provinceContainer = document.getElementById('province' + value);
-    provinceContainer.innerHTML = '';
+    if (provinceContainer) {
+        while (provinceContainer.firstChild) {
+            provinceContainer.removeChild(provinceContainer.firstChild);
+        }
 
-    listeStationsAfficher.forEach((stationName) => {
-        let stationButton = document.createElement('button');
-        stationButton.id = stationName.replace(/"/g, '');
-        stationButton.value = stationName.replace(/"/g, '');
-        stationButton.onclick = function () { getStations(this.value); };
-        stationButton.className = 'station-btn';
-        stationButton.textContent = `${stationName.replace(/"/g, '')} (${getCodeAeroport(stationName)})`;
+        listeStationsAfficher.forEach((stationName) => {
+            let stationButton = document.createElement('button');
+            stationButton.id = stationName.replace(/"/g, '');
+            stationButton.value = stationName.replace(/"/g, '');
+            stationButton.onclick = function () { getStations(this.value); };
+            stationButton.className = 'station-btn';
+            stationButton.textContent = `${stationName.replace(/"/g, '')} (${getCodeAeroport(stationName)})`;
 
-        let listItem = document.createElement('ul');
-        listItem.appendChild(stationButton);
-        provinceContainer.appendChild(listItem);
-    });
+            let listItem = document.createElement('li');
+            listItem.appendChild(stationButton);
+            provinceContainer.appendChild(listItem);
+        });
+    }
 }
 
 let previousButton = null;
