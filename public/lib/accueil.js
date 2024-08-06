@@ -247,7 +247,7 @@ function afficherNomsStations(value) {
   let ancienBtn = document.getElementById(provinceId);
   ancienBtn.classList.remove('special');
   ancienBtn.textContent = provinces[provinceId.split('-')[1]];
-  document.getElementById('province' + provinceId.split('-')[1]).innerHTML = '';
+  clearChildren(document.getElementById('province' + provinceId.split('-')[1]));
   provinceId = 'province-' + value;
   document.getElementById(provinceId).classList.add('special');
 
@@ -274,7 +274,6 @@ function afficherNomsStations(value) {
     listItem.appendChild(stationButton);
     provinceContainer.appendChild(listItem);
   });
-
 
   if (statistiqueChoisis) showStatistics();
   else showData();
