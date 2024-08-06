@@ -96,7 +96,10 @@ function getCodeAeroport(stationName) {
 
 function showProvinces() {
     let listeprovince = document.getElementById("listeprovince");
-    listeprovince.innerHTML = '';
+
+    while (listeprovince.firstChild) {
+        listeprovince.removeChild(listeprovince.firstChild);
+    }
 
     for (let i in provinces) {
         let button = document.createElement('button');
@@ -106,10 +109,15 @@ function showProvinces() {
         button.textContent = provinces[i];
 
         let ulContainer = document.createElement('ul');
-        ulContainer.appendChild(button);
+        ulContainer.className = 'no-bullets';
+
+        let liButton = document.createElement('li');
+        liButton.appendChild(button);
+        ulContainer.appendChild(liButton);
 
         let stationList = document.createElement('ul');
         stationList.id = 'province' + i;
+        stationList.className = 'no-bullets';
         ulContainer.appendChild(stationList);
 
         listeprovince.appendChild(ulContainer);
@@ -126,7 +134,7 @@ function showProvinces() {
             this.disabled = true;
             previousSelectedButton = this;
             afficherNomsStations(this.value);
-            document.getElementById("nom").textContent = provinces[button.value];
+            document.getElementById("nom").textContent = provinces[this.value];
             codeAeroportSelectionne = "null";
             document.getElementById("aucune-station-selectionnee").style.display = "block";
             showPrevisions();
@@ -207,7 +215,7 @@ async function showPrevisions() {
         if (!rss_feed) throw new Error('RSS feed not found for the selected airport.');
         rss_feed = rss_feed.substring(rss_feed.indexOf("city/")).replace('city/', '').replace('_f.xml', '');
 
-        const response = await fetch(`/previsions/${rss_feed}`,{cache:"default"});
+        const response = await fetch(`/previsions/${rss_feed}`, { cache: "default" });
         if (!response.ok) throw new Error(`Error fetching weather forecast: ${response.statusText}`);
         const donneesMeteo = await response.json();
         document.getElementById("station-name").textContent = donneesMeteo.title;
