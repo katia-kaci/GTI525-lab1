@@ -213,7 +213,7 @@ async function showPrevisions() {
                     break;
                 case "Conditions actuelles":
                     let conditionsText = summary.replace(']]>', '').replace('<![CDATA[', '');
-                    conditionsActuelles.innerHTML = conditionsText;
+                    conditionsActuelles.innerHTML = conditionsText; // car le texte de l'API contient des balises HTML
                     break;
                 case "Prévisions météo":
                     let sommaire = entry.title;

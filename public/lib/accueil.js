@@ -538,7 +538,7 @@ function showData() {
   table.appendChild(tbody);
 
   let tableau = document.getElementById("tableau");
-  tableau.innerHTML = '';
+  clearChildren(tableau);
   tableau.appendChild(table);
 
   statistiqueChoisis = false;
