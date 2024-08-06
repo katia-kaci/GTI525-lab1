@@ -131,12 +131,6 @@ function afficherNomsStations(value) {
   });
 }
 
-function clearChildren(container) {
-  while (container.firstChild) {
-    container.removeChild(container.firstChild);
-  }
-}
-
 let previousButton = null;
 function getStations(value) {
   stationSelectionee = provinceSelectionnee.filter((e) => e['"Station Name"'].replace(/"/g, '') === value);

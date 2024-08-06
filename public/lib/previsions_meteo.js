@@ -176,10 +176,6 @@ function getStations(value) {
     showPrevisions();
 }
 
-
-
-/* ----------------------- NOUVELLES FONCTIONS --------------------------------------------------*/
-
 async function showPrevisions() {
     document.getElementById("infos-previsions").style.visibility = "hidden";
     if (codeAeroportSelectionne === "null") return;

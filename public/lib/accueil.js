@@ -195,7 +195,7 @@ function getCodeAeroport(stationName) {
 
 function showProvinces() {
   let listeprovince = document.getElementById("listeprovince");
-  listeprovince.innerHTML = '';
+  clearChildren(listeprovince);
 
   for (let i in provinces) {
     let button = document.createElement('button');
@@ -260,7 +260,7 @@ function afficherNomsStations(value) {
   listeStationsAfficher.sort();
 
   let provinceContainer = document.getElementById('province' + value);
-  provinceContainer.innerHTML = '';
+  clearChildren(provinceContainer);
 
   listeStationsAfficher.forEach((stationName) => {
     let stationButton = document.createElement('button');
@@ -557,4 +557,10 @@ function initDate() {
   updateDateFilter()
   if (document.getElementById('showData').disabled) showData();
   else if (document.getElementById('showStatistics').disabled) showStatistics();
+}
+
+function clearChildren(container) {
+  while (container.firstChild) {
+    container.removeChild(container.firstChild);
+  }
 }
