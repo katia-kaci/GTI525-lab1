@@ -171,7 +171,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 async function showHistory() {
   document.getElementById("date-indisponible").style.visibility = "hidden";
-  document.getElementById("aucune-station-selectionnee").style.display = "none"
+  document.getElementById("aucune-station-selectionnee").style.display = "none";
   var tableAncienne = document.getElementById("historique");
   if (tableAncienne) {
     tableAncienne.remove();
@@ -199,8 +199,9 @@ async function showHistory() {
   if (valHistorique.length == 0) {
     emptyValues();
     return;
+  } else {
+    valHistorique.map(e => cleaningData(e));
   }
-  else valHistorique.map(e => cleaningData(e));
 
   let table = document.createElement('table');
   table.id = "historique";
@@ -256,7 +257,7 @@ async function showHistory() {
 
     table.appendChild(tbody);
     let tableau = document.getElementById("tableau");
-    tableau.innerHTML = '';
+    clearChildren(tableau);
     tableau.appendChild(table);
   }
 }
