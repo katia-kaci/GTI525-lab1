@@ -100,7 +100,10 @@ function afficherNomsStations(value) {
   let ancienBtn = document.getElementById(provinceId);
   ancienBtn.classList.remove('special');
   ancienBtn.textContent = provinces[provinceId.split('-')[1]];
-  document.getElementById('province' + provinceId.split('-')[1]).innerHTML = '';
+
+  let previousProvinceContainer = document.getElementById('province' + provinceId.split('-')[1]);
+  clearChildren(previousProvinceContainer);
+
   provinceId = 'province-' + value;
   document.getElementById(provinceId).classList.add('special');
 
@@ -111,9 +114,8 @@ function afficherNomsStations(value) {
   });
 
   listeStationsAfficher.sort();
-
   let provinceContainer = document.getElementById('province' + value);
-  provinceContainer.innerHTML = '';
+  clearChildren(provinceContainer);
 
   listeStationsAfficher.forEach((stationName) => {
     let stationButton = document.createElement('button');
@@ -127,6 +129,12 @@ function afficherNomsStations(value) {
     listItem.appendChild(stationButton);
     provinceContainer.appendChild(listItem);
   });
+}
+
+function clearChildren(container) {
+  while (container.firstChild) {
+    container.removeChild(container.firstChild);
+  }
 }
 
 let previousButton = null;
