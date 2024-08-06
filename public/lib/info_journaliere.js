@@ -1,62 +1,22 @@
-var stations = [];// csvToArray(stations, ",", true);
-let stationInventory = []; //csvToArray(StationInventoryEN, '","', false);
+var stations = [];
+let stationInventory = [];
 
-let provinces = []; //getProvinces();
+let provinces = [];
 let provinceSelectionnee = [];
-let stationSelectionee = [];// stations;
+let stationSelectionee = [];
 let codeAeroportSelectionne = "";
 let years = Array.from(new Set(stations.map((s) => s['"Year"'].replace(/"/g, '')))).sort();
 let year = years[0], month = "01", day = "01";
 let idStationsMapper = [];
 
-// showProvinces()
 let provinceId = 'province-0';
-// document.getElementById(provinceId).classList.add('special');
 getAllStations();
-
 
 function getProvinces() {
   var provinces = Array.from(new Set(stationInventory.map(station => station['Province'])));
   provinces = provinces.filter(province => province !== 'NUNAVUT' && province !== "NORTHWEST TERRITORIES" && province !== "YUKON TERRITORY" && province !== "PRINCE EDWARD ISLAND");
   provinces.sort().pop();
   return provinces;
-}
-
-function csvToArray(data, separator, skipLigne1) {
-  if (skipLigne1) {
-    let listSta = [];
-    for (i in data) {
-      let valeurs = data[i]
-        .slice(data[i].indexOf('\n') + 1)
-        .split('\n')
-        .map(v => v.split(separator))
-
-      let rows = data[i].slice(data[i].indexOf('\n') + 1).split('\n');
-      let titles = valeurs[0];
-      rows.splice(0, 1);
-
-      let temp = rows.map(row => {
-        const values = row.split(separator)
-        return titles.reduce((obj, actuel, i) => (obj[actuel] = values[i], obj), {})
-      });
-      listSta = listSta.concat(temp);
-    }
-    return listSta.filter((e) => e['"Climate ID"'] !== undefined);
-  }
-  else {
-    let valeurs = data
-      .slice(data.indexOf('\n') + 1)
-      .split('\n')
-      .map(v => v.split(separator))
-
-    let rows = data.slice(data.indexOf('\n') + 0).split('\n');
-    let titles = valeurs[3];
-    rows.splice(0, 5);
-    return rows.map(row => {
-      const values = row.split(separator);
-      return titles.reduce((obj, actuel, i) => (obj[actuel] = values[i], obj), {})
-    });
-  }
 }
 
 function getCodeAeroport(stationName) {
@@ -79,7 +39,7 @@ function getCodeAeroport(stationName) {
 
 function showProvinces() {
   let listeprovince = document.getElementById("listeprovince");
-  listeprovince.innerHTML = '';
+  clearChildren(listeprovince);
 
   for (let i in provinces) {
     let button = document.createElement('button');
@@ -115,6 +75,12 @@ function showProvinces() {
       document.getElementById("date-indisponible").style.visibility = "hidden";
     });
   });
+}
+
+function clearChildren(container) {
+  while (container.firstChild) {
+    container.removeChild(container.firstChild);
+  }
 }
 
 function afficherNomsStations(value) {
@@ -179,10 +145,6 @@ function getStations(value) {
   showHistory();
 }
 
-
-
-/* ----------------------- NOUVELLES FONCTIONS --------------------------------------------------*/
-
 document.addEventListener('DOMContentLoaded', function () {
   let date = document.getElementById("dateChoice");
   date.min = years[0] + '-01-01'
@@ -195,7 +157,6 @@ document.addEventListener('DOMContentLoaded', function () {
     year = tabVal[0];
     month = tabVal[1];
     day = tabVal[2];
-    // console.log(`date: ${day}/${month}/${year}`);
     showHistory();
   })
 });
@@ -360,29 +321,17 @@ function emptyValues() {
   document.getElementById("date-indisponible").style.visibility = "visible";
 }
 
-// async function getAllStations(){
-//   let res = await fetch('/stations')
-//   stations = await res.json();
-//   // console.log(JSON.stringify(stations)); // enlever
-// } ///il faut JSON.stringify(stationsEN)..... envoyer dans l'autre et ramener comme les autres ******************************
-
 async function getAllStations() {
   let res = await fetch('/stations');
   stations = await res.json();
-  // console.log(stations);
   await getAllStationsInventories();
-  // console.log(stationInventory);
   provinces = getProvinces();
   stationSelectionee = stations;
   showProvinces()
   document.getElementById(provinceId).classList.add('special');
-  // showStatistics()
-  // selectDateRange();
 }
 
 async function getAllStationsInventories() {
   let res = await fetch('/stationsInventories');
   stationInventory = await res.json();
-  // showProvinces()
-  // console.log(JSON.stringify(stationInventory)); // enlever
 }

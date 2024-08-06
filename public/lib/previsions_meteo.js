@@ -182,7 +182,7 @@ function getStations(value) {
 
 async function showPrevisions() {
     document.getElementById("infos-previsions").style.visibility = "hidden";
-    if (codeAeroportSelectionne == "null") return;
+    if (codeAeroportSelectionne === "null") return;
 
     try {
         let rss_feed = stationJsonMap[codeAeroportSelectionne]?.rss_feed;
@@ -192,9 +192,20 @@ async function showPrevisions() {
         const response = await fetch(`/previsions/${rss_feed}`, { cache: "default" });
         if (!response.ok) throw new Error(`Error fetching weather forecast: ${response.statusText}`);
         const donneesMeteo = await response.json();
+
         document.getElementById("station-name").textContent = donneesMeteo.title;
         document.getElementById("station-name").href = donneesMeteo.link;
         document.getElementById("updated").textContent = getDate(donneesMeteo.updated);
+
+        let veillesEtAvertissements = document.getElementById("veilles-et-avertissements");
+        let conditionsActuelles = document.getElementById("conditions-actuelles");
+        let previsionsSommaires = document.getElementById("previsions-sommaires");
+        let previsionsDetaillees = document.getElementById("previsions-detaillees");
+
+        veillesEtAvertissements.textContent = '';
+        conditionsActuelles.textContent = '';
+        clearList(previsionsSommaires);
+        clearList(previsionsDetaillees);
 
         for (let entry of donneesMeteo.entries) {
             const category = entry.category;
@@ -202,29 +213,37 @@ async function showPrevisions() {
 
             switch (category) {
                 case "Veilles et avertissements":
-                    document.getElementById("veilles-et-avertissements").textContent = summary;
+                    veillesEtAvertissements.textContent = summary;
                     break;
                 case "Conditions actuelles":
-                    document.getElementById("conditions-actuelles").innerHTML = summary.replace(']]>', '').replace('<![CDATA[', '');
+                    let conditionsText = summary.replace(']]>', '').replace('<![CDATA[', '');
+                    conditionsActuelles.innerHTML = conditionsText;
                     break;
                 case "Prévisions météo":
-                    let sommaire = entry.title
-                    var previsionSommaire = document.createElement("li");
-                    previsionSommaire.textContent = sommaire;
-                    document.getElementById("previsions-sommaires").appendChild(previsionSommaire);
+                    let sommaire = entry.title;
 
-                    var previsionDetaillee = document.createElement("li");
+                    let previsionSommaire = document.createElement("li");
+                    previsionSommaire.textContent = sommaire;
+                    previsionsSommaires.appendChild(previsionSommaire);
+
+                    let previsionDetaillee = document.createElement("li");
                     previsionDetaillee.textContent = sommaire.split(':')[0] + ': ' + summary;
-                    document.getElementById("previsions-detaillees").appendChild(previsionDetaillee);
+                    previsionsDetaillees.appendChild(previsionDetaillee);
                     break;
             }
         }
-        document.getElementById("aucune-station-selectionnee").style.display = "none"
+        document.getElementById("aucune-station-selectionnee").style.display = "none";
         document.getElementById("infos-previsions").style.visibility = "visible";
     }
     catch (error) {
         alert("Une erreur est survenue.");
         console.error(error.message);
+    }
+}
+
+function clearList(listElement) {
+    while (listElement.firstChild) {
+        listElement.removeChild(listElement.firstChild);
     }
 }
 
