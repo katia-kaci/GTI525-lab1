@@ -39,7 +39,6 @@ async function getAllStationsInventories() {
   let res = await fetch('/stationsInventories');
   stationInventory = await res.json();
   // showProvinces()
-  // console.log(JSON.stringify(stationInventory)); // enlever
 }
 
 function selectDateRange() {
